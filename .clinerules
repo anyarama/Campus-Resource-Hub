@@ -1,0 +1,434 @@
+# Campus Resource Hub - Cline AI Configuration Rules
+
+## PROJECT CONTEXT
+This is the Campus Resource Hub AiDD 2025 Capstone Project for Kelley MSIS.
+- **Timeline**: 18 days from start to completion
+- **Type**: Full-stack Flask web application for campus resource booking
+- **Goal**: Enterprise-grade, production-quality system (NOT generic Bootstrap template)
+- **Solo Developer**: Single developer managing entire lifecycle
+- **Grading Weight**: Functionality (30%), Code Quality (15%), UX (15%), Testing (15%), Docs (10%), Presentation (15%)
+
+## ARCHITECTURE CONSTRAINTS
+
+### Application Structure (MANDATORY)
+```
+Flask App Factory Pattern with Blueprints:
+- auth (authentication & user management)
+- resources (resource CRUD & search)
+- bookings (booking flow & conflict detection)
+- messages (user-to-user messaging)
+- reviews (ratings & feedback)
+- admin (dashboard, moderation, analytics)
+
+Layer Separation:
+├── Controllers (routes) → handle HTTP, validate input, call services
+├── Services → business logic, orchestration
+├── Data Access Layer (DAL) → all database operations (CRUD)
+└── Models → SQLAlchemy ORM definitions
+
+NEVER put SQL queries or business logic in route handlers.
+NEVER bypass the Data Access Layer.
+```
+
+### Technology Stack (FIXED)
+- **Backend**: Flask 3.x, SQLAlchemy, Flask-Login, Flask-WTF
+- **Database**: SQLite (development), optional PostgreSQL (production)
+- **Auth**: bcrypt password hashing, Flask-Login sessions
+- **Frontend**: Jinja2 templates + Bootstrap 5 (MUST CUSTOMIZE - no stock templates)
+- **Testing**: pytest with 70%+ coverage required
+- **Linting**: ruff + black + mypy (all must pass)
+
+### Database Schema (5 Required Tables)
+1. **users**: user_id, name, email, password_hash, role (student/staff/admin), profile_image, department
+2. **resources**: resource_id, owner_id, title, description, category, location, capacity, images, availability_rules (JSON), status (draft/published/archived)
+3. **bookings**: booking_id, resource_id, requester_id, start_datetime, end_datetime, status (pending/approved/rejected/cancelled/completed)
+4. **messages**: message_id, thread_id, sender_id, receiver_id, content, timestamp
+5. **reviews**: review_id, resource_id, reviewer_id, rating (1-5), comment, timestamp
+6. **admin_logs** (optional): log_id, admin_id, action, target_table, details, timestamp
+
+## SECURITY REQUIREMENTS (NON-NEGOTIABLE)
+
+### ALWAYS Implement:
+1. **CSRF Protection**: Enable Flask-WTF CSRF on ALL forms
+2. **Password Security**: bcrypt hashing with salt (NEVER plaintext)
+3. **SQL Injection Prevention**: Use ONLY parameterized queries or ORM
+4. **XSS Protection**: Jinja auto-escaping enabled, sanitize any user HTML
+5. **File Upload Security**: 
+   - Whitelist extensions (.jpg, .jpeg, .png, .gif only)
+   - Random filename generation (uuid4)
+   - Size limits (2MB max per image)
+   - Store outside web root with secure_filename()
+6. **Role-Based Access Control (RBAC)**: Decorators for @require_role('admin'), @require_role('staff')
+
+### NEVER Do:
+- Store passwords in plaintext
+- Trust user input without validation
+- Execute raw SQL with string concatenation
+- Allow arbitrary file uploads
+- Expose sensitive data in error messages
+- Use debug=True in production
+
+## CODE QUALITY STANDARDS
+
+### Every Code Change Must:
+1. **Follow MVC pattern** - No business logic in routes
+2. **Use type hints** - All function signatures typed
+3. **Include docstrings** - Every public function/class
+4. **Pass linters**: `make fmt && make lint && make test` before commit
+5. **Have tests** - Unit tests for services, integration tests for flows
+6. **Log decisions** - Document non-obvious choices in comments
+
+### Naming Conventions:
+- **Routes**: `/resources`, `/bookings/<int:booking_id>/approve`
+- **Functions**: `snake_case` (e.g., `check_booking_conflict()`)
+- **Classes**: `PascalCase` (e.g., `BookingService`, `ResourceRepository`)
+- **Variables**: descriptive, avoid single letters except loops
+- **Constants**: `UPPER_SNAKE_CASE` (e.g., `MAX_UPLOAD_SIZE`)
+
+### File Organization:
+```
+src/
+├── __init__.py
+├── app.py                    # App factory
+├── config.py                 # Config classes (Dev/Prod)
+├── controllers/              # Flask blueprints
+│   ├── __init__.py
+│   ├── auth.py
+│   ├── resources.py
+│   ├── bookings.py
+│   ├── messages.py
+│   ├── reviews.py
+│   └── admin.py
+├── services/                 # Business logic
+│   ├── __init__.py
+│   ├── booking_service.py   # Conflict detection, approvals
+│   ├── search_service.py     # Search & filter logic
+│   └── notification_service.py
+├── data_access/              # Database operations
+│   ├── __init__.py
+│   ├── user_repository.py
+│   ├── resource_repository.py
+│   └── booking_repository.py
+├── models/                   # ORM models
+│   ├── __init__.py
+│   ├── user.py
+│   ├── resource.py
+│   ├── booking.py
+│   ├── message.py
+│   └── review.py
+├── static/
+│   ├── css/
+│   │   └── custom.css       # MUST customize beyond Bootstrap
+│   ├── js/
+│   │   └── app.js
+│   └── uploads/
+└── templates/
+    ├── base.html            # Base layout with nav/footer
+    ├── auth/
+    ├── resources/
+    ├── bookings/
+    ├── messages/
+    ├── reviews/
+    └── admin/
+```
+
+## AI-FIRST DEVELOPMENT REQUIREMENTS
+
+### Mandatory AI Structure:
+```
+.prompt/
+├── dev_notes.md             # Log ALL Cline interactions (REQUIRED)
+└── golden_prompts.md        # Best prompts that worked well
+
+docs/
+└── context/
+    ├── APA/                 # Agility & Process artifacts
+    ├── DT/                  # Design Thinking (personas, journey maps)
+    ├── PM/                  # Product Management (PRD, OKRs)
+    └── shared/              # Glossary, common definitions
+```
+
+### AI Development Workflow:
+1. **Every significant Cline interaction** → log in `.prompt/dev_notes.md`
+2. **Format**: Date, prompt used, outcome, what worked/didn't work, reflection
+3. **Attribution**: Mark AI-generated code with comments:
+   ```python
+   # AI Contribution: Cline suggested initial conflict detection logic
+   # Reviewed and modified by developer on 2025-11-03
+   ```
+4. **Golden Prompts**: When a prompt produces excellent code, save it in `golden_prompts.md`
+5. **Context Grounding**: AI feature must reference real database data (no hallucinations)
+
+### Required AI Feature (Choose ONE):
+**Option A: Resource Concierge** (Recommended)
+- Natural language queries: "Find study rooms for 4 people tomorrow 2-4pm"
+- Parses query → searches database → returns results
+- Can answer policy questions based on docs/context/
+
+**Option B: Smart Scheduler**
+- Suggests optimal booking times based on historical usage
+- Conflict avoidance recommendations
+- "When is this resource least busy this week?"
+
+**Option C: AI Summary Reporter**
+- Weekly usage summaries for admins
+- Trend analysis: "Most popular resources", "Peak hours"
+- Data-driven insights
+
+## ENTERPRISE UI/UX STANDARDS
+
+### Design Goals:
+- **Professional**: Like Airbnb, Notion, or Linear (not generic Bootstrap)
+- **Consistent**: Design system with defined colors, spacing, typography
+- **Responsive**: Mobile-first, test at 320px, 768px, 1024px, 1920px
+- **Accessible**: WCAG 2.1 AA compliance (labels, contrast, keyboard nav)
+
+### UI Components to Implement:
+1. **Navigation**: Fixed header with user dropdown, search bar
+2. **Cards**: Resource cards with image, title, rating, availability badge
+3. **Forms**: Floating labels, inline validation, helpful error messages
+4. **Modals**: For confirmations, quick actions
+5. **Loading States**: Spinners, skeleton screens (not just blank pages)
+6. **Empty States**: Helpful CTAs when no data exists
+7. **Toast Notifications**: Success/error feedback (not just alerts)
+
+### Custom CSS Required:
+```css
+/* Define custom properties (CSS variables) */
+:root {
+  --primary-color: #your-brand-color;
+  --secondary-color: #accent-color;
+  --text-dark: #333;
+  --text-light: #666;
+  --border-radius: 8px;
+  --shadow-sm: 0 2px 4px rgba(0,0,0,0.1);
+  --shadow-md: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+/* Custom components beyond Bootstrap */
+.resource-card { /* custom styling */ }
+.booking-calendar { /* custom calendar */ }
+.dashboard-stat-card { /* admin metrics */ }
+```
+
+## TESTING REQUIREMENTS
+
+### Test Coverage (MINIMUM 70%):
+1. **Unit Tests**:
+   - Booking conflict detection logic
+   - Rating aggregation calculations
+   - Search/filter algorithms
+   - Data Access Layer CRUD operations
+
+2. **Integration Tests**:
+   - Auth flow: register → login → access protected route
+   - Booking flow: browse → book → approve → complete
+   - Review flow: complete booking → leave rating
+
+3. **End-to-End Test** (at least one):
+   - Complete user journey: signup → create resource → book it → review
+
+4. **Security Tests**:
+   - SQL injection attempts (should fail)
+   - XSS attempts (should be escaped)
+   - CSRF token validation
+
+### Test Naming:
+```python
+def test_booking_conflict_detection_prevents_overlap():
+    """Test that overlapping bookings are rejected"""
+    
+def test_user_cannot_review_without_completed_booking():
+    """Test authorization for review submission"""
+```
+
+## PROMPT ENGINEERING TIPS FOR THIS PROJECT
+
+### Effective Prompts for Cline:
+
+**For Code Generation**:
+```
+"Implement the booking conflict detection algorithm in src/services/booking_service.py. 
+It should check if a new booking overlaps with existing approved bookings for the same resource_id. 
+Use the BookingRepository from data_access layer. Include docstrings and type hints. 
+Consider edge cases: same start/end time, bookings that wrap around midnight."
+```
+
+**For Refactoring**:
+```
+"Refactor the resource search function in src/services/search_service.py to separate concerns:
+1. Query building (filters, sorting)
+2. Pagination logic
+3. Result formatting
+Keep it testable with clear function boundaries."
+```
+
+**For Testing**:
+```
+"Write pytest unit tests for the booking conflict detection logic in tests/test_booking_service.py.
+Cover these cases:
+- Exact overlap (same start/end)
+- Partial overlap (starts during existing booking)
+- No overlap (back-to-back bookings OK)
+- Multiple overlapping bookings
+Use pytest fixtures for test data setup."
+```
+
+**For Documentation**:
+```
+"Update the README.md with:
+1. Prerequisites (Python version, dependencies)
+2. Setup instructions (virtualenv, pip install, db init)
+3. How to run (development server, tests, linting)
+4. Project structure overview
+5. API endpoint summary
+Use clear headings and code blocks for commands."
+```
+
+### Context-Rich Prompts:
+Always reference:
+- Specific file paths: `src/controllers/bookings.py`
+- Related files: "This connects to BookingRepository in data_access/"
+- Requirements: "Per the project brief section 6, we need server-side validation..."
+- Standards: "Following the Data Access Layer pattern in .clinerules..."
+
+## WORKFLOW BEST PRACTICES
+
+### Development Cycle:
+1. **Plan** → Write out what you're building (pseudocode, flow diagram)
+2. **Implement** → Use Cline to generate initial code
+3. **Review** → Read every line, understand logic, add comments
+4. **Test** → Write tests immediately (not at the end)
+5. **Refactor** → Clean up, extract functions, improve naming
+6. **Document** → Update docs, log AI interactions
+7. **Commit** → Clear commit messages, feature branches
+
+### Git Strategy:
+```bash
+# Feature branches
+git checkout -b feature/booking-conflict-detection
+git checkout -b feature/resource-search
+git checkout -b feature/admin-dashboard
+
+# Commit messages format
+feat: Add booking conflict detection algorithm
+fix: Correct start/end time validation in booking form
+docs: Update API documentation for review endpoints
+test: Add unit tests for search service
+refactor: Extract booking approval logic to service layer
+```
+
+### Daily Checklist:
+- [ ] Run `make fmt && make lint` before any commit
+- [ ] Write/update tests for new features
+- [ ] Log significant Cline interactions in dev_notes.md
+- [ ] Update todo list to track progress
+- [ ] Review generated code for security issues
+- [ ] Test UI changes in browser (mobile + desktop)
+
+## DELIVERABLES CHECKLIST
+
+### Phase 1: Planning (Days 1-3)
+- [ ] Product Requirements Document (PRD) - 1-2 pages
+- [ ] Wireframes for 8+ key screens (Figma/hand-drawn)
+- [ ] Entity-Relationship Diagram (ERD) with all relationships
+- [ ] API endpoint specification document
+- [ ] Acceptance criteria defined
+
+### Phase 2: Development (Days 4-14)
+- [ ] Flask app with blueprint architecture
+- [ ] Database models with proper relationships
+- [ ] Authentication system (register, login, RBAC)
+- [ ] Resource CRUD operations
+- [ ] Search & filter functionality
+- [ ] Booking system with conflict detection
+- [ ] Messaging between users
+- [ ] Review & rating system
+- [ ] Admin dashboard with analytics
+- [ ] AI-powered feature (Concierge/Scheduler/Reporter)
+
+### Phase 3: Testing & Docs (Days 15-16)
+- [ ] Unit tests (70%+ coverage)
+- [ ] Integration tests
+- [ ] End-to-end test scenario
+- [ ] Security audit completed
+- [ ] README.md with setup instructions
+- [ ] API documentation
+- [ ] .prompt/dev_notes.md completed
+- [ ] .prompt/golden_prompts.md with best prompts
+
+### Phase 4: Polish & Demo (Days 17-18)
+- [ ] Enterprise-grade UI polish
+- [ ] Responsive design tested
+- [ ] Accessibility features verified
+- [ ] Demo data seeded
+- [ ] Presentation slides (7 max)
+- [ ] Demo script prepared
+- [ ] Optional: Deployed to cloud
+
+## ERROR DETECTION & PREVENTION
+
+### Common Mistakes to Avoid:
+1. **Business logic in routes** → Use services layer
+2. **Direct database calls in controllers** → Use repositories
+3. **No CSRF tokens** → Enable Flask-WTF globally
+4. **Plaintext passwords** → Always use bcrypt
+5. **Stock Bootstrap UI** → Customize with custom.css
+6. **No tests** → Write tests as you code
+7. **Undocumented AI usage** → Log in dev_notes.md immediately
+8. **N+1 queries** → Use eager loading (.join() or .joinedload())
+9. **Missing error handling** → Try/except with helpful messages
+10. **No input validation** → Validate on server side always
+
+### When Cline Generates Code, Verify:
+- [ ] Does it follow the architecture (MVC + DAL)?
+- [ ] Are security measures in place (CSRF, bcrypt, escaping)?
+- [ ] Is it testable (no global state, clear interfaces)?
+- [ ] Are there docstrings and type hints?
+- [ ] Does it handle errors gracefully?
+- [ ] Is it consistent with existing code style?
+
+## SUCCESS METRICS
+
+### Definition of Done (for each feature):
+- [ ] Code implementation complete
+- [ ] Unit tests written and passing
+- [ ] Security considerations addressed
+- [ ] Documentation updated
+- [ ] UI/UX polished and responsive
+- [ ] Accessibility verified
+- [ ] Peer review completed (self-review in solo project)
+- [ ] Committed to Git with clear message
+
+### Project Completion Criteria:
+- [ ] All core features working (User, Resource, Booking, Message, Review, Admin)
+- [ ] AI feature integrated and documented
+- [ ] Tests passing with 70%+ coverage
+- [ ] `make fmt && make lint` passes cleanly
+- [ ] Documentation complete (PRD, ERD, README, API docs, AI logs)
+- [ ] Demo presentation ready
+- [ ] Professional, enterprise-grade UI
+- [ ] Security audit passed
+- [ ] Deployment-ready (optional: actually deployed)
+
+---
+
+## FINAL NOTES
+
+This is a **capstone project** that demonstrates your ability to:
+1. Build production-quality software
+2. Apply security best practices
+3. Create enterprise-grade user experiences
+4. Leverage AI tools effectively while maintaining human oversight
+5. Document your work professionally
+6. Present technical solutions clearly
+
+**Quality > Quantity**: Better to have 90% of features working perfectly than 100% half-broken.
+
+**Use Cline Wisely**: It's a powerful tool, but YOU are the engineer. Review everything, understand the code, and take ownership of decisions.
+
+**Document Everything**: Your .prompt/dev_notes.md is as important as your code. Reflect on what worked, what didn't, and what you learned.
+
+**Enterprise-Grade Means**: Professional, polished, secure, tested, documented, and presentation-ready.
+
+Good luck! 🚀
