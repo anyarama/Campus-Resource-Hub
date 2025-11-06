@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+
+{% block title %}New Message to {{ recipient.name }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Back Button -->
+    <div class="mb-3">
+        <a href="{{ url_for('messages.inbox') }}" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-arrow-left me-1"></i>Back to Messages
+        </a>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <!-- Compose Card -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-pencil-square me-2"></i>New Message
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <!-- Recipient Info -->
+                    <div class="alert alert-info">
+                        <div class="d-flex align-items-center">
+                            <div class="me-3">
+                                {% if recipient.profile_image %}
+                                    <img src="{{ url_for('static', filename='uploads/' + recipient.profile_image) }}" 
+                                         alt="{{ recipient.name }}"
+                                         class="rounded-circle"
+                                         width="50" 
+                                         height="50"
+                                         style="object-fit: cover;">
+                                {% else %}
+                                    <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center"
+                                         style="width: 50px; height: 50px;">
+                                        <span class="text-white fw-bold">{{ recipient.name[0].upper() }}</span>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div>
+                                <strong>To: {{ recipient.name }}</strong>
+                                <p class="mb-0 small text-muted">
+                                    <i class="bi bi-envelope me-1"></i>{{ recipient.email }}
+                                </p>
+                                <small>
+                                    <span class="badge bg-{{ 'danger' if recipient.role == 'admin' else 'primary' if recipient.role == 'staff' else 'success' }}">
+                                        {{ recipient.role|capitalize }}
+                                    </span>
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Compose Form -->
+                    <form method="POST" action="{{ url_for('messages.compose', user_id=recipient.user_id) }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                        
+                        <div class="mb-3">
+                            <label for="content" class="form-label">
+                                <i class="bi bi-chat-left-text me-1"></i>Message
+                            </label>
+                            <textarea class="form-control" 
+                                      id="content" 
+                                      name="content" 
+                                      rows="8" 
+                                      placeholder="Type your message here..."
+                                      required
+                                      maxlength="10000"></textarea>
+                            <div class="form-text">Maximum 10,000 characters</div>
+                        </div>
+
+                        <!-- Guidelines -->
+                        <div class="alert alert-light border">
+                            <h6 class="alert-heading">
+                                <i class="bi bi-info-circle me-1"></i>Messaging Guidelines
+                            </h6>
+                            <ul class="mb-0 small">
+                                <li>Be professional and respectful</li>
+                                <li>Clearly state your reason for messaging</li>
+                                <li>Include any relevant booking or resource details</li>
+                                <li>Messages are plain text only (no HTML)</li>
+                            </ul>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url_for('messages.inbox') }}" class="btn btn-outline-secondary">
+                                <i class="bi bi-x-circle me-1"></i>Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-send me-1"></i>Send Message
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Help Card -->
+            <div class="card border-0 bg-light mt-3">
+                <div class="card-body">
+                    <h6 class="mb-2">
+                        <i class="bi bi-question-circle me-1"></i>Need Help?
+                    </h6>
+                    <p class="mb-0 small text-muted">
+                        Use messaging to ask questions about resources, coordinate bookings, 
+                        or discuss any concerns with other users. All conversations are private 
+                        between you and the recipient.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Character counter
+    const textarea = document.getElementById('content');
+    if (textarea) {
+        textarea.addEventListener('input', function() {
+            const remaining = 10000 - this.value.length;
+            const helpText = this.nextElementSibling;
+            if (helpText) {
+                helpText.textContent = `${remaining.toLocaleString()} characters remaining`;
+                if (remaining < 100) {
+                    helpText.classList.add('text-warning');
+                } else {
+                    helpText.classList.remove('text-warning');
+                }
+            }
+        });
+    }
+</script>
+{% endblock %}

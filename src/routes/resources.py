@@ -12,7 +12,6 @@ Reviewed by developer on 2025-11-05
 import json
 from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify
 from flask_login import login_required, current_user
-from werkzeug.utils import secure_filename
 
 from src.security.rbac import require_admin
 from src.services.resource_service import ResourceService, ResourceServiceError
@@ -43,11 +42,16 @@ def admin_ping():
 
     Requires authentication AND admin role.
     """
-    return jsonify({
-        "message": "Admin access confirmed",
-        "user": current_user.name,
-        "role": current_user.role,
-    }), 200
+    return (
+        jsonify(
+            {
+                "message": "Admin access confirmed",
+                "user": current_user.name,
+                "role": current_user.role,
+            }
+        ),
+        200,
+    )
 
 
 # ============================================================================
@@ -72,10 +76,7 @@ def index():
 
     # Fetch resources (published only for public view)
     resources = ResourceRepository.search(
-        query_str=search_term,
-        category=category,
-        location=location,
-        status="published"
+        query_str=search_term, category=category, location=location, status="published"
     )
 
     # Simple pagination (in-memory for now)
@@ -92,7 +93,7 @@ def index():
         search_term=search_term,
         page=page,
         total=total,
-        per_page=per_page
+        per_page=per_page,
     )
 
 
@@ -114,7 +115,7 @@ def detail(resource_id):
     if resource.images:
         try:
             images = json.loads(resource.images)
-        except:
+        except (json.JSONDecodeError, TypeError, ValueError):
             images = []
 
     # Parse availability rules
@@ -122,14 +123,11 @@ def detail(resource_id):
     if resource.availability_rules:
         try:
             availability = json.loads(resource.availability_rules)
-        except:
+        except (json.JSONDecodeError, TypeError, ValueError):
             availability = {}
 
     return render_template(
-        "resources/detail.html",
-        resource=resource,
-        images=images,
-        availability=availability
+        "resources/detail.html", resource=resource, images=images, availability=availability
     )
 
 
@@ -167,7 +165,7 @@ def create():
             location=location,
             capacity=capacity,
             images=images if images else None,
-            status=status
+            status=status,
         )
 
         flash(f"Resource '{resource.title}' created successfully!", "success")
@@ -204,7 +202,7 @@ def edit(resource_id):
         if resource.images:
             try:
                 images = json.loads(resource.images)
-            except:
+            except (json.JSONDecodeError, TypeError, ValueError):
                 images = []
 
         return render_template("resources/edit.html", resource=resource, images=images)
@@ -233,9 +231,7 @@ def edit(resource_id):
 
         # Update resource
         resource = ResourceService.update_resource(
-            resource_id=resource_id,
-            user_id=current_user.user_id,
-            **updates
+            resource_id=resource_id, user_id=current_user.user_id, **updates
         )
 
         flash(f"Resource '{resource.title}' updated successfully!", "success")

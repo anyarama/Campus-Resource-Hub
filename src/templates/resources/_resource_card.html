@@ -1,0 +1,73 @@
+{# Resource Card Partial - Reusable component for displaying resource in list views #}
+<div class="card mb-3 shadow-sm resource-card">
+    <div class="card-body">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <div class="d-flex align-items-start">
+                    <div class="flex-grow-1">
+                        <h5 class="card-title mb-2">
+                            <a href="{{ url_for('resources.detail', resource_id=resource.resource_id) }}" 
+                               class="text-decoration-none text-dark">
+                                {{ resource.title }}
+                            </a>
+                        </h5>
+                        <p class="card-text text-muted small mb-2">
+                            {{ resource.description[:150] if resource.description else 'No description' }}{% if resource.description and resource.description|length > 150 %}...{% endif %}
+                        </p>
+                        <div class="d-flex flex-wrap gap-2">
+                            <span class="badge bg-light text-dark border">
+                                <i class="bi bi-tag"></i> {{ resource.category or 'Uncategorized' }}
+                            </span>
+                            <span class="badge bg-light text-dark border">
+                                <i class="bi bi-geo-alt"></i> {{ resource.location }}
+                            </span>
+                            {% if resource.capacity %}
+                            <span class="badge bg-light text-dark border">
+                                <i class="bi bi-people"></i> {{ resource.capacity }}
+                            </span>
+                            {% endif %}
+                            <span class="badge 
+                                {% if resource.status == 'draft' %}bg-secondary
+                                {% elif resource.status == 'published' %}bg-success
+                                {% else %}bg-warning text-dark{% endif %}">
+                                {{ resource.status|upper }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                <div class="d-flex flex-column gap-2">
+                    <a href="{{ url_for('resources.detail', resource_id=resource.resource_id) }}" 
+                       class="btn btn-sm btn-outline-primary">
+                        <i class="bi bi-eye"></i> View
+                    </a>
+                    <a href="{{ url_for('resources.edit', resource_id=resource.resource_id) }}" 
+                       class="btn btn-sm btn-outline-secondary">
+                        <i class="bi bi-pencil"></i> Edit
+                    </a>
+                    {% if resource.status == 'draft' %}
+                    <form method="POST" action="{{ url_for('resources.publish', resource_id=resource.resource_id) }}" class="m-0">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="btn btn-sm btn-outline-success w-100">
+                            <i class="bi bi-check-circle"></i> Publish
+                        </button>
+                    </form>
+                    {% elif resource.status == 'published' %}
+                    <form method="POST" action="{{ url_for('resources.archive', resource_id=resource.resource_id) }}" class="m-0">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="btn btn-sm btn-outline-warning w-100">
+                            <i class="bi bi-archive"></i> Archive
+                        </button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card-footer bg-light text-muted small">
+        <i class="bi bi-calendar"></i> Created {{ resource.created_at.strftime('%b %d, %Y') if resource.created_at else 'Unknown' }}
+        <span class="ms-3"><i class="bi bi-calendar-check"></i> Bookings: Coming Soon</span>
+        <span class="ms-3"><i class="bi bi-star"></i> Rating: Coming Soon</span>
+    </div>
+</div>

@@ -81,12 +81,29 @@ def require_admin(f: Callable) -> Callable:
     return require_roles("admin")(f)
 
 
+def require_staff(f: Callable) -> Callable:
+    """
+    Decorator requiring staff role (includes admin).
+
+    Convenience wrapper around require_roles('staff', 'admin').
+    Used for booking approvals and staff-level operations.
+
+    Example:
+        @app.route('/bookings/<int:booking_id>/approve')
+        @login_required
+        @require_staff
+        def approve_booking(booking_id):
+            # Only staff or admin can approve bookings
+            pass
+    """
+    return require_roles("staff", "admin")(f)
+
+
 def require_staff_or_admin(f: Callable) -> Callable:
     """
     Decorator requiring staff or admin role.
 
-    Convenience wrapper around require_roles('staff', 'admin').
-    Used for resource approval workflows and moderation.
+    Alias for require_staff (kept for backward compatibility).
 
     Example:
         @app.route('/bookings/<int:booking_id>/approve')

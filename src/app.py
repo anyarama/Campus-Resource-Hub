@@ -133,30 +133,33 @@ def register_blueprints(app: Flask) -> None:
     # Import blueprints (delayed import to avoid circular dependencies)
     from src.routes.auth import auth_bp
     from src.routes.resources import resources_bp
+    from src.routes.bookings import bookings_bp
+    from src.routes.reviews import reviews_bp
+    from src.routes.messages import messages_bp
 
-    # Register blueprints (Phase 4)
+    # Register blueprints
     app.register_blueprint(auth_bp, url_prefix="/auth")
     app.register_blueprint(resources_bp)
+    app.register_blueprint(bookings_bp)  # Phase 6: Bookings
+    app.register_blueprint(reviews_bp)   # Phase 6: Reviews
+    app.register_blueprint(messages_bp)  # Phase 7: Messages
 
-    # TODO: Implement remaining blueprints in Phase 5-6
-    # from src.controllers.bookings import bookings_bp
-    # from src.controllers.messages import messages_bp
-    # from src.controllers.reviews import reviews_bp
-    # from src.controllers.admin import admin_bp
-    # app.register_blueprint(bookings_bp, url_prefix='/bookings')
-    # app.register_blueprint(messages_bp, url_prefix='/messages')
-    # app.register_blueprint(reviews_bp, url_prefix='/reviews')
+    # TODO: Implement remaining blueprints in future phases
+    # from src.routes.admin import admin_bp
     # app.register_blueprint(admin_bp, url_prefix='/admin')
 
-    # Temporary: Register a simple index route for testing
+    # Homepage route - redirect to appropriate page based on auth status
     @app.route("/")
     def index():
-        return {
-            "app": app.config["APP_NAME"],
-            "version": app.config["APP_VERSION"],
-            "status": "running",
-            "message": "Campus Resource Hub API - Phase 1 Setup Complete",
-        }
+        from flask import redirect, url_for
+        from flask_login import current_user
+        
+        if current_user.is_authenticated:
+            # Redirect authenticated users to resources dashboard
+            return redirect(url_for('resources.dashboard'))
+        else:
+            # Redirect unauthenticated users to login page
+            return redirect(url_for('auth.login'))
 
     @app.route("/health")
     def health_check():

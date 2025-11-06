@@ -68,31 +68,45 @@ class ResourceRepository:
 
     @staticmethod
     def search(
-        query_str: str, page: int = 1, per_page: int = 50, category: Optional[str] = None
-    ) -> Dict:
-        """Search resources by title, description, or location."""
-        search_filter = or_(
-            Resource.title.ilike(f"%{query_str}%"),
-            Resource.description.ilike(f"%{query_str}%"),
-            Resource.location.ilike(f"%{query_str}%"),
-        )
+        query_str: Optional[str] = None,
+        page: int = 1,
+        per_page: int = 50,
+        category: Optional[str] = None,
+        location: Optional[str] = None,
+        status: Optional[str] = None,
+    ) -> List[Resource]:
+        """
+        Search resources by title, description, or location.
+        
+        Note: Returns list for backward compatibility with routes/resources.py
+        """
+        query = Resource.query
+        
+        # Apply status filter (default to published if not specified)
+        if status:
+            query = query.filter_by(status=status)
+        else:
+            query = query.filter(Resource.status == "published")
+        
+        # Apply search filter if query string provided
+        if query_str:
+            search_filter = or_(
+                Resource.title.ilike(f"%{query_str}%"),
+                Resource.description.ilike(f"%{query_str}%"),
+                Resource.location.ilike(f"%{query_str}%"),
+            )
+            query = query.filter(search_filter)
 
-        query = Resource.query.filter(search_filter, Resource.status == "published")
-
+        # Apply category filter
         if category:
             query = query.filter_by(category=category)
+            
+        # Apply location filter
+        if location:
+            query = query.filter(Resource.location.ilike(f"%{location}%"))
 
-        paginated = query.order_by(Resource.created_at.desc()).paginate(
-            page=page, per_page=per_page, error_out=False
-        )
-
-        return {
-            "items": paginated.items,
-            "total": paginated.total,
-            "page": paginated.page,
-            "per_page": paginated.per_page,
-            "pages": paginated.pages,
-        }
+        # Return all matching resources (simple list for now)
+        return query.order_by(Resource.created_at.desc()).all()
 
     @staticmethod
     def update(resource_id: int, **kwargs) -> Optional[Resource]:

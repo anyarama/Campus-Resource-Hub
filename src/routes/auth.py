@@ -141,7 +141,7 @@ def login():
         user = UserRepository.get_by_email(email)
 
         # Verify password (using constant-time comparison)
-        if user and verify_password(password, user._password_hash):
+        if user and verify_password(password, user.password_hash):
             # Login successful
             login_user(user, remember=remember)
             flash(f"Welcome back, {user.name}!", "success")

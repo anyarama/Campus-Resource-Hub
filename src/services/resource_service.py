@@ -11,14 +11,12 @@ Reviewed and configured by developer on 2025-11-05
 import json
 import os
 import uuid
-from datetime import datetime
 from typing import List, Optional, Tuple
 from werkzeug.datastructures import FileStorage
 from werkzeug.utils import secure_filename
 
 from src.models.resource import Resource
 from src.repositories.resource_repo import ResourceRepository
-from src.app import db
 
 
 # Image upload configuration
@@ -196,7 +194,7 @@ class ResourceService:
                         for uploaded_path in image_paths:
                             try:
                                 os.remove(os.path.join("src/static", uploaded_path))
-                            except:
+                            except (OSError, FileNotFoundError):
                                 pass
                         raise ResourceServiceError(f"Image upload failed: {str(e)}")
 
@@ -208,12 +206,12 @@ class ResourceService:
             category=category,
             location=location.strip() if location else None,
             capacity=capacity,
-            images=json.dumps(image_paths) if image_paths else None,
-            availability_rules=json.dumps(availability_rules) if availability_rules else None,
+            images=json.dumps(image_paths) if image_paths else None,  # type: ignore[arg-type]
+            availability_rules=json.dumps(availability_rules) if availability_rules else None,  # type: ignore[arg-type]
             status=status,
         )
 
-        return ResourceRepository.create(resource)
+        return ResourceRepository.create(resource)  # type: ignore[call-arg]
 
     @staticmethod
     def update_resource(

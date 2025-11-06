@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 """
-Seed script for creating demo authentication accounts.
+Seed script for creating demo authentication accounts and resources.
 
 Creates three demo users:
 - admin@example.com (role: admin)
 - staff@example.com (role: staff)
 - student@example.com (role: student)
+
+Creates 8 demo resources across various categories.
 
 All accounts use password: Demo123!
 
@@ -13,7 +15,7 @@ Usage:
     python scripts/seed_auth_demo.py
 
 AI Contribution: Cline generated seed script structure
-Reviewed and configured by developer on 2025-11-05
+Reviewed and extended by developer on 2025-11-05
 """
 
 import sys
@@ -25,7 +27,9 @@ sys.path.insert(0, str(project_root))
 
 from src.app import create_app, db
 from src.models.user import User
+from src.models.resource import Resource
 from src.repositories.user_repo import UserRepository
+from src.repositories.resource_repo import ResourceRepository
 
 
 def seed_demo_users():
@@ -73,17 +77,15 @@ def seed_demo_users():
                 skipped_count += 1
                 continue
 
-            # Create new user
-            user = User(
-                name=account["name"],
-                email=account["email"],
-                role=account["role"],
-                department=account["department"],
-            )
-            user.password = account["password"]  # Uses property setter for hashing
-
+            # Create new user using repository method
             try:
-                UserRepository.create(user)
+                user = UserRepository.create(
+                    name=account["name"],
+                    email=account["email"],
+                    password=account["password"],
+                    role=account["role"],
+                    department=account["department"],
+                )
                 print(f"✅ Created: {account['email']} ({account['role']})")
                 created_count += 1
             except Exception as e:
@@ -103,10 +105,137 @@ def seed_demo_users():
         print("🚀 You can now login with these accounts!")
 
 
+def seed_demo_resources():
+    """Create demo resources for testing and demonstration."""
+    app = create_app("development")
+
+    with app.app_context():
+        print("\n🏢 Seeding demo resources...")
+        print("-" * 50)
+
+        # Get staff user as owner
+        staff_user = UserRepository.get_by_email("staff@example.com")
+        if not staff_user:
+            print("⚠️  Staff user not found. Please run user seeding first.")
+            return
+
+        # Demo resources configuration
+        demo_resources = [
+            {
+                "title": "Main Library Study Room A",
+                "description": "Quiet study room perfect for group work. Seats 6 people comfortably. Equipped with whiteboard, markers, and power outlets at every seat.",
+                "category": "Study Space",
+                "location": "Main Library, 2nd Floor, Room 201",
+                "capacity": 6,
+                "status": "published"
+            },
+            {
+                "title": "Innovation Lab - 3D Printing Station",
+                "description": "Access to professional-grade 3D printers including Prusa i3 MK3S+ and Ultimaker S5. Perfect for prototyping and course projects. Safety training required.",
+                "category": "Lab",
+                "location": "Engineering Building, Room 105",
+                "capacity": 4,
+                "status": "published"
+            },
+            {
+                "title": "MacBook Pro 16\" (M2 Max, 2023)",
+                "description": "Latest MacBook Pro available for 7-day checkout. Includes charger and carrying case. Pre-loaded with Adobe Creative Suite, Final Cut Pro, and Xcode.",
+                "category": "Technology",
+                "location": "IT Services Desk, Student Center",
+                "capacity": 1,
+                "status": "published"
+            },
+            {
+                "title": "Conference Room B - Skylight Hall",
+                "description": "Premium conference room for large events and presentations. Capacity 50 people theater-style. Includes projector, wireless presentation system, and professional audio setup.",
+                "category": "Event Space",
+                "location": "Student Center, 3rd Floor",
+                "capacity": 50,
+                "status": "published"
+            },
+            {
+                "title": "Photography Equipment Bundle",
+                "description": "Professional photography kit including Canon EOS R6 mirrorless camera, 24-70mm f/2.8 lens, tripod, and lighting equipment. Perfect for student journalism and projects.",
+                "category": "Equipment",
+                "location": "Media Lab, Basement Level",
+                "capacity": 1,
+                "status": "published"
+            },
+            {
+                "title": "Seminar Room 305",
+                "description": "Mid-sized classroom ideal for workshops and seminars. Flexible seating for up to 25 people. Smartboard, projector, and video conferencing capabilities.",
+                "category": "Event Space",
+                "location": "Academic Building, 3rd Floor",
+                "capacity": 25,
+                "status": "published"
+            },
+            {
+                "title": "Podcast Recording Studio",
+                "description": "Professional podcast recording setup with Shure SM7B microphones, mixing board, and soundproofing. Free training session included with first booking.",
+                "category": "Lab",
+                "location": "Media Center, Room B12",
+                "capacity": 4,
+                "status": "published"
+            },
+            {
+                "title": "VR Development Lab",
+                "description": "Virtual reality development space with Meta Quest 3, HTC Vive Pro 2, and high-performance gaming PCs. Ideal for XR development courses and research.",
+                "category": "Lab",
+                "location": "Computer Science Building, Room 220",
+                "capacity": 8,
+                "status": "published"
+            },
+        ]
+
+        created_count = 0
+        skipped_count = 0
+
+        for resource_data in demo_resources:
+            # Check if resource already exists (by title)
+            existing_resources = ResourceRepository.search(query_str=resource_data["title"])
+            if existing_resources:
+                print(f"⏭️  Skipped: {resource_data['title']} (already exists)")
+                skipped_count += 1
+                continue
+
+            # Create new resource
+            resource = Resource(
+                owner_id=staff_user.user_id,
+                title=resource_data["title"],
+                description=resource_data["description"],
+                category=resource_data["category"],
+                location=resource_data["location"],
+                capacity=resource_data["capacity"],
+                status=resource_data["status"]
+            )
+
+            try:
+                ResourceRepository.create(resource)
+                print(f"✅ Created: {resource_data['title']}")
+                created_count += 1
+            except Exception as e:
+                print(f"❌ Error creating {resource_data['title']}: {e}")
+
+        print("-" * 50)
+        print(f"✨ Resource seeding complete!")
+        print(f"   Created: {created_count}")
+        print(f"   Skipped: {skipped_count}")
+        print(f"   Total:   {len(demo_resources)}")
+        print()
+        print("🎯 Demo resources include:")
+        print("   • Study spaces")
+        print("   • Technology equipment")
+        print("   • Lab facilities")
+        print("   • Event spaces")
+        print()
+        print("🌐 Visit /resources to see them!")
+
+
 def main():
     """Main entry point for seed script."""
     try:
         seed_demo_users()
+        seed_demo_resources()
         sys.exit(0)
     except KeyboardInterrupt:
         print("\n⚠️  Seeding interrupted by user")
