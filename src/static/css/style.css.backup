@@ -1,0 +1,774 @@
+/**
+ * Campus Resource Hub - Custom Styles
+ * AiDD 2025 Capstone Project
+ * 
+ * Enterprise-grade custom CSS beyond Bootstrap per .clinerules
+ * Professional, consistent design system
+ */
+
+/* ============================================================================
+   CSS Custom Properties (Design System)
+   ============================================================================ */
+:root {
+    /* Brand Colors */
+    --primary-color: #0066cc;
+    --primary-hover: #0052a3;
+    --secondary-color: #6c757d;
+    --success-color: #28a745;
+    --danger-color: #dc3545;
+    --warning-color: #ffc107;
+    --info-color: #17a2b8;
+    
+    /* Text Colors */
+    --text-dark: #212529;
+    --text-medium: #495057;
+    --text-light: #6c757d;
+    --text-muted: #adb5bd;
+    
+    /* Background Colors */
+    --bg-light: #f8f9fa;
+    --bg-white: #ffffff;
+    --bg-gray: #e9ecef;
+    
+    /* Border & Shadow */
+    --border-color: #dee2e6;
+    --border-radius-sm: 4px;
+    --border-radius: 8px;
+    --border-radius-lg: 12px;
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.08);
+    --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.12);
+    --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.16);
+    
+    /* Spacing */
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+    
+    /* Typography */
+    --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-size-sm: 0.875rem;
+    --font-size-base: 1rem;
+    --font-size-lg: 1.125rem;
+    --font-size-xl: 1.25rem;
+    --line-height: 1.5;
+}
+
+/* ============================================================================
+   Global Styles
+   ============================================================================ */
+body {
+    font-family: var(--font-family);
+    color: var(--text-dark);
+    line-height: var(--line-height);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+}
+
+/* ============================================================================
+   Custom Components
+   ============================================================================ */
+
+/* Resource Cards */
+.resource-card {
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    transition: all 0.3s ease;
+    overflow: hidden;
+    background: var(--bg-white);
+    height: 100%;
+}
+
+.resource-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+}
+
+.resource-card-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    background: var(--bg-gray);
+}
+
+.resource-card-badge {
+    position: absolute;
+    top: var(--spacing-md);
+    right: var(--spacing-md);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--border-radius-sm);
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: var(--shadow-sm);
+}
+
+.resource-card-body {
+    padding: var(--spacing-lg);
+}
+
+.resource-card-title {
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    margin-bottom: var(--spacing-sm);
+    color: var(--text-dark);
+}
+
+.resource-card-meta {
+    display: flex;
+    gap: var(--spacing-md);
+    font-size: var(--font-size-sm);
+    color: var(--text-light);
+    margin-bottom: var(--spacing-md);
+}
+
+.resource-card-description {
+    color: var(--text-medium);
+    margin-bottom: var(--spacing-md);
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Dashboard Statistics Cards */
+.dashboard-stat-card {
+    background: var(--bg-white);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: var(--spacing-lg);
+    text-align: center;
+    transition: box-shadow 0.3s ease;
+}
+
+.dashboard-stat-card:hover {
+    box-shadow: var(--shadow-md);
+}
+
+.dashboard-stat-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-sm);
+}
+
+.dashboard-stat-label {
+    font-size: var(--font-size-base);
+    color: var(--text-light);
+    font-weight: 500;
+}
+
+/* Status Badges */
+.status-badge {
+    display: inline-block;
+    padding: var(--spacing-xs) var(--spacing-md);
+    border-radius: var(--border-radius-sm);
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+}
+
+.status-badge-draft {
+    background-color: #ffc107;
+    color: #000;
+}
+
+.status-badge-published {
+    background-color: #28a745;
+    color: #fff;
+}
+
+.status-badge-archived {
+    background-color: #6c757d;
+    color: #fff;
+}
+
+/* Image Upload Preview */
+.image-preview-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-md);
+}
+
+.image-preview {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    border: 2px solid var(--border-color);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+}
+
+.image-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.image-preview-remove {
+    position: absolute;
+    top: var(--spacing-xs);
+    right: var(--spacing-xs);
+    background: var(--danger-color);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1;
+}
+
+/* Empty States */
+.empty-state {
+    text-align: center;
+    padding: var(--spacing-xl) var(--spacing-md);
+    color: var(--text-light);
+}
+
+.empty-state-icon {
+    font-size: 4rem;
+    margin-bottom: var(--spacing-md);
+    opacity: 0.3;
+}
+
+.empty-state-title {
+    font-size: var(--font-size-xl);
+    font-weight: 600;
+    margin-bottom: var(--spacing-sm);
+    color: var(--text-medium);
+}
+
+.empty-state-description {
+    margin-bottom: var(--spacing-lg);
+}
+
+/* Loading States */
+.skeleton {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s infinite;
+    border-radius: var(--border-radius-sm);
+}
+
+@keyframes skeleton-loading {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* Form Enhancements */
+.form-label {
+    font-weight: 500;
+    color: var(--text-dark);
+    margin-bottom: var(--spacing-sm);
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(0, 102, 204, 0.25);
+}
+
+.form-text {
+    color: var(--text-light);
+    font-size: var(--font-size-sm);
+}
+
+/* Buttons */
+.btn {
+    border-radius: var(--border-radius-sm);
+    font-weight: 500;
+    padding: 0.5rem 1.25rem;
+    transition: all 0.2s ease;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-hover);
+    border-color: var(--primary-hover);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
+}
+
+/* Navigation */
+.navbar {
+    box-shadow: var(--shadow-sm);
+}
+
+.navbar-brand {
+    font-weight: 700;
+    font-size: var(--font-size-xl);
+}
+
+/* Footer */
+footer {
+    border-top: 1px solid var(--border-color);
+    background: var(--bg-white);
+}
+
+/* Alerts */
+.alert {
+    border-radius: var(--border-radius);
+    border: none;
+    box-shadow: var(--shadow-sm);
+}
+
+/* Carousel Customization */
+.carousel-control-prev,
+.carousel-control-next {
+    width: 50px;
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.carousel-indicators {
+    margin-bottom: 0.5rem;
+}
+
+/* ============================================================================
+   Responsive Design
+   ============================================================================ */
+
+/* Tablet (768px and below) */
+@media (max-width: 768px) {
+    :root {
+        --font-size-base: 0.9375rem;
+    }
+    
+    .dashboard-stat-value {
+        font-size: 2rem;
+    }
+    
+    .resource-card-image {
+        height: 180px;
+    }
+}
+
+/* Mobile (576px and below) */
+@media (max-width: 576px) {
+    :root {
+        --font-size-base: 0.875rem;
+        --spacing-lg: 1rem;
+        --spacing-xl: 1.5rem;
+    }
+    
+    .dashboard-stat-value {
+        font-size: 1.75rem;
+    }
+    
+    .resource-card-image {
+        height: 160px;
+    }
+    
+    .navbar-brand {
+        font-size: var(--font-size-lg);
+    }
+}
+
+/* ============================================================================
+   Accessibility
+   ============================================================================ */
+
+/* Focus indicators */
+a:focus,
+button:focus,
+.btn:focus,
+.form-control:focus,
+.form-select:focus {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+/* Skip to main content link */
+.skip-to-main {
+    position: absolute;
+    left: -9999px;
+    z-index: 999;
+    padding: var(--spacing-md);
+    background: var(--primary-color);
+    color: white;
+    text-decoration: none;
+}
+
+.skip-to-main:focus {
+    left: 0;
+}
+
+/* ============================================================================
+   Utility Classes
+   ============================================================================ */
+
+.text-truncate-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.text-truncate-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.shadow-hover:hover {
+    box-shadow: var(--shadow-md) !important;
+}
+
+.transition-all {
+    transition: all 0.3s ease;
+}
+
+/* ============================================================================
+   PHASE 6: BOOKINGS & REVIEWS STYLES
+   ============================================================================ */
+
+/* Booking Status Badges */
+.badge.bg-warning.text-dark {
+    background-color: #ffc107 !important;
+    color: #000 !important;
+}
+
+.badge.bg-success {
+    background-color: #28a745 !important;
+}
+
+.badge.bg-danger {
+    background-color: #dc3545 !important;
+}
+
+.badge.bg-secondary {
+    background-color: #6c757d !important;
+}
+
+.badge.bg-primary {
+    background-color: #0d6efd !important;
+}
+
+.badge.bg-info {
+    background-color: #17a2b8 !important;
+}
+
+/* Booking Card Styles */
+.booking-card {
+    transition: all 0.3s ease;
+    border: 1px solid var(--border-color);
+}
+
+.booking-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+}
+
+.booking-card .card-footer {
+    background-color: #f8f9fa;
+    font-size: 0.875rem;
+}
+
+/* Review Card Styles */
+.review-card {
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    transition: all 0.2s ease;
+}
+
+.review-card:hover {
+    box-shadow: var(--shadow-md);
+}
+
+.review-hidden {
+    opacity: 0.6;
+    background-color: #fff3cd;
+    border-left: 4px solid #ffc107;
+}
+
+.reviewer-avatar {
+    flex-shrink: 0;
+}
+
+.review-content {
+    line-height: 1.6;
+    color: var(--text-dark);
+}
+
+.review-footer {
+    font-size: 0.875rem;
+    color: var(--text-light);
+}
+
+/* Star Rating Styles */
+.star-rating {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.star-icon {
+    transition: all 0.2s ease;
+    color: #ffc107;
+}
+
+.star-rating-sm .star-icon {
+    font-size: 0.875rem;
+}
+
+.star-rating-md .star-icon {
+    font-size: 1.125rem;
+}
+
+.star-rating-lg .star-icon {
+    font-size: 1.5rem;
+}
+
+.star-rating-interactive .star-icon {
+    cursor: pointer;
+}
+
+.star-rating-interactive .star-icon:hover {
+    transform: scale(1.1);
+}
+
+/* Rating Summary */
+.rating-summary {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+/* Rating Distribution */
+.rating-distribution .progress {
+    background-color: #e9ecef;
+}
+
+.rating-distribution .progress-bar {
+    background-color: #ffc107;
+}
+
+/* Tab Styles for My Bookings */
+.nav-tabs {
+    border-bottom: 2px solid var(--border-color);
+}
+
+.nav-tabs .nav-link {
+    color: var(--text-medium);
+    border: none;
+    border-bottom: 2px solid transparent;
+    padding: 0.75rem 1.25rem;
+    font-weight: 500;
+}
+
+.nav-tabs .nav-link:hover {
+    border-color: transparent;
+    color: var(--primary-color);
+}
+
+.nav-tabs .nav-link.active {
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+    background: transparent;
+}
+
+.nav-tabs .badge {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+}
+
+/* Form Character Counter */
+#char-count {
+    font-weight: 600;
+}
+
+#char-count.text-danger {
+    color: var(--danger-color) !important;
+}
+
+#char-count.text-warning {
+    color: var(--warning-color) !important;
+}
+
+#char-count.text-success {
+    color: var(--success-color) !important;
+}
+
+/* Booking Detail Page Styles */
+.booking-card .alert {
+    margin-bottom: 0;
+}
+
+/* Review Form Styles */
+#review-form .card {
+    border: 2px solid var(--primary-color);
+}
+
+#review-form .card-header {
+    background-color: rgba(0, 102, 204, 0.05);
+}
+
+/* Dropdown Menu Styles */
+.dropdown-menu {
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+}
+
+.dropdown-item:hover {
+    background-color: var(--bg-light);
+}
+
+.dropdown-item.text-danger:hover {
+    background-color: rgba(220, 53, 69, 0.1);
+}
+
+.dropdown-item.text-warning:hover {
+    background-color: rgba(255, 193, 7, 0.1);
+}
+
+/* Modal Styles */
+.modal-content {
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-lg);
+}
+
+.modal-header {
+    border-bottom: 1px solid var(--border-color);
+    padding: 1.25rem 1.5rem;
+}
+
+.modal-footer {
+    border-top: 1px solid var(--border-color);
+    padding: 1rem 1.5rem;
+}
+
+/* Calendar/Date Input Styles */
+input[type="date"],
+input[type="time"],
+input[type="datetime-local"] {
+    cursor: pointer;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="time"]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    padding: 5px;
+}
+
+/* Responsive Booking/Review Cards */
+@media (max-width: 768px) {
+    .reviewer-avatar img,
+    .reviewer-avatar div {
+        width: 40px !important;
+        height: 40px !important;
+        font-size: 1rem !important;
+    }
+    
+    .booking-card .col-md-3,
+    .booking-card .col-lg-2 {
+        margin-bottom: 1rem;
+    }
+}
+
+/* Animation for New Reviews/Bookings */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.review-card.new,
+.booking-card.new {
+    animation: slideIn 0.3s ease;
+}
+
+/* Sticky Action Sidebar */
+@media (min-width: 992px) {
+    .sticky-top {
+        position: sticky;
+        top: 20px;
+        z-index: 1020;
+    }
+}
+
+/* Booking Timeline/Status Indicator */
+.status-timeline {
+    display: flex;
+    align-items: center;
+    padding: 1rem 0;
+}
+
+.status-timeline-item {
+    flex: 1;
+    text-align: center;
+    position: relative;
+}
+
+.status-timeline-item::before {
+    content: '';
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    right: -50%;
+    height: 2px;
+    background: var(--border-color);
+    z-index: -1;
+}
+
+.status-timeline-item:last-child::before {
+    display: none;
+}
+
+.status-timeline-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--bg-light);
+    border: 2px solid var(--border-color);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.5rem;
+}
+
+.status-timeline-item.active .status-timeline-icon {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+}
+
+/* Print Styles for Bookings */
+@media print {
+    .navbar,
+    .btn,
+    footer,
+    .dropdown,
+    .alert {
+        display: none !important;
+    }
+    
+    .booking-card,
+    .review-card {
+        box-shadow: none !important;
+        border: 1px solid #000 !important;
+    }
+}

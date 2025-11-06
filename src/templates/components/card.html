@@ -1,0 +1,55 @@
+{#
+Card Component
+Usage:
+  {% from "components/card.html" import card %}
+  {% call card(title='Resource Title', footer='Footer content') %}
+    Card body content here
+  {% endcall %}
+
+Parameters:
+  - title: Card title (optional)
+  - footer: Footer content (optional)
+  - variant: default|elevated|outlined (default: 'default')
+  - class: Additional CSS classes (optional)
+#}
+
+{% macro card(title=None, footer=None, variant='default', class='') %}
+  <div class="card card--{{ variant }} {{ class }}">
+    {% if title %}
+      <div class="card__header">
+        <h3 class="card__title">{{ title }}</h3>
+      </div>
+    {% endif %}
+    
+    <div class="card__body">
+      {{ caller() }}
+    </div>
+    
+    {% if footer %}
+      <div class="card__footer">
+        {{ footer }}
+      </div>
+    {% endif %}
+  </div>
+{% endmacro %}
+
+{# Simple card without caller pattern #}
+{% macro simple_card(content, title=None, footer=None, variant='default', class='') %}
+  <div class="card card--{{ variant }} {{ class }}">
+    {% if title %}
+      <div class="card__header">
+        <h3 class="card__title">{{ title }}</h3>
+      </div>
+    {% endif %}
+    
+    <div class="card__body">
+      {{ content }}
+    </div>
+    
+    {% if footer %}
+      <div class="card__footer">
+        {{ footer }}
+      </div>
+    {% endif %}
+  </div>
+{% endmacro %}

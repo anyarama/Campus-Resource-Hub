@@ -1,0 +1,42 @@
+{#
+Alert Component
+Usage:
+  {% from "components/alert.html" import alert %}
+  {{ alert('Success!', 'Your changes have been saved.', variant='success') }}
+
+Parameters:
+  - title: Alert title (optional)
+  - message: Alert message content (required)
+  - variant: success|error|warning|info (default: 'info')
+  - dismissible: Boolean (default: False)
+  - class: Additional CSS classes (optional)
+#}
+
+{% macro alert(title='', message='', variant='info', dismissible=False, class='') %}
+  <div class="alert alert--{{ variant }} {{ class }}" role="alert">
+    <div class="alert__icon">
+      {% if variant == 'success' %}
+        <i class="fas fa-check-circle" aria-hidden="true"></i>
+      {% elif variant == 'error' %}
+        <i class="fas fa-exclamation-circle" aria-hidden="true"></i>
+      {% elif variant == 'warning' %}
+        <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
+      {% else %}
+        <i class="fas fa-info-circle" aria-hidden="true"></i>
+      {% endif %}
+    </div>
+    
+    <div class="alert__content">
+      {% if title %}
+        <h4 class="alert__title">{{ title }}</h4>
+      {% endif %}
+      <p class="alert__message">{{ message }}</p>
+    </div>
+    
+    {% if dismissible %}
+      <button type="button" class="alert__dismiss" aria-label="Close alert">
+        <i class="fas fa-times" aria-hidden="true"></i>
+      </button>
+    {% endif %}
+  </div>
+{% endmacro %}

@@ -1,0 +1,49 @@
+{#
+Avatar Component
+Usage:
+  {% from "components/avatar.html" import avatar %}
+  {{ avatar(user.profile_image, user.name, size='md') }}
+
+Parameters:
+  - src: Image source URL (required, can be None for initials fallback)
+  - alt: Alt text / user name (required)
+  - size: sm|md|lg|xl (default: 'md')
+  - initials: Custom initials (optional, auto-generated from alt if None)
+  - class: Additional CSS classes (optional)
+#}
+
+{% macro avatar(src, alt, size='md', initials=None, class='') %}
+  <div class="avatar avatar--{{ size }} {{ class }}">
+    {% if src %}
+      <img src="{{ src }}" alt="{{ alt }}" class="avatar__image">
+    {% else %}
+      {% set display_initials = initials or get_initials(alt) %}
+      <span class="avatar__initials" aria-label="{{ alt }}">{{ display_initials }}</span>
+    {% endif %}
+  </div>
+{% endmacro %}
+
+{# Helper function to extract initials #}
+{% macro get_initials(name) %}
+  {%- set words = name.split() -%}
+  {%- if words|length >= 2 -%}
+    {{ words[0][0]|upper }}{{ words[1][0]|upper }}
+  {%- elif words|length == 1 -%}
+    {{ words[0][0:2]|upper }}
+  {%- else -%}
+    NA
+  {%- endif -%}
+{% endmacro %}
+
+{# Avatar with status indicator #}
+{% macro avatar_with_status(src, alt, status='online', size='md', class='') %}
+  <div class="avatar avatar--{{ size }} avatar--with-status {{ class }}">
+    {% if src %}
+      <img src="{{ src }}" alt="{{ alt }}" class="avatar__image">
+    {% else %}
+      {% set display_initials = get_initials(alt) %}
+      <span class="avatar__initials" aria-label="{{ alt }}">{{ display_initials }}</span>
+    {% endif %}
+    <span class="avatar__status avatar__status--{{ status }}" aria-label="{{ status }}"></span>
+  </div>
+{% endmacro %}

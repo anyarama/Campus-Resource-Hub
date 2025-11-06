@@ -1,0 +1,71 @@
+{#
+Select Component
+Usage:
+  {% from "components/select.html" import select %}
+  {{ select('category', 'Category', options=[
+      {'value': 'study', 'label': 'Study Space'},
+      {'value': 'tech', 'label': 'Technology'}
+  ]) }}
+
+Parameters:
+  - name: Select name attribute (required)
+  - label: Label text (required)
+  - options: List of dicts with 'value' and 'label' keys (required)
+  - selected: Currently selected value (optional)
+  - required: Boolean (default: False)
+  - disabled: Boolean (default: False)
+  - error: Error message to display (optional)
+  - help_text: Help text below select (optional)
+  - placeholder: Placeholder option text (optional)
+  - class: Additional CSS classes (optional)
+#}
+
+{% macro select(
+  name,
+  label,
+  options,
+  selected='',
+  required=False,
+  disabled=False,
+  error=None,
+  help_text=None,
+  placeholder='Select an option',
+  class=''
+) %}
+  <div class="form-group {{ class }} {% if error %}form-group--error{% endif %}">
+    <label for="{{ name }}" class="form-label">
+      {{ label }}
+      {% if required %}<span class="form-label__required" aria-label="required">*</span>{% endif %}
+    </label>
+    
+    <select id="{{ name }}"
+            name="{{ name }}"
+            class="form-select {% if error %}form-select--error{% endif %}"
+            {% if required %}required aria-required="true"{% endif %}
+            {% if disabled %}disabled{% endif %}
+            {% if error %}aria-invalid="true" aria-describedby="{{ name }}-error"{% endif %}
+            {% if help_text and not error %}aria-describedby="{{ name }}-help"{% endif %}>
+      {% if placeholder %}
+        <option value="" {% if not selected %}selected{% endif %}>{{ placeholder }}</option>
+      {% endif %}
+      {% for option in options %}
+        <option value="{{ option.value }}" 
+                {% if option.value == selected %}selected{% endif %}
+                {% if option.get('disabled') %}disabled{% endif %}>
+          {{ option.label }}
+        </option>
+      {% endfor %}
+    </select>
+    
+    {% if help_text and not error %}
+      <p id="{{ name }}-help" class="form-help">{{ help_text }}</p>
+    {% endif %}
+    
+    {% if error %}
+      <p id="{{ name }}-error" class="form-error" role="alert">
+        <i class="fas fa-exclamation-circle" aria-hidden="true"></i>
+        {{ error }}
+      </p>
+    {% endif %}
+  </div>
+{% endmacro %}

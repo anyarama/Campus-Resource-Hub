@@ -1,0 +1,44 @@
+{#
+Tabs Component
+Usage:
+  {% from "components/tabs.html" import tabs %}
+  {% set tab_items = [
+      {'id': 'overview', 'label': 'Overview', 'active': True},
+      {'id': 'details', 'label': 'Details'},
+      {'id': 'reviews', 'label': 'Reviews'}
+  ] %}
+  {{ tabs(tab_items) }}
+
+Parameters:
+  - items: List of dicts with 'id', 'label', and optional 'active' keys (required)
+  - class: Additional CSS classes (optional)
+#}
+
+{% macro tabs(items, class='') %}
+  <div class="tabs {{ class }}" role="tablist">
+    <div class="tabs__nav">
+      {% for item in items %}
+        <button type="button"
+                role="tab"
+                id="tab-{{ item.id }}"
+                class="tabs__button {% if item.get('active') %}tabs__button--active{% endif %}"
+                aria-selected="{% if item.get('active') %}true{% else %}false{% endif %}"
+                aria-controls="tabpanel-{{ item.id }}"
+                data-tab="{{ item.id }}">
+          {{ item.label }}
+        </button>
+      {% endfor %}
+    </div>
+  </div>
+{% endmacro %}
+
+{# Tab panel wrapper #}
+{% macro tab_panel(id, active=False) %}
+  <div id="tabpanel-{{ id }}"
+       class="tab-panel {% if active %}tab-panel--active{% endif %}"
+       role="tabpanel"
+       aria-labelledby="tab-{{ id }}"
+       {% if not active %}hidden{% endif %}>
+    {{ caller() }}
+  </div>
+{% endmacro %}

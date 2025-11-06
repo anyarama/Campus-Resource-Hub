@@ -1,0 +1,61 @@
+{#
+Button Component
+Usage:
+  {% from "components/button.html" import button %}
+  {{ button('Click Me', variant='primary', size='md') }}
+
+Parameters:
+  - text: Button text content
+  - type: button|submit|reset (default: 'button')
+  - variant: primary|secondary|ghost|danger|success (default: 'primary')
+  - size: sm|md|lg (default: 'md')
+  - icon: Icon class name (optional)
+  - href: URL for link-style button (optional)
+  - disabled: Boolean (default: False)
+  - class: Additional CSS classes (optional)
+  - id: Element ID (optional)
+  - onclick: JavaScript onclick handler (optional)
+#}
+
+{% macro button(
+  text,
+  type='button',
+  variant='primary',
+  size='md',
+  icon=None,
+  href=None,
+  disabled=False,
+  class='',
+  id='',
+  onclick=''
+) %}
+  {% if href %}
+    <a href="{{ href }}"
+       class="btn btn--{{ variant }} btn--{{ size }} {{ class }} {% if disabled %}btn--disabled{% endif %}"
+       {% if id %}id="{{ id }}"{% endif %}
+       {% if disabled %}aria-disabled="true"{% endif %}>
+      {% if icon %}<i class="btn__icon {{ icon }}" aria-hidden="true"></i>{% endif %}
+      <span class="btn__text">{{ text }}</span>
+    </a>
+  {% else %}
+    <button type="{{ type }}"
+            class="btn btn--{{ variant }} btn--{{ size }} {{ class }}"
+            {% if id %}id="{{ id }}"{% endif %}
+            {% if disabled %}disabled{% endif %}
+            {% if onclick %}onclick="{{ onclick }}"{% endif %}>
+      {% if icon %}<i class="btn__icon {{ icon }}" aria-hidden="true"></i>{% endif %}
+      <span class="btn__text">{{ text }}</span>
+    </button>
+  {% endif %}
+{% endmacro %}
+
+{# Icon-only button variant #}
+{% macro icon_button(icon, label, variant='ghost', size='md', class='', id='', onclick='') %}
+  <button type="button"
+          class="btn btn--icon btn--{{ variant }} btn--{{ size }} {{ class }}"
+          {% if id %}id="{{ id }}"{% endif %}
+          {% if onclick %}onclick="{{ onclick }}"{% endif %}
+          aria-label="{{ label }}">
+    <i class="{{ icon }}" aria-hidden="true"></i>
+  </button>
+{% endmacro %}

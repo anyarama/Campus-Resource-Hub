@@ -1,0 +1,70 @@
+{#
+Textarea Component
+Usage:
+  {% from "components/textarea.html" import textarea %}
+  {{ textarea('description', 'Description', rows=4, required=True) }}
+
+Parameters:
+  - name: Textarea name attribute (required)
+  - label: Label text (required)
+  - value: Textarea value (default: '')
+  - placeholder: Placeholder text (optional)
+  - rows: Number of visible rows (default: 3)
+  - required: Boolean (default: False)
+  - disabled: Boolean (default: False)
+  - readonly: Boolean (default: False)
+  - error: Error message to display (optional)
+  - help_text: Help text below textarea (optional)
+  - maxlength: Maximum character length (optional)
+  - class: Additional CSS classes (optional)
+#}
+
+{% macro textarea(
+  name,
+  label,
+  value='',
+  placeholder='',
+  rows=3,
+  required=False,
+  disabled=False,
+  readonly=False,
+  error=None,
+  help_text=None,
+  maxlength='',
+  class=''
+) %}
+  <div class="form-group {{ class }} {% if error %}form-group--error{% endif %}">
+    <label for="{{ name }}" class="form-label">
+      {{ label }}
+      {% if required %}<span class="form-label__required" aria-label="required">*</span>{% endif %}
+      {% if maxlength %}
+        <span class="form-label__counter">
+          <span id="{{ name }}-counter">{{ value|length }}</span>/{{ maxlength }}
+        </span>
+      {% endif %}
+    </label>
+    
+    <textarea id="{{ name }}"
+              name="{{ name }}"
+              class="form-textarea {% if error %}form-textarea--error{% endif %}"
+              rows="{{ rows }}"
+              {% if placeholder %}placeholder="{{ placeholder }}"{% endif %}
+              {% if required %}required aria-required="true"{% endif %}
+              {% if disabled %}disabled{% endif %}
+              {% if readonly %}readonly{% endif %}
+              {% if maxlength %}maxlength="{{ maxlength }}" data-counter="{{ name }}-counter"{% endif %}
+              {% if error %}aria-invalid="true" aria-describedby="{{ name }}-error"{% endif %}
+              {% if help_text and not error %}aria-describedby="{{ name }}-help"{% endif %}>{{ value }}</textarea>
+    
+    {% if help_text and not error %}
+      <p id="{{ name }}-help" class="form-help">{{ help_text }}</p>
+    {% endif %}
+    
+    {% if error %}
+      <p id="{{ name }}-error" class="form-error" role="alert">
+        <i class="fas fa-exclamation-circle" aria-hidden="true"></i>
+        {{ error }}
+      </p>
+    {% endif %}
+  </div>
+{% endmacro %}

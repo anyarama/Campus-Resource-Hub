@@ -1,0 +1,67 @@
+{#
+Modal Component
+Usage:
+  {% from "components/modal.html" import modal %}
+  {% call modal(id='confirm-delete', title='Confirm Deletion') %}
+    <p>Are you sure you want to delete this item?</p>
+  {% endcall %}
+
+Parameters:
+  - id: Unique modal ID (required)
+  - title: Modal title (optional)
+  - size: sm|md|lg|xl (default: 'md')
+  - footer: Footer content (optional)
+  - dismissible: Boolean for close button (default: True)
+  - class: Additional CSS classes (optional)
+#}
+
+{% macro modal(id, title='', size='md', footer='', dismissible=True, class='') %}
+  <div id="{{ id }}"
+       class="modal modal--{{ size }} {{ class }}"
+       role="dialog"
+       aria-modal="true"
+       {% if title %}aria-labelledby="{{ id }}-title"{% endif %}
+       aria-hidden="true">
+    <div class="modal__backdrop" data-dismiss="modal"></div>
+    <div class="modal__container">
+      <div class="modal__content">
+        {% if title or dismissible %}
+          <div class="modal__header">
+            {% if title %}
+              <h2 id="{{ id }}-title" class="modal__title">{{ title }}</h2>
+            {% endif %}
+            {% if dismissible %}
+              <button type="button" 
+                      class="modal__close" 
+                      data-dismiss="modal" 
+                      aria-label="Close modal">
+                <i class="fas fa-times" aria-hidden="true"></i>
+              </button>
+            {% endif %}
+          </div>
+        {% endif %}
+        
+        <div class="modal__body">
+          {{ caller() }}
+        </div>
+        
+        {% if footer %}
+          <div class="modal__footer">
+            {{ footer }}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{% endmacro %}
+
+{# Confirmation modal shortcut #}
+{% macro confirm_modal(id, title, message, confirm_text='Confirm', cancel_text='Cancel', confirm_variant='danger') %}
+  {% call modal(id=id, title=title, size='sm') %}
+    <p>{{ message }}</p>
+    <div class="modal__actions">
+      <button type="button" class="btn btn--ghost" data-dismiss="modal">{{ cancel_text }}</button>
+      <button type="submit" class="btn btn--{{ confirm_variant }}">{{ confirm_text }}</button>
+    </div>
+  {% endcall %}
+{% endmacro %}

@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block title %}Concierge Help - Campus Resource Hub{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <h1 class="mb-4">🤖 Resource Concierge Help</h1>
+            
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h3>What is the Resource Concierge?</h3>
+                    <p>The AI Resource Concierge is an intelligent search assistant that understands natural language queries. Instead of filling out complex search forms, just tell me what you need in plain English!</p>
+                </div>
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h3>How to Use It</h3>
+                    <ol>
+                        <li><strong>Describe what you need</strong> - Use natural language like you're talking to a person</li>
+                        <li><strong>Be specific if you can</strong> - Mention capacity, dates, times, or locations</li>
+                        <li><strong>Review the results</strong> - I'll show you matching resources with a conversational explanation</li>
+                        <li><strong>Click to book</strong> - When you find what you need, click "View Details" to book it</li>
+                    </ol>
+                </div>
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h3>Example Queries</h3>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5>Study Rooms</h5>
+                            <ul class="list-unstyled">
+                                <li>✓ "Find a study room for 4 people"</li>
+                                <li>✓ "Study space for tomorrow afternoon"</li>
+                                <li>✓ "Quiet room in Hodge Hall"</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Equipment</h5>
+                            <ul class="list-unstyled">
+                                <li>✓ "I need a projector for tomorrow"</li>
+                                <li>✓ "Show me available laptops"</li>
+                                <li>✓ "AV equipment for next Tuesday"</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <h5>Conference Rooms</h5>
+                            <ul class="list-unstyled">
+                                <li>✓ "Conference room for 20 people"</li>
+                                <li>✓ "Meeting space this weekend"</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Labs</h5>
+                            <ul class="list-unstyled">
+                                <li>✓ "Show me available labs"</li>
+                                <li>✓ "Computer lab for tonight"</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h3>What I Understand</h3>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5><i class="bi bi-people text-primary"></i> Capacity</h5>
+                            <p class="small text-muted">"for 4 people", "seats 10", "room for my team of 6"</p>
+                            
+                            <h5><i class="bi bi-calendar text-primary"></i> Dates</h5>
+                            <p class="small text-muted">"tomorrow", "next Tuesday", "this weekend", "Friday"</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h5><i class="bi bi-clock text-primary"></i> Times</h5>
+                            <p class="small text-muted">"morning", "afternoon", "evening", "at 2pm"</p>
+                            
+                            <h5><i class="bi bi-geo-alt text-primary"></i> Locations</h5>
+                            <p class="small text-muted">"in Hodge Hall", "near the library", "Business School"</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h3>Tips for Better Results</h3>
+                    <ul>
+                        <li>✅ <strong>Be specific</strong> - "Study room for 4 people tomorrow" is better than just "study room"</li>
+                        <li>✅ <strong>Use natural language</strong> - Write like you're talking to a person</li>
+                        <li>✅ <strong>Include key details</strong> - Capacity, date/time, location help narrow results</li>
+                        <li>✅ <strong>Try different phrasings</strong> - If you don't get good results, rephrase your query</li>
+                        <li>❌ <strong>Don't be too vague</strong> - "Find something" won't work well</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="card mb-4 bg-light">
+                <div class="card-body">
+                    <h3>Important Notes</h3>
+                    <ul class="mb-0">
+                        <li><strong>Database Grounded:</strong> All results come from real, available resources in our system - I never make things up!</li>
+                        <li><strong>No Booking Yet:</strong> The concierge helps you find resources. To actually book, click "View Details" on a resource.</li>
+                        <li><strong>Public Access:</strong> You don't need to log in to search, but you'll need an account to book resources.</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="text-center mt-5">
+                <a href="{{ url_for('concierge.index') }}" class="btn btn-primary btn-lg">
+                    <i class="bi bi-search"></i> Try the Concierge
+                </a>
+                <a href="{{ url_for('resources.index') }}" class="btn btn-outline-secondary btn-lg ms-2">
+                    <i class="bi bi-grid"></i> Browse All Resources
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

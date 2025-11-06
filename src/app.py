@@ -136,6 +136,8 @@ def register_blueprints(app: Flask) -> None:
     from src.routes.bookings import bookings_bp
     from src.routes.reviews import reviews_bp
     from src.routes.messages import messages_bp
+    from src.routes.admin import admin_bp
+    from src.routes.concierge import concierge_bp
 
     # Register blueprints
     app.register_blueprint(auth_bp, url_prefix="/auth")
@@ -143,10 +145,8 @@ def register_blueprints(app: Flask) -> None:
     app.register_blueprint(bookings_bp)  # Phase 6: Bookings
     app.register_blueprint(reviews_bp)   # Phase 6: Reviews
     app.register_blueprint(messages_bp)  # Phase 7: Messages
-
-    # TODO: Implement remaining blueprints in future phases
-    # from src.routes.admin import admin_bp
-    # app.register_blueprint(admin_bp, url_prefix='/admin')
+    app.register_blueprint(admin_bp)     # Phase 8: Admin Dashboard
+    app.register_blueprint(concierge_bp) # Phase 9: AI Concierge
 
     # Homepage route - redirect to appropriate page based on auth status
     @app.route("/")

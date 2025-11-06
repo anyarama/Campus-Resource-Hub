@@ -1,0 +1,110 @@
+{#
+Checkbox & Radio Components
+Usage:
+  {% from "components/checkbox.html" import checkbox, radio %}
+  {{ checkbox('agree', 'I agree to terms', checked=True) }}
+  {{ radio('role', 'student', 'Student', checked=True) }}
+
+Parameters:
+  - name: Input name attribute (required)
+  - label: Label text (required)
+  - value: Input value for radio buttons (required for radio)
+  - checked: Boolean (default: False)
+  - disabled: Boolean (default: False)
+  - error: Error message to display (optional)
+  - help_text: Help text below input (optional)
+  - class: Additional CSS classes (optional)
+#}
+
+{% macro checkbox(
+  name,
+  label,
+  checked=False,
+  disabled=False,
+  error=None,
+  help_text=None,
+  class=''
+) %}
+  <div class="form-check {{ class }} {% if error %}form-check--error{% endif %}">
+    <input type="checkbox"
+           id="{{ name }}"
+           name="{{ name }}"
+           class="form-check__input"
+           value="1"
+           {% if checked %}checked{% endif %}
+           {% if disabled %}disabled{% endif %}
+           {% if error %}aria-invalid="true" aria-describedby="{{ name }}-error"{% endif %}>
+    <label for="{{ name }}" class="form-check__label">
+      {{ label }}
+    </label>
+    
+    {% if help_text and not error %}
+      <p id="{{ name }}-help" class="form-help">{{ help_text }}</p>
+    {% endif %}
+    
+    {% if error %}
+      <p id="{{ name }}-error" class="form-error" role="alert">
+        <i class="fas fa-exclamation-circle" aria-hidden="true"></i>
+        {{ error }}
+      </p>
+    {% endif %}
+  </div>
+{% endmacro %}
+
+{% macro radio(
+  name,
+  value,
+  label,
+  checked=False,
+  disabled=False,
+  error=None,
+  class=''
+) %}
+  <div class="form-check {{ class }} {% if error %}form-check--error{% endif %}">
+    <input type="radio"
+           id="{{ name }}_{{ value }}"
+           name="{{ name }}"
+           value="{{ value }}"
+           class="form-check__input"
+           {% if checked %}checked{% endif %}
+           {% if disabled %}disabled{% endif %}
+           {% if error %}aria-invalid="true" aria-describedby="{{ name }}-error"{% endif %}>
+    <label for="{{ name }}_{{ value }}" class="form-check__label">
+      {{ label }}
+    </label>
+    
+    {% if error %}
+      <p id="{{ name }}-error" class="form-error" role="alert">
+        <i class="fas fa-exclamation-circle" aria-hidden="true"></i>
+        {{ error }}
+      </p>
+    {% endif %}
+  </div>
+{% endmacro %}
+
+{# Group of radio buttons with label #}
+{% macro radio_group(name, label, options, selected='', required=False, error=None, help_text=None) %}
+  <fieldset class="form-group {% if error %}form-group--error{% endif %}">
+    <legend class="form-label">
+      {{ label }}
+      {% if required %}<span class="form-label__required" aria-label="required">*</span>{% endif %}
+    </legend>
+    
+    <div class="form-check-group">
+      {% for option in options %}
+        {{ radio(name, option.value, option.label, checked=(option.value == selected)) }}
+      {% endfor %}
+    </div>
+    
+    {% if help_text and not error %}
+      <p class="form-help">{{ help_text }}</p>
+    {% endif %}
+    
+    {% if error %}
+      <p id="{{ name }}-error" class="form-error" role="alert">
+        <i class="fas fa-exclamation-circle" aria-hidden="true"></i>
+        {{ error }}
+      </p>
+    {% endif %}
+  </fieldset>
+{% endmacro %}

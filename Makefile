@@ -76,10 +76,11 @@ all: check
 # Run Flask development server
 run:
 	@echo "🚀 Starting Flask development server..."
-	@echo "📍 Server running at: http://localhost:5000"
+	@echo "📍 Server running at: http://localhost:5001"
 	@echo "🛑 Press CTRL+C to stop"
+	@echo "⚠️  Note: Using port 5001 to avoid AirPlay conflict on macOS"
 	@echo ""
-	FLASK_APP=src/app.py FLASK_ENV=development flask run --host=0.0.0.0 --port=5000 --reload
+	FLASK_APP=src/app.py FLASK_ENV=development flask run --host=0.0.0.0 --port=5001 --reload
 
 # Open Flask shell
 shell:

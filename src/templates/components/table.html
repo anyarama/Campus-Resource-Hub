@@ -1,0 +1,65 @@
+{#
+Table Component
+Usage:
+  {% from "components/table.html" import table %}
+  {{ table(columns=[
+      {'key': 'name', 'label': 'Name', 'sortable': True},
+      {'key': 'email', 'label': 'Email'}
+  ], rows=[
+      {'name': 'John Doe', 'email': 'john@example.com'},
+      {'name': 'Jane Smith', 'email': 'jane@example.com'}
+  ]) }}
+
+Parameters:
+  - columns: List of dicts with 'key' and 'label' keys (required)
+  - rows: List of dicts with keys matching column keys (required)
+  - sortable: Boolean for table-level sorting (default: False)
+  - hover: Boolean for hover effect (default: True)
+  - striped: Boolean for striped rows (default: False)
+  - bordered: Boolean for borders (default: False)
+  - class: Additional CSS classes (optional)
+#}
+
+{% macro table(columns, rows, sortable=False, hover=True, striped=False, bordered=False, class='') %}
+  <div class="table-container">
+    <table class="table 
+                  {% if hover %}table--hover{% endif %} 
+                  {% if striped %}table--striped{% endif %} 
+                  {% if bordered %}table--bordered{% endif %} 
+                  {% if sortable %}table--sortable{% endif %} 
+                  {{ class }}">
+      <thead class="table__head">
+        <tr>
+          {% for col in columns %}
+            <th class="table__header {% if col.get('sortable') %}table__header--sortable{% endif %}">
+              {{ col.label }}
+              {% if col.get('sortable') %}
+                <i class="fas fa-sort table__sort-icon" aria-hidden="true"></i>
+              {% endif %}
+            </th>
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody class="table__body">
+        {% for row in rows %}
+          <tr class="table__row">
+            {% for col in columns %}
+              <td class="table__cell" data-label="{{ col.label }}">
+                {{ row[col.key] }}
+              </td>
+            {% endfor %}
+          </tr>
+        {% else %}
+          <tr class="table__row table__row--empty">
+            <td class="table__cell" colspan="{{ columns|length }}">
+              <div class="table__empty">
+                <i class="fas fa-inbox" aria-hidden="true"></i>
+                <p>No data available</p>
+              </div>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endmacro %}

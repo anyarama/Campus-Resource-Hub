@@ -1,0 +1,45 @@
+{#
+Badge Component
+Usage:
+  {% from "components/badge.html" import badge %}
+  {{ badge('Active', variant='success') }}
+  {{ badge('3', variant='danger', size='sm') }}
+
+Parameters:
+  - text: Badge text content (required)
+  - variant: success|warning|danger|info|neutral|primary (default: 'neutral')
+  - size: sm|md|lg (default: 'md')
+  - class: Additional CSS classes (optional)
+#}
+
+{% macro badge(text, variant='neutral', size='md', class='') %}
+  <span class="badge badge--{{ variant }} badge--{{ size }} {{ class }}">{{ text }}</span>
+{% endmacro %}
+
+{# Status badge with icon #}
+{% macro status_badge(text, status) %}
+  {% set variant_map = {
+    'published': 'success',
+    'draft': 'neutral',
+    'archived': 'neutral',
+    'pending': 'warning',
+    'approved': 'success',
+    'rejected': 'danger',
+    'cancelled': 'neutral',
+    'completed': 'info'
+  } %}
+  {% set icon_map = {
+    'published': 'fas fa-check-circle',
+    'draft': 'fas fa-file',
+    'archived': 'fas fa-archive',
+    'pending': 'fas fa-clock',
+    'approved': 'fas fa-check-circle',
+    'rejected': 'fas fa-times-circle',
+    'cancelled': 'fas fa-ban',
+    'completed': 'fas fa-flag-checkered'
+  } %}
+  <span class="badge badge--{{ variant_map.get(status, 'neutral') }}">
+    <i class="{{ icon_map.get(status, 'fas fa-circle') }}" aria-hidden="true"></i>
+    {{ text }}
+  </span>
+{% endmacro %}
