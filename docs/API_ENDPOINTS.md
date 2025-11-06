@@ -613,25 +613,320 @@ comment (required): Text (10-1000 chars)
 
 ---
 
-## Message Endpoints
-
-### POST /messages
-**Description**: Send message  
-**Auth Required**: Yes  
-**Request Body**:
-```json
-{
-  "receiver_id": 5,
-  "content": "Is the room available?"
-}
-```
-**Response 201**: Message sent
+## Message Endpoints (Phase 7 - Implemented)
 
 ### GET /messages
-**Description**: Get user's messages  
+**Description**: View message inbox with conversation list and statistics  
 **Auth Required**: Yes  
-**Query Parameters**: `type` (inbox/sent)  
-**Response 200**: Array of message objects
+**Response 200** (HTML): Renders `messages/inbox.html`  
+
+**Features**:
+- **Statistics Dashboard**: Total conversations, messages received, sent, unread count
+- **Conversation List**: Groups messages by conversation partner
+- **Unread Badges**: Shows unread count per conversation
+- **Last Message Preview**: Displays most recent message in conversation
+- **Timestamps**: Shows when last message was sent
+- **Empty State**: Helpful message when no conversations exist
+- **Quick Actions**: View conversation, start new message
+
+**Conversation Grouping**:
+- Groups messages by unique sender/receiver pair
+- Most recent conversation first
+- Shows partner's name and avatar
+- Calculates unread count per conversation
+
+---
+
+### GET /messages/conversation/<int:user_id>
+**Description**: View full message thread with specific user  
+**Auth Required**: Yes  
+**Path Parameters**: `user_id` - ID of conversation partner  
+
+**Response 200** (HTML): Renders `messages/conversation.html`  
+**Response 404**: If user not found  
+
+**Features**:
+- **Thread View**: All messages between current user and partner
+- **Message Bubbles**: Different styling for sent (right, blue) vs received (left, gray)
+- **Auto-scroll**: JavaScript auto-scrolls to bottom on page load
+- **Reply Form**: Inline form to send new message
+- **Character Counter**: Real-time character count (0/1000)
+- **Delete Own Messages**: Delete button for sender's messages
+- **Partner Info**: Shows partner's name and department at top
+- **Timestamps**: Full timestamp for each message
+- **Auto-read Marking**: Marks all messages as read when viewing
+
+**Message Display**:
+- Sent messages: Right-aligned, primary color
+- Received messages: Left-aligned, light gray
+- Delete button shown only on own messages
+- Timestamps below each message
+
+---
+
+### GET /messages/compose/<int:user_id>
+### POST /messages/compose/<int:user_id>
+**Description**: Compose and send message to specific user  
+**Auth Required**: Yes  
+**Path Parameters**: `user_id` - Recipient user ID  
+**Method**: GET displays form, POST sends message  
+
+**Form Data**:
+```
+content (required): Message text (min 1 char, max 1000 chars)
+```
+
+**Response 302** (POST): Redirects to conversation view on success  
+**Response 200** (POST): Re-renders form with error on failure  
+**Response 403**: If trying to message self  
+**Response 404**: If recipient not found  
+
+**Compose Page Features**:
+- **Recipient Card**: Shows who you're messaging
+- **Message Textarea**: Large input with character counter
+- **Guidelines**: Messaging etiquette reminders
+- **Cancel Button**: Returns to inbox
+- **Validation**: Client-side + server-side validation
+
+---
+
+### POST /messages/send
+**Description**: Send message (alternative endpoint for AJAX/form submission)  
+**Auth Required**: Yes  
+**Method**: POST (CSRF protected)  
+
+**Form Data**:
+```
+receiver_id (required): Integer recipient user ID
+content (required): Message text (min 1 char, max 1000 chars)
+```
+
+**Validation**:
+- Content length: 1-1000 characters
+- Cannot send to self
+- Recipient must exist
+- Both users must be authenticated
+
+**Response 302**: Redirects to conversation view on success  
+**Response 400**: Validation errors (missing fields, invalid format)  
+**Response 403**: Authorization errors (self-message, etc.)  
+**Response 404**: Recipient not found  
+
+**Side Effects**:
+- Creates message record with timestamp
+- Sets receiver's message as unread (`is_read=False`)
+- Flash success message
+
+---
+
+### POST /messages/<int:message_id>/delete
+**Description**: Delete own message (sender-only)  
+**Auth Required**: Yes (message sender only)  
+**Method**: POST (CSRF protected)  
+**Path Parameters**: `message_id` - Message ID  
+
+**Response 302**: Redirects back to conversation  
+**Response 403**: If not message sender  
+**Response 404**: Message not found  
+
+**Confirmation**: JavaScript confirm dialog before deletion  
+**Note**: Only sender can delete their own messages
+
+---
+
+### POST /messages/mark-read/<int:user_id>
+**Description**: Mark all messages from specific user as read  
+**Auth Required**: Yes  
+**Method**: POST (CSRF protected)  
+**Path Parameters**: `user_id` - Sender user ID  
+
+**Response 302**: Redirects back to previous page  
+**Effect**: Sets `is_read=True` for all messages from user_id to current user  
+**Usage**: Automatically called when viewing conversation
+
+---
+
+### GET /messages/unread-count
+**Description**: Get unread message count (AJAX endpoint for badge)  
+**Auth Required**: Yes  
+**Response 200** (JSON):
+```json
+{
+  "unread_count": 5
+}
+```
+
+**Usage**: Called by JavaScript to update navigation badge  
+**Updates**: Can be polled periodically for real-time updates  
+**Security**: Only returns count for current authenticated user
+
+---
+
+### GET /messages/stats
+**Description**: Get messaging statistics for current user  
+**Auth Required**: Yes  
+**Response 200** (JSON):
+```json
+{
+  "total_conversations": 8,
+  "messages_received": 45,
+  "messages_sent": 38,
+  "unread_count": 3
+}
+```
+
+**Calculations**:
+- `total_conversations`: Unique users messaged/received from
+- `messages_received`: Total messages received
+- `messages_sent`: Total messages sent
+- `unread_count`: Unread messages count
+
+**Usage**: Used in inbox statistics dashboard
+
+---
+
+### GET /messages/about-resource/<int:resource_id>
+**Description**: Send message to resource owner (convenience redirect)  
+**Auth Required**: Yes  
+**Path Parameters**: `resource_id` - Resource ID  
+
+**Response 302**: Redirects to `/messages/compose/<owner_id>`  
+**Response 403**: If trying to message own resource  
+**Response 404**: If resource not found  
+
+**Purpose**: Quick action from resource detail page  
+**Integration**: "Message Owner" button on resource detail page  
+**Usage Example**: `/messages/about-resource/15` → redirects to compose message to owner of resource 15
+
+---
+
+### GET /messages/about-booking/<int:booking_id>
+**Description**: Send message related to specific booking  
+**Auth Required**: Yes (requester or resource owner)  
+**Path Parameters**: `booking_id` - Booking ID  
+
+**Response 302**: Redirects to compose message with pre-filled context  
+**Response 403**: If not authorized (not requester or owner)  
+**Response 404**: If booking not found  
+
+**Purpose**: Communicate about booking details  
+**Integration**: Can be called from booking detail page  
+**Pre-fills**: Message textarea with booking reference (optional enhancement)
+
+---
+
+## Message Data Model
+
+```json
+{
+  "message_id": 1,
+  "thread_id": null,
+  "sender_id": 3,
+  "receiver_id": 5,
+  "content": "Hi! Is the projector still available for tomorrow afternoon?",
+  "is_read": false,
+  "timestamp": "2025-11-06T10:30:00Z"
+}
+```
+
+**Field Constraints**:
+- `content`: TEXT, length 1-1000 characters
+- `is_read`: BOOLEAN, default FALSE
+- `timestamp`: DATETIME, auto-generated
+- `thread_id`: INTEGER (optional, for threading conversations)
+
+**Relationships**:
+- `sender`: FK to users.user_id
+- `receiver`: FK to users.user_id
+
+**Conversation Threading**:
+- Messages grouped by sender/receiver pair
+- Bidirectional: (user_a ↔ user_b) forms one conversation
+- Ordered by timestamp DESC (newest first in list, oldest first in thread)
+
+**Unread Logic**:
+- Set `is_read=False` on message creation
+- Set `is_read=True` when viewing conversation
+- Badge shows total unread count across all conversations
+
+---
+
+## Navigation Integration
+
+**Messages Link**:
+- Located in main navigation bar
+- Shows envelope icon
+- Displays unread badge (red pill) when unread messages exist
+- Badge updates via AJAX call to `/messages/unread-count`
+- Badge hides when count is 0
+
+**Resource Detail Integration**:
+- "Message Owner" button in non-owner actions section
+- Clicking redirects to `/messages/about-resource/<resource_id>`
+- Helps users ask questions before booking
+- Button only shown to authenticated, non-owner users
+
+---
+
+## UI Components
+
+### Inbox Page
+- **Stats Cards**: Four metric cards at top
+- **Conversation List**: Card-based layout with avatars
+- **Unread Badges**: Red pill badges showing count
+- **Last Message**: Truncated preview of recent message
+- **Timestamps**: Human-readable relative time
+- **Empty State**: Encourages starting conversations
+
+### Conversation Thread
+- **Message Bubbles**: Chat-style interface
+- **Sender Info**: Shows "You" for own messages
+- **Auto-scroll**: Scrolls to bottom on load
+- **Reply Form**: Fixed at bottom with character counter
+- **Delete Buttons**: Only on own messages
+
+### Compose Form
+- **Recipient Card**: Shows who you're messaging
+- **Large Textarea**: For composing message
+- **Character Counter**: Real-time (0/1000)
+- **Guidelines Card**: Messaging best practices
+- **Action Buttons**: Send or Cancel
+
+---
+
+## Security & Authorization
+
+**Message Access Rules**:
+- Users can only view their own messages (sender or receiver)
+- Cannot send messages to self
+- Cannot delete others' messages
+- Conversation view checks: must be sender or receiver
+- CSRF protection on all POST endpoints
+
+**Input Validation**:
+- Content length: 1-1000 characters
+- HTML escaping (Jinja auto-escape enabled)
+- No XSS vulnerabilities
+- SQL injection prevention (ORM parameterized queries)
+
+**Privacy**:
+- Messages visible only to sender and receiver
+- No public message listing
+- Admin can view messages (optional, not currently implemented)
+
+---
+
+## Future Enhancements (Optional)
+
+- **Real-time Updates**: WebSocket for instant messaging
+- **Threading**: Group messages by conversation thread_id
+- **Attachments**: File upload in messages
+- **Message Search**: Search within message history
+- **Archive Conversations**: Hide old conversations
+- **Block Users**: Prevent messages from specific users
+- **Read Receipts**: Show when message was read
+- **Typing Indicators**: Show when other user is typing
+- **Push Notifications**: Browser notifications for new messages
 
 ---
 
