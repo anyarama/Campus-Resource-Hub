@@ -1,0 +1,204 @@
+// =============================================================================
+// COLOR TOKENS - IU/Kelley Crimson Enterprise Design System
+// =============================================================================
+// Brand: Indiana University / Kelley School Crimson (#990000)
+// Aesthetic: Clean, professional, enterprise-grade (Apple/Linear/Atlassian)
+// =============================================================================
+
+// -----------------------------------------------------------------------------
+// PRIMARY - Kelley Crimson
+// -----------------------------------------------------------------------------
+$crimson-50: #fff5f5;
+$crimson-100: #ffe0e0;
+$crimson-200: #ffc7c7;
+$crimson-300: #ff9999;
+$crimson-400: #ff6b6b;
+$crimson-500: #bb0000;
+$crimson-600: #990000;  // PRIMARY BRAND COLOR
+$crimson-700: #770000;
+$crimson-800: #5e0000;
+$crimson-900: #4d0000;
+
+// -----------------------------------------------------------------------------
+// NEUTRALS - Light Theme Base
+// -----------------------------------------------------------------------------
+$gray-50: #fafafa;
+$gray-100: #f5f5f5;
+$gray-200: #e5e5e5;
+$gray-300: #d4d4d4;
+$gray-400: #a3a3a3;
+$gray-500: #737373;
+$gray-600: #525252;
+$gray-700: #404040;
+$gray-800: #262626;
+$gray-900: #171717;
+
+// Pure values
+$white: #ffffff;
+$black: #000000;
+
+// -----------------------------------------------------------------------------
+// SEMANTIC COLORS
+// -----------------------------------------------------------------------------
+$success-50: #f0fdf4;
+$success-100: #dcfce7;
+$success-500: #22c55e;
+$success-600: #16a34a;
+$success-700: #15803d;
+
+$warning-50: #fff7ed;
+$warning-100: #ffedd5;
+$warning-500: #f97316;
+$warning-600: #ea580c;
+$warning-700: #c2410c;
+
+$error-50: #fef2f2;
+$error-100: #fee2e2;
+$error-500: #ef4444;
+$error-600: #dc2626;
+$error-700: #b91c1c;
+
+$info-50: #f0f9ff;
+$info-100: #e0f2fe;
+$info-500: #06b6d4;
+$info-600: #0284c7;
+$info-700: #0369a1;
+
+// -----------------------------------------------------------------------------
+// CSS CUSTOM PROPERTIES (CSS Variables) - Light Theme Default
+// -----------------------------------------------------------------------------
+:root {
+  // Primary Brand
+  --color-primary-50: #{$crimson-50};
+  --color-primary-100: #{$crimson-100};
+  --color-primary-200: #{$crimson-200};
+  --color-primary-500: #{$crimson-500};
+  --color-primary-600: #{$crimson-600};
+  --color-primary-700: #{$crimson-700};
+  --color-primary-900: #{$crimson-900};
+  
+  // Neutrals
+  --color-gray-50: #{$gray-50};
+  --color-gray-100: #{$gray-100};
+  --color-gray-200: #{$gray-200};
+  --color-gray-300: #{$gray-300};
+  --color-gray-400: #{$gray-400};
+  --color-gray-500: #{$gray-500};
+  --color-gray-600: #{$gray-600};
+  --color-gray-700: #{$gray-700};
+  --color-gray-800: #{$gray-800};
+  --color-gray-900: #{$gray-900};
+  
+  // Pure
+  --color-white: #{$white};
+  --color-black: #{$black};
+  
+  // Semantic
+  --color-success: #{$success-600};
+  --color-success-light: #{$success-50};
+  --color-success-dark: #{$success-700};
+  
+  --color-warning: #{$warning-600};
+  --color-warning-light: #{$warning-50};
+  --color-warning-dark: #{$warning-700};
+  
+  --color-error: #{$error-600};
+  --color-error-light: #{$error-50};
+  --color-error-dark: #{$error-700};
+  
+  --color-info: #{$info-600};
+  --color-info-light: #{$info-50};
+  --color-info-dark: #{$info-700};
+  
+  // -----------------------------------------------------------------------------
+  // THEME-AWARE SEMANTIC TOKENS
+  // -----------------------------------------------------------------------------
+  // Background Colors
+  --color-bg-primary: #{$white};
+  --color-bg-secondary: #{$gray-50};
+  --color-bg-tertiary: #{$gray-100};
+  --color-bg-elevated: #{$white};
+  --color-bg-overlay: rgba(0, 0, 0, 0.5);
+  
+  // Text Colors
+  --color-text-primary: #{$gray-900};
+  --color-text-secondary: #{$gray-700};
+  --color-text-tertiary: #{$gray-500};
+  --color-text-disabled: #{$gray-400};
+  --color-text-on-primary: #{$white};
+  --color-text-inverse: #{$white};
+  
+  // Border Colors
+  --color-border-default: #{$gray-200};
+  --color-border-medium: #{$gray-300};
+  --color-border-strong: #{$gray-400};
+  --color-border-focus: #{$crimson-600};
+  
+  // Interactive States
+  --color-interactive-default: #{$crimson-600};
+  --color-interactive-hover: #{$crimson-700};
+  --color-interactive-active: #{$crimson-800};
+  --color-interactive-disabled: #{$gray-300};
+  
+  // Component-Specific
+  --color-input-bg: #{$white};
+  --color-input-border: #{$gray-300};
+  --color-input-focus-border: #{$crimson-600};
+  --color-input-focus-ring: #{rgba($crimson-600, 0.2)};
+  
+  --color-card-bg: #{$white};
+  --color-card-border: #{$gray-200};
+  --color-card-hover: #{$gray-50};
+  
+  --color-sidebar-bg: #{$gray-900};
+  --color-sidebar-text: #{$gray-300};
+  --color-sidebar-hover: #{$gray-800};
+  --color-sidebar-active: #{$crimson-600};
+}
+
+// -----------------------------------------------------------------------------
+// DARK THEME OVERRIDES
+// -----------------------------------------------------------------------------
+:root[data-theme="dark"] {
+  // Background Colors
+  --color-bg-primary: #{$gray-900};
+  --color-bg-secondary: #{$gray-800};
+  --color-bg-tertiary: #{$gray-700};
+  --color-bg-elevated: #{$gray-800};
+  --color-bg-overlay: rgba(0, 0, 0, 0.7);
+  
+  // Text Colors
+  --color-text-primary: #{$gray-50};
+  --color-text-secondary: #{$gray-300};
+  --color-text-tertiary: #{$gray-400};
+  --color-text-disabled: #{$gray-600};
+  --color-text-on-primary: #{$white};
+  --color-text-inverse: #{$gray-900};
+  
+  // Border Colors
+  --color-border-default: #{$gray-700};
+  --color-border-medium: #{$gray-600};
+  --color-border-strong: #{$gray-500};
+  --color-border-focus: #{$crimson-500};
+  
+  // Interactive States
+  --color-interactive-default: #{$crimson-500};
+  --color-interactive-hover: #{$crimson-400};
+  --color-interactive-active: #{$crimson-300};
+  --color-interactive-disabled: #{$gray-700};
+  
+  // Component-Specific
+  --color-input-bg: #{$gray-800};
+  --color-input-border: #{$gray-600};
+  --color-input-focus-border: #{$crimson-500};
+  --color-input-focus-ring: #{rgba($crimson-500, 0.3)};
+  
+  --color-card-bg: #{$gray-800};
+  --color-card-border: #{$gray-700};
+  --color-card-hover: #{$gray-700};
+  
+  --color-sidebar-bg: #{$black};
+  --color-sidebar-text: #{$gray-400};
+  --color-sidebar-hover: #{$gray-900};
+  --color-sidebar-active: #{$crimson-500};
+}

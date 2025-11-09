@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}401 - Unauthorized{% endblock %}
+
+{% block main_content %}
+<div class="error-page">
+  <div class="error-content">
+    <h1 class="error-code">401</h1>
+    <h2 class="error-title">Authentication Required</h2>
+    <p class="error-message">You need to be logged in to access this page.</p>
+    <div class="error-actions">
+      <a href="{{ url_for('auth.login') }}" class="btn btn-primary">Log In</a>
+      <a href="{{ url_for('auth.register') }}" class="btn btn-secondary">Register</a>
+    </div>
+  </div>
+</div>
+
+<style>
+.error-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  text-align: center;
+  padding: 2rem;
+}
+
+.error-content {
+  max-width: 500px;
+}
+
+.error-code {
+  font-size: 6rem;
+  font-weight: 700;
+  color: var(--color-info, #0dcaf0);
+  margin-bottom: 1rem;
+}
+
+.error-title {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.error-message {
+  color: var(--color-text-secondary, #6c757d);
+  margin-bottom: 2rem;
+}
+
+.error-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+</style>
+{% endblock %}

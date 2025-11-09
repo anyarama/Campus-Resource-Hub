@@ -6,11 +6,11 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>{% block title %}Campus Resource Hub{% endblock %}</title>
     
-    <!-- Font Awesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Bootstrap Icons (keeping for icon compatibility) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     
-    <!-- Custom CSS from Phase 10 -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- Enterprise Design System CSS (Phase 12 - Vite Build) -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='dist/assets/style-Dc6-QCGH.css') }}">
     
     {% block extra_css %}{% endblock %}
     
@@ -93,8 +93,7 @@
             color: #1f2937;
         }
 
-        .nav-item.active,
-        .nav-item:active {
+        .nav-item.active {
             background: #fef2f2;
             color: #990000;
             font-weight: 500;
@@ -208,7 +207,7 @@
             border: 1px solid #e5e7eb;
             border-radius: 0.5rem;
             font-size: 0.875rem;
-            background: #f9fafb url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="%236b7280" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/></svg>') no-repeat 0.75rem center;
+            background: #f9fafb;
             transition: all 0.15s ease;
         }
 
@@ -270,44 +269,6 @@
             margin-bottom: 1.5rem;
         }
 
-        .alert {
-            padding: 1rem;
-            border-radius: 0.5rem;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: start;
-            gap: 0.75rem;
-        }
-
-        .alert--success {
-            background: #dcfce7;
-            color: #166534;
-            border: 1px solid #86efac;
-        }
-
-        .alert--error,
-        .alert--danger {
-            background: #fee2e2;
-            color: #991b1b;
-            border: 1px solid #fca5a5;
-        }
-
-        .alert--warning {
-            background: #fef3c7;
-            color: #92400e;
-            border: 1px solid #fcd34d;
-        }
-
-        .alert--info {
-            background: #dbeafe;
-            color: #1e40af;
-            border: 1px solid #93c5fd;
-        }
-
-        .alert i {
-            font-size: 1.25rem;
-        }
-
         /* RESPONSIVE */
         @media (max-width: 768px) {
             .sidebar {
@@ -353,44 +314,47 @@
     </style>
 </head>
 <body>
+    <!-- Skip to main content link for screen readers -->
+    <a href="#main-content" class="skip-to-main visually-hidden-focusable">Skip to main content</a>
+    
     {% if current_user.is_authenticated %}
         <!-- Sidebar Backdrop (Mobile) -->
         <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
 
         <div class="app-shell">
             <!-- SIDEBAR -->
-            <aside class="sidebar" id="sidebar">
+            <aside class="sidebar" id="sidebar" role="navigation" aria-label="Main navigation">
                 <div class="sidebar__header">
-                    <div class="sidebar__logo">C</div>
+                    <div class="sidebar__logo" aria-hidden="true">C</div>
                     <span class="sidebar__title">Campus Hub</span>
                 </div>
                 
-                <nav class="sidebar__nav">
+                <nav class="sidebar__nav" role="menubar" aria-label="Primary navigation">
                     <a href="{{ url_for('resources.dashboard') }}" class="nav-item {% if request.endpoint == 'resources.dashboard' %}active{% endif %}">
-                        <i class="fas fa-home"></i>
+                        <i class="bi bi-house"></i>
                         <span>Dashboard</span>
                     </a>
                     <a href="{{ url_for('resources.index') }}" class="nav-item {% if request.endpoint in ['resources.index', 'resources.detail'] %}active{% endif %}">
-                        <i class="fas fa-grid-2"></i>
+                        <i class="bi bi-grid"></i>
                         <span>Resources</span>
                     </a>
-                    <a href="{{ url_for('bookings.my_bookings') }}" class="nav-item {% if request.endpoint == 'bookings.my_bookings' %}active{% endif %}">
-                        <i class="fas fa-calendar-check"></i>
+                    <a href="{{ url_for('bookings.my_bookings') }}" class="nav-item {% if 'bookings' in request.endpoint %}active{% endif %}">
+                        <i class="bi bi-calendar-check"></i>
                         <span>My Bookings</span>
                     </a>
-                    <a href="{{ url_for('messages.inbox') }}" class="nav-item {% if request.endpoint in ['messages.inbox', 'messages.conversation'] %}active{% endif %}">
-                        <i class="fas fa-envelope"></i>
+                    <a href="{{ url_for('messages.inbox') }}" class="nav-item {% if 'messages' in request.endpoint %}active{% endif %}">
+                        <i class="bi bi-envelope"></i>
                         <span>Messages</span>
                     </a>
-                    <a href="{{ url_for('concierge.index') }}" class="nav-item {% if request.endpoint == 'concierge.index' %}active{% endif %}">
-                        <i class="fas fa-robot"></i>
+                    <a href="{{ url_for('concierge.index') }}" class="nav-item {% if 'concierge' in request.endpoint %}active{% endif %}">
+                        <i class="bi bi-robot"></i>
                         <span>AI Concierge</span>
                     </a>
                     
                     {% if current_user.role == 'admin' %}
                     <hr class="sidebar__divider">
                     <a href="{{ url_for('admin.dashboard') }}" class="nav-item {% if 'admin' in request.endpoint %}active{% endif %}">
-                        <i class="fas fa-shield-halved"></i>
+                        <i class="bi bi-shield"></i>
                         <span>Admin</span>
                     </a>
                     {% endif %}
@@ -398,9 +362,15 @@
                 
                 <div class="sidebar__footer">
                     <a href="{{ url_for('auth.profile') }}" class="user-menu" style="text-decoration: none;">
-                        <img src="{{ current_user.profile_image or 'https://ui-avatars.com/api/?name=' + current_user.name|urlencode + '&background=990000&color=fff' }}" 
-                             alt="{{ current_user.name }}" 
-                             class="user-menu__avatar">
+                        {% if current_user.profile_image %}
+                            <img src="{{ url_for('static', filename='uploads/' + current_user.profile_image) }}" 
+                                 alt="{{ current_user.name }}" 
+                                 class="user-menu__avatar">
+                        {% else %}
+                            <div class="user-menu__avatar bg-secondary d-flex align-items-center justify-content-center text-white fw-bold">
+                                {{ current_user.name[0].upper() }}
+                            </div>
+                        {% endif %}
                         <div class="user-menu__info">
                             <p class="user-menu__name">{{ current_user.name }}</p>
                             <p class="user-menu__email">{{ current_user.email }}</p>
@@ -414,30 +384,35 @@
                 <!-- TOPBAR -->
                 <header class="topbar">
                     <button class="topbar__menu-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
-                        <i class="fas fa-bars"></i>
+                        <i class="bi bi-list"></i>
                     </button>
                     
                     <div class="topbar__search">
-                        <input type="search" 
-                               placeholder="Search resources..." 
-                               class="search-input"
-                               aria-label="Search">
+                        <form action="{{ url_for('resources.index') }}" method="GET">
+                            <input type="search" 
+                                   name="search"
+                                   placeholder="Search resources..." 
+                                   class="search-input"
+                                   aria-label="Search">
+                        </form>
                     </div>
                     
                     <div class="topbar__actions">
                         <button class="icon-button" id="themeToggle" aria-label="Toggle theme" title="Toggle dark mode">
-                            <i class="fas fa-moon"></i>
+                            <i class="bi bi-moon"></i>
                         </button>
                         
-                        <button class="icon-button" aria-label="Notifications" title="Notifications">
-                            <i class="fas fa-bell"></i>
-                        </button>
-                        
-                        <a href="{{ url_for('auth.profile') }}" class="icon-button" title="Profile">
-                            <img src="{{ current_user.profile_image or 'https://ui-avatars.com/api/?name=' + current_user.name|urlencode + '&background=990000&color=fff&size=32' }}" 
-                                 alt="{{ current_user.name }}" 
-                                 style="width: 32px; height: 32px; border-radius: 50%;">
+                        <a href="{{ url_for('messages.inbox') }}" class="icon-button" title="Messages">
+                            <i class="bi bi-envelope"></i>
                         </a>
+                        
+                        <a href="{{ url_for('auth.logout') }}" class="icon-button" title="Logout" 
+                           onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                            <i class="bi bi-box-arrow-right"></i>
+                        </a>
+                        <form id="logout-form" action="{{ url_for('auth.logout') }}" method="POST" style="display: none;">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                        </form>
                     </div>
                 </header>
 
@@ -448,9 +423,10 @@
                         {% if messages %}
                             <div class="flash-messages">
                                 {% for category, message in messages %}
-                                    <div class="alert alert--{{ 'danger' if category == 'error' else category }}" role="alert">
-                                        <i class="fas fa-{% if category == 'success' %}check-circle{% elif category == 'error' or category == 'danger' %}exclamation-circle{% elif category == 'warning' %}exclamation-triangle{% else %}info-circle{% endif %}"></i>
+                                    <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                                        <i class="bi bi-{% if category == 'success' %}check-circle{% elif category == 'error' or category == 'danger' %}exclamation-circle{% elif category == 'warning' %}exclamation-triangle{% else %}info-circle{% endif %} me-2"></i>
                                         <span>{{ message }}</span>
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                     </div>
                                 {% endfor %}
                             </div>
@@ -483,19 +459,19 @@
                 });
             }
 
-            // Theme toggle (basic implementation)
+            // Theme toggle
             const themeToggle = document.getElementById('themeToggle');
             if (themeToggle) {
                 themeToggle.addEventListener('click', () => {
                     const html = document.documentElement;
-                    const currentTheme = html.getAttribute('data-theme');
+                    const currentTheme = html.getAttribute('data-theme') || 'light';
                     const newTheme = currentTheme === 'light' ? 'dark' : 'light';
                     html.setAttribute('data-theme', newTheme);
                     localStorage.setItem('theme', newTheme);
                     
                     // Update icon
                     const icon = themeToggle.querySelector('i');
-                    icon.className = newTheme === 'light' ? 'fas fa-moon' : 'fas fa-sun';
+                    icon.className = newTheme === 'light' ? 'bi bi-moon' : 'bi bi-sun';
                 });
             }
 
@@ -505,30 +481,15 @@
                 document.documentElement.setAttribute('data-theme', savedTheme);
                 const themeIcon = document.querySelector('#themeToggle i');
                 if (themeIcon) {
-                    themeIcon.className = savedTheme === 'light' ? 'fas fa-moon' : 'fas fa-sun';
+                    themeIcon.className = savedTheme === 'light' ? 'bi bi-moon' : 'bi bi-sun';
                 }
             });
         </script>
-    {% else %}
-        <!-- Public layout (login/register pages) - keep simple -->
-        <div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; background: #f9fafb;">
-            <div style="width: 100%; max-width: 400px; padding: 2rem;">
-                {% with messages = get_flashed_messages(with_categories=true) %}
-                    {% if messages %}
-                        {% for category, message in messages %}
-                            <div class="alert alert--{{ 'danger' if category == 'error' else category }}" role="alert">
-                                <i class="fas fa-{% if category == 'success' %}check-circle{% elif category == 'error' or category == 'danger' %}exclamation-circle{% else %}info-circle{% endif %}"></i>
-                                <span>{{ message }}</span>
-                            </div>
-                        {% endfor %}
-                    {% endif %}
-                {% endwith %}
-                
-                {% block content %}{% endblock %}
-            </div>
-        </div>
     {% endif %}
 
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
     {% block extra_js %}{% endblock %}
 </body>
 </html>

@@ -1,0 +1,605 @@
+// =============================================================================
+// TABS COMPONENT
+// =============================================================================
+// Tab navigation for organizing content into switchable panels
+// Includes horizontal/vertical tabs, pills, underline styles, responsive behavior
+
+@use '../tokens' as *;
+
+// -----------------------------------------------------------------------------
+// Tabs Container
+// -----------------------------------------------------------------------------
+.tabs {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-4;
+}
+
+// -----------------------------------------------------------------------------
+// Tab List (button container)
+// -----------------------------------------------------------------------------
+.tabs__list {
+  display: flex;
+  gap: $spacing-2;
+  border-bottom: 2px solid var(--color-gray-200);
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+  
+  // Hide scrollbar but keep functionality
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Tab Button
+// -----------------------------------------------------------------------------
+.tabs__button {
+  position: relative;
+  background: none;
+  border: none;
+  padding: $spacing-3 $spacing-4;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: var(--color-gray-600);
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px; // Overlap with list border
+  
+  &:hover {
+    color: var(--color-gray-900);
+    background-color: var(--color-gray-50);
+  }
+  
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+    border-radius: $border-radius-sm;
+  }
+  
+  // Active state
+  &[aria-selected="true"],
+  &.is-active {
+    color: var(--color-primary);
+    border-bottom-color: var(--color-primary);
+  }
+  
+  // Disabled state
+  &:disabled {
+    color: var(--color-gray-400);
+    cursor: not-allowed;
+    
+    &:hover {
+      background-color: transparent;
+    }
+  }
+  
+  // With icon
+  &.has-icon {
+    display: flex;
+    align-items: center;
+    gap: $spacing-2;
+    
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Tab Panels
+// -----------------------------------------------------------------------------
+.tabs__panel {
+  display: none;
+  animation: fadeIn 0.2s ease-out;
+  
+  &[aria-hidden="false"],
+  &.is-active {
+    display: block;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Tab Variants: Pills
+// -----------------------------------------------------------------------------
+.tabs--pills {
+  .tabs__list {
+    border-bottom: none;
+    gap: $spacing-2;
+  }
+  
+  .tabs__button {
+    border-radius: $border-radius-md;
+    border-bottom: none;
+    margin-bottom: 0;
+    padding: $spacing-2 $spacing-4;
+    
+    &:hover {
+      background-color: var(--color-gray-100);
+    }
+    
+    &[aria-selected="true"],
+    &.is-active {
+      background-color: var(--color-primary);
+      color: white;
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Tab Variants: Underline (cleaner, less prominent border)
+// -----------------------------------------------------------------------------
+.tabs--underline {
+  .tabs__list {
+    border-bottom: 1px solid var(--color-gray-200);
+  }
+  
+  .tabs__button {
+    border-bottom-width: 2px;
+    margin-bottom: -1px;
+    padding: $spacing-3 $spacing-2;
+    
+    &:hover {
+      background-color: transparent;
+      border-bottom-color: var(--color-gray-300);
+    }
+    
+    &[aria-selected="true"],
+    &.is-active {
+      border-bottom-color: var(--color-primary);
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Tab Variants: Boxed/Segmented (button group style)
+// -----------------------------------------------------------------------------
+.tabs--boxed {
+  .tabs__list {
+    border: 1px solid var(--color-gray-300);
+    border-radius: $border-radius-md;
+    padding: $spacing-1;
+    background-color: var(--color-gray-100);
+    border-bottom: 1px solid var(--color-gray-300);
+    gap: 0;
+  }
+  
+  .tabs__button {
+    border: none;
+    border-radius: $border-radius-sm;
+    margin-bottom: 0;
+    padding: $spacing-2 $spacing-4;
+    
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.5);
+    }
+    
+    &[aria-selected="true"],
+    &.is-active {
+      background-color: white;
+      color: var(--color-gray-900);
+      box-shadow: $shadow-sm;
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Tab Variants: Vertical Tabs
+// -----------------------------------------------------------------------------
+.tabs--vertical {
+  flex-direction: row;
+  align-items: flex-start;
+  
+  .tabs__list {
+    flex-direction: column;
+    border-bottom: none;
+    border-right: 2px solid var(--color-gray-200);
+    width: 200px;
+    flex-shrink: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+  
+  .tabs__button {
+    width: 100%;
+    text-align: left;
+    justify-content: flex-start;
+    border-bottom: none;
+    border-right: 2px solid transparent;
+    margin-bottom: 0;
+    margin-right: -2px;
+    
+    &[aria-selected="true"],
+    &.is-active {
+      border-bottom-color: transparent;
+      border-right-color: var(--color-primary);
+      background-color: var(--color-primary-50);
+    }
+  }
+  
+  .tabs__panels {
+    flex: 1;
+    padding-left: $spacing-6;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Tab Sizes
+// -----------------------------------------------------------------------------
+.tabs--sm {
+  .tabs__button {
+    padding: $spacing-2 $spacing-3;
+    font-size: $font-size-xs;
+  }
+}
+
+.tabs--lg {
+  .tabs__button {
+    padding: $spacing-4 $spacing-6;
+    font-size: $font-size-base;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Tabs with Badge/Counter
+// -----------------------------------------------------------------------------
+.tabs__button {
+  .badge {
+    margin-left: $spacing-2;
+  }
+  
+  .counter {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 $spacing-1;
+    margin-left: $spacing-2;
+    background-color: var(--color-gray-200);
+    color: var(--color-gray-700);
+    font-size: $font-size-xs;
+    font-weight: $font-weight-semibold;
+    border-radius: $border-radius-full;
+  }
+  
+  &[aria-selected="true"],
+  &.is-active {
+    .counter {
+      background-color: var(--color-primary);
+      color: white;
+    }
+  }
+}
+
+// For pills variant
+.tabs--pills {
+  .tabs__button {
+    &[aria-selected="true"],
+    &.is-active {
+      .counter {
+        background-color: rgba(255, 255, 255, 0.3);
+        color: white;
+      }
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Campus-Specific Tab Use Cases
+// -----------------------------------------------------------------------------
+
+// Resource details tabs (overview, reviews, availability)
+.tabs--resource-details {
+  .tabs__button {
+    font-size: $font-size-sm;
+    
+    &[aria-selected="true"] {
+      font-weight: $font-weight-semibold;
+    }
+  }
+}
+
+// Admin dashboard tabs (users, resources, bookings, analytics)
+.tabs--admin {
+  .tabs__list {
+    background-color: var(--color-gray-50);
+    padding: $spacing-2;
+    border-radius: $border-radius-lg;
+  }
+  
+  .tabs__button {
+    &[aria-selected="true"] {
+      background-color: white;
+      box-shadow: $shadow-sm;
+      border-radius: $border-radius-md;
+      border-bottom-color: transparent;
+    }
+  }
+}
+
+// Booking status tabs (All, Pending, Approved, Rejected, Completed)
+.tabs--booking-status {
+  .tabs__button {
+    position: relative;
+    
+    // Status indicator dot
+    &::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-right: $spacing-2;
+      display: inline-block;
+    }
+    
+    // Status colors
+    &[data-status="pending"]::before {
+      background-color: var(--color-warning-500);
+    }
+    
+    &[data-status="approved"]::before {
+      background-color: var(--color-success-500);
+    }
+    
+    &[data-status="rejected"]::before {
+      background-color: var(--color-error-500);
+    }
+    
+    &[data-status="completed"]::before {
+      background-color: var(--color-gray-500);
+    }
+  }
+}
+
+// Message inbox tabs (Inbox, Sent, Archive)
+.tabs--messages {
+  .tabs__button {
+    .unread-count {
+      background-color: var(--color-error-500);
+      color: white;
+      min-width: 18px;
+      height: 18px;
+      padding: 0 $spacing-1;
+      border-radius: $border-radius-full;
+      font-size: 11px;
+      font-weight: $font-weight-bold;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-left: $spacing-2;
+    }
+  }
+}
+
+// Profile tabs (Info, Bookings, Reviews)
+.tabs--profile {
+  .tabs__list {
+    border-bottom: 1px solid var(--color-gray-200);
+  }
+  
+  .tabs__button {
+    font-size: $font-size-sm;
+    padding: $spacing-3 $spacing-4;
+    
+    &[aria-selected="true"] {
+      color: var(--color-primary);
+      border-bottom-width: 3px;
+      border-bottom-color: var(--color-primary);
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Responsive Behavior
+// -----------------------------------------------------------------------------
+@media (max-width: 768px) {
+  .tabs__list {
+    gap: $spacing-1;
+  }
+  
+  .tabs__button {
+    padding: $spacing-2 $spacing-3;
+    font-size: $font-size-xs;
+  }
+  
+  // Stack vertical tabs horizontally on mobile
+  .tabs--vertical {
+    flex-direction: column;
+    
+    .tabs__list {
+      flex-direction: row;
+      width: 100%;
+      border-right: none;
+      border-bottom: 2px solid var(--color-gray-200);
+      overflow-x: auto;
+    }
+    
+    .tabs__button {
+      border-right: none;
+      border-bottom: 2px solid transparent;
+      margin-right: 0;
+      margin-bottom: -2px;
+      
+      &[aria-selected="true"],
+      &.is-active {
+        border-right-color: transparent;
+        border-bottom-color: var(--color-primary);
+      }
+    }
+    
+    .tabs__panels {
+      padding-left: 0;
+      padding-top: $spacing-4;
+    }
+  }
+  
+  // Scroll snap for mobile tabs
+  .tabs__list {
+    scroll-snap-type: x mandatory;
+  }
+  
+  .tabs__button {
+    scroll-snap-align: start;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Tabs with Dropdown (overflow menu for many tabs)
+// -----------------------------------------------------------------------------
+.tabs--with-dropdown {
+  .tabs__list {
+    position: relative;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: 40px;
+      background: linear-gradient(
+        to right,
+        transparent,
+        white
+      );
+      pointer-events: none;
+    }
+  }
+  
+  .tabs__dropdown-toggle {
+    position: absolute;
+    right: 0;
+    top: 0;
+    background: white;
+    border: 1px solid var(--color-gray-300);
+    padding: $spacing-2 $spacing-3;
+    border-radius: $border-radius-md;
+    cursor: pointer;
+    font-size: $font-size-sm;
+    color: var(--color-gray-700);
+    
+    &:hover {
+      background-color: var(--color-gray-50);
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Tab Loading State
+// -----------------------------------------------------------------------------
+.tabs__panel--loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  color: var(--color-gray-500);
+  
+  .spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid var(--color-gray-200);
+    border-top-color: var(--color-primary);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Tab Panel Content Padding
+// -----------------------------------------------------------------------------
+.tabs__panel {
+  padding: $spacing-4 0;
+  
+  &--padded {
+    padding: $spacing-6;
+    background-color: var(--color-gray-50);
+    border-radius: $border-radius-md;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Tabs Full Width (equal width buttons)
+// -----------------------------------------------------------------------------
+.tabs--full-width {
+  .tabs__button {
+    flex: 1;
+    justify-content: center;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Tabs Centered
+// -----------------------------------------------------------------------------
+.tabs--centered {
+  .tabs__list {
+    justify-content: center;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Dark Theme Adjustments
+// -----------------------------------------------------------------------------
+@media (prefers-color-scheme: dark) {
+  .tabs__list {
+    border-bottom-color: var(--color-gray-700);
+  }
+  
+  .tabs__button {
+    color: var(--color-gray-400);
+    
+    &:hover {
+      color: var(--color-gray-200);
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+    
+    &[aria-selected="true"],
+    &.is-active {
+      color: var(--color-primary);
+    }
+  }
+  
+  .tabs--boxed {
+    .tabs__list {
+      background-color: var(--color-gray-800);
+      border-color: var(--color-gray-700);
+    }
+    
+    .tabs__button {
+      &[aria-selected="true"],
+      &.is-active {
+        background-color: var(--color-gray-700);
+        color: var(--color-gray-100);
+      }
+    }
+  }
+  
+  .tabs--pills {
+    .tabs__button {
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+    }
+  }
+}

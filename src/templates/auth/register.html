@@ -1,69 +1,81 @@
 {% extends "base.html" %}
+{% from "_components.html" import form_field, button, card %}
 
 {% block title %}Register - Campus Resource Hub{% endblock %}
 
-{% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-8 col-lg-6">
-        <div class="card shadow">
-            <div class="card-body p-4">
-                <h2 class="card-title text-center mb-4">Create Account</h2>
+{% block main_content %}
+<div class="auth-container">
+    <div class="auth-card auth-card--wide">
+        {% call card(title="Create Your Account") %}
+            <form method="POST" action="{{ url_for('auth.register') }}" novalidate class="form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                 
-                <form method="POST" action="{{ url_for('auth.register') }}" novalidate>
-                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                    
-                    <div class="mb-3">
-                        <label for="name" class="form-label">Full Name <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="name" name="name" 
-                               value="{{ name or '' }}" required autofocus minlength="2">
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="email" class="form-label">Email Address <span class="text-danger">*</span></label>
-                        <input type="email" class="form-control" id="email" name="email" 
-                               value="{{ email or '' }}" required>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="password" class="form-label">Password <span class="text-danger">*</span></label>
-                        <input type="password" class="form-control" id="password" name="password" 
-                               required minlength="8" aria-describedby="passwordHelp">
-                        <div id="passwordHelp" class="form-text">
-                            At least 8 characters with uppercase, lowercase, and digit
-                        </div>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="confirm_password" class="form-label">Confirm Password <span class="text-danger">*</span></label>
-                        <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="role" class="form-label">Role</label>
-                        <select class="form-select" id="role" name="role">
-                            <option value="student" {% if role == 'student' or not role %}selected{% endif %}>Student</option>
-                            <option value="staff" {% if role == 'staff' %}selected{% endif %}>Staff</option>
-                            <option value="admin" {% if role == 'admin' %}selected{% endif %}>Admin</option>
-                        </select>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="department" class="form-label">Department (Optional)</label>
-                        <input type="text" class="form-control" id="department" name="department" 
-                               value="{{ department or '' }}" placeholder="e.g., Computer Science">
-                    </div>
-                    
-                    <button type="submit" class="btn btn-primary w-100">Register</button>
-                </form>
+                {{ form_field(
+                    type="text",
+                    name="name",
+                    label="Full Name",
+                    value=name or '',
+                    required=true,
+                    autofocus=true,
+                    min_length=2
+                ) }}
                 
-                <hr class="my-4">
+                {{ form_field(
+                    type="email",
+                    name="email",
+                    label="Email Address",
+                    value=email or '',
+                    required=true
+                ) }}
                 
-                <p class="text-center mb-0">
-                    Already have an account? 
-                    <a href="{{ url_for('auth.login') }}">Login here</a>
-                </p>
-            </div>
-        </div>
+                {{ form_field(
+                    type="password",
+                    name="password",
+                    label="Password",
+                    required=true,
+                    min_length=8,
+                    help_text="At least 8 characters with uppercase, lowercase, and digit"
+                ) }}
+                
+                {{ form_field(
+                    type="password",
+                    name="confirm_password",
+                    label="Confirm Password",
+                    required=true
+                ) }}
+                
+                <div class="form-group">
+                    <label for="role" class="form-label">Role</label>
+                    <select class="form-select" id="role" name="role">
+                        <option value="student" {% if role == 'student' or not role %}selected{% endif %}>Student</option>
+                        <option value="staff" {% if role == 'staff' %}selected{% endif %}>Staff</option>
+                        <option value="admin" {% if role == 'admin' %}selected{% endif %}>Admin</option>
+                    </select>
+                </div>
+                
+                {{ form_field(
+                    type="text",
+                    name="department",
+                    label="Department (Optional)",
+                    value=department or '',
+                    placeholder="e.g., Computer Science"
+                ) }}
+                
+                {{ button(
+                    text="Create Account",
+                    type="submit",
+                    variant="primary",
+                    full_width=true
+                ) }}
+            </form>
+            
+            <div class="auth-divider"></div>
+            
+            <p class="auth-footer-text">
+                Already have an account? 
+                <a href="{{ url_for('auth.login') }}" class="link-primary">Login here</a>
+            </p>
+        {% endcall %}
     </div>
 </div>
 {% endblock %}

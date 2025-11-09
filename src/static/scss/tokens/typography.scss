@@ -1,0 +1,170 @@
+// =============================================================================
+// TYPOGRAPHY TOKENS - Enterprise Design System
+// =============================================================================
+// Font Stack: Inter (modern, readable, professional)
+// Fallback: System fonts for optimal performance
+// =============================================================================
+
+// -----------------------------------------------------------------------------
+// FONT FAMILIES
+// -----------------------------------------------------------------------------
+$font-family-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", 
+                   "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", 
+                   "Droid Sans", "Helvetica Neue", sans-serif;
+
+$font-family-mono: "SF Mono", "Monaco", "Inconsolata", "Fira Code", 
+                   "Fira Mono", "Roboto Mono", "Consolas", "Courier New", monospace;
+
+// -----------------------------------------------------------------------------
+// FONT SIZES - Type Scale (Perfect Fourth - 1.333)
+// -----------------------------------------------------------------------------
+$font-size-xs: 0.75rem;    // 12px
+$font-size-sm: 0.875rem;   // 14px
+$font-size-base: 1rem;     // 16px (base)
+$font-size-lg: 1.125rem;   // 18px
+$font-size-xl: 1.25rem;    // 20px
+$font-size-2xl: 1.5rem;    // 24px
+$font-size-3xl: 1.875rem;  // 30px
+$font-size-4xl: 2.25rem;   // 36px
+$font-size-5xl: 3rem;      // 48px
+$font-size-6xl: 3.75rem;   // 60px
+
+// -----------------------------------------------------------------------------
+// FONT WEIGHTS
+// -----------------------------------------------------------------------------
+$font-weight-normal: 400;    // Regular
+$font-weight-medium: 500;    // Medium
+$font-weight-semibold: 600;  // Semibold
+$font-weight-bold: 700;      // Bold
+
+// -----------------------------------------------------------------------------
+// LINE HEIGHTS
+// -----------------------------------------------------------------------------
+$line-height-tight: 1.25;   // Headings
+$line-height-snug: 1.375;   // Subheadings
+$line-height-normal: 1.5;   // Body text
+$line-height-relaxed: 1.625; // Long-form content
+$line-height-loose: 2;      // Spacious layouts
+
+// -----------------------------------------------------------------------------
+// LETTER SPACING
+// -----------------------------------------------------------------------------
+$letter-spacing-tight: -0.025em;
+$letter-spacing-normal: 0;
+$letter-spacing-wide: 0.025em;
+$letter-spacing-wider: 0.05em;
+$letter-spacing-widest: 0.1em;
+
+// -----------------------------------------------------------------------------
+// CSS CUSTOM PROPERTIES (CSS Variables)
+// -----------------------------------------------------------------------------
+:root {
+  // Font Families
+  --font-family-sans: #{$font-family-sans};
+  --font-family-mono: #{$font-family-mono};
+  
+  // Font Sizes
+  --font-size-xs: #{$font-size-xs};
+  --font-size-sm: #{$font-size-sm};
+  --font-size-base: #{$font-size-base};
+  --font-size-lg: #{$font-size-lg};
+  --font-size-xl: #{$font-size-xl};
+  --font-size-2xl: #{$font-size-2xl};
+  --font-size-3xl: #{$font-size-3xl};
+  --font-size-4xl: #{$font-size-4xl};
+  --font-size-5xl: #{$font-size-5xl};
+  --font-size-6xl: #{$font-size-6xl};
+  
+  // Font Weights
+  --font-weight-normal: #{$font-weight-normal};
+  --font-weight-medium: #{$font-weight-medium};
+  --font-weight-semibold: #{$font-weight-semibold};
+  --font-weight-bold: #{$font-weight-bold};
+  
+  // Line Heights
+  --line-height-tight: #{$line-height-tight};
+  --line-height-snug: #{$line-height-snug};
+  --line-height-normal: #{$line-height-normal};
+  --line-height-relaxed: #{$line-height-relaxed};
+  --line-height-loose: #{$line-height-loose};
+  
+  // Letter Spacing
+  --letter-spacing-tight: #{$letter-spacing-tight};
+  --letter-spacing-normal: #{$letter-spacing-normal};
+  --letter-spacing-wide: #{$letter-spacing-wide};
+  --letter-spacing-wider: #{$letter-spacing-wider};
+  --letter-spacing-widest: #{$letter-spacing-widest};
+}
+
+// -----------------------------------------------------------------------------
+// SEMANTIC TYPE STYLES
+// -----------------------------------------------------------------------------
+// Headings
+:root {
+  --typography-h1-size: #{$font-size-4xl};
+  --typography-h1-weight: #{$font-weight-bold};
+  --typography-h1-line-height: #{$line-height-tight};
+  --typography-h1-letter-spacing: #{$letter-spacing-tight};
+  
+  --typography-h2-size: #{$font-size-3xl};
+  --typography-h2-weight: #{$font-weight-bold};
+  --typography-h2-line-height: #{$line-height-tight};
+  --typography-h2-letter-spacing: #{$letter-spacing-tight};
+  
+  --typography-h3-size: #{$font-size-2xl};
+  --typography-h3-weight: #{$font-weight-semibold};
+  --typography-h3-line-height: #{$line-height-snug};
+  --typography-h3-letter-spacing: #{$letter-spacing-normal};
+  
+  --typography-h4-size: #{$font-size-xl};
+  --typography-h4-weight: #{$font-weight-semibold};
+  --typography-h4-line-height: #{$line-height-snug};
+  --typography-h4-letter-spacing: #{$letter-spacing-normal};
+  
+  --typography-h5-size: #{$font-size-lg};
+  --typography-h5-weight: #{$font-weight-medium};
+  --typography-h5-line-height: #{$line-height-normal};
+  --typography-h5-letter-spacing: #{$letter-spacing-normal};
+  
+  --typography-h6-size: #{$font-size-base};
+  --typography-h6-weight: #{$font-weight-medium};
+  --typography-h6-line-height: #{$line-height-normal};
+  --typography-h6-letter-spacing: #{$letter-spacing-normal};
+  
+  // Body Text
+  --typography-body-lg-size: #{$font-size-lg};
+  --typography-body-lg-weight: #{$font-weight-normal};
+  --typography-body-lg-line-height: #{$line-height-relaxed};
+  
+  --typography-body-base-size: #{$font-size-base};
+  --typography-body-base-weight: #{$font-weight-normal};
+  --typography-body-base-line-height: #{$line-height-normal};
+  
+  --typography-body-sm-size: #{$font-size-sm};
+  --typography-body-sm-weight: #{$font-weight-normal};
+  --typography-body-sm-line-height: #{$line-height-normal};
+  
+  --typography-body-xs-size: #{$font-size-xs};
+  --typography-body-xs-weight: #{$font-weight-normal};
+  --typography-body-xs-line-height: #{$line-height-normal};
+  
+  // Special
+  --typography-label-size: #{$font-size-sm};
+  --typography-label-weight: #{$font-weight-medium};
+  --typography-label-line-height: #{$line-height-normal};
+  --typography-label-letter-spacing: #{$letter-spacing-wide};
+  
+  --typography-button-size: #{$font-size-sm};
+  --typography-button-weight: #{$font-weight-medium};
+  --typography-button-line-height: #{$line-height-tight};
+  --typography-button-letter-spacing: #{$letter-spacing-wide};
+  
+  --typography-caption-size: #{$font-size-xs};
+  --typography-caption-weight: #{$font-weight-normal};
+  --typography-caption-line-height: #{$line-height-normal};
+  
+  --typography-code-size: #{$font-size-sm};
+  --typography-code-weight: #{$font-weight-normal};
+  --typography-code-line-height: #{$line-height-normal};
+  --typography-code-family: #{$font-family-mono};
+}

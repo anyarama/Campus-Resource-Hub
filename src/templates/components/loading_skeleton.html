@@ -1,0 +1,108 @@
+{#
+  Loading Skeleton Component
+  Shows animated placeholders while content loads
+  
+  Usage: {% include 'components/loading_skeleton.html' with {'type': 'card', 'count': 3} %}
+  
+  Types: 'card', 'list', 'table', 'text'
+#}
+
+{% if type == 'card' %}
+    {# Card Skeleton - for resource/booking cards #}
+    {% for i in range(count|default(3)) %}
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card">
+            <div class="skeleton" style="height: 200px;"></div>
+            <div class="card-body">
+                <div class="skeleton skeleton-text mb-3" style="width: 70%; height: 24px;"></div>
+                <div class="skeleton skeleton-text mb-2" style="width: 100%; height: 16px;"></div>
+                <div class="skeleton skeleton-text mb-2" style="width: 90%; height: 16px;"></div>
+                <div class="skeleton skeleton-text" style="width: 60%; height: 16px;"></div>
+                <div class="d-flex gap-2 mt-3">
+                    <div class="skeleton" style="width: 80px; height: 32px; border-radius: 6px;"></div>
+                    <div class="skeleton" style="width: 80px; height: 32px; border-radius: 6px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+{% elif type == 'list' %}
+    {# List Skeleton - for message/booking lists #}
+    {% for i in range(count|default(5)) %}
+    <div class="card mb-3">
+        <div class="card-body">
+            <div class="d-flex align-items-start">
+                <div class="skeleton rounded-circle me-3" style="width: 48px; height: 48px;"></div>
+                <div class="flex-grow-1">
+                    <div class="skeleton skeleton-text mb-2" style="width: 40%; height: 20px;"></div>
+                    <div class="skeleton skeleton-text mb-2" style="width: 100%; height: 16px;"></div>
+                    <div class="skeleton skeleton-text" style="width: 70%; height: 16px;"></div>
+                </div>
+                <div class="skeleton" style="width: 80px; height: 28px; border-radius: 14px;"></div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+{% elif type == 'table' %}
+    {# Table Skeleton #}
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    {% for i in range(columns|default(4)) %}
+                    <th><div class="skeleton skeleton-text" style="width: 80%; height: 20px;"></div></th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in range(count|default(5)) %}
+                <tr>
+                    {% for j in range(columns|default(4)) %}
+                    <td><div class="skeleton skeleton-text" style="width: 90%; height: 16px;"></div></td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+{% elif type == 'text' %}
+    {# Text Block Skeleton #}
+    {% for i in range(count|default(3)) %}
+    <div class="skeleton skeleton-text mb-2" style="width: 100%; height: 16px;"></div>
+    {% endfor %}
+    <div class="skeleton skeleton-text mb-2" style="width: 80%; height: 16px;"></div>
+
+{% else %}
+    {# Default Generic Skeleton #}
+    <div class="skeleton" style="width: 100%; height: 200px;"></div>
+{% endif %}
+
+<style>
+    .skeleton {
+        background: linear-gradient(
+            90deg,
+            var(--color-gray-200) 25%,
+            var(--color-gray-100) 50%,
+            var(--color-gray-200) 75%
+        );
+        background-size: 200% 100%;
+        animation: shimmer 1.5s infinite;
+        border-radius: var(--radius-sm);
+    }
+    
+    .skeleton-text {
+        border-radius: 4px;
+    }
+    
+    @keyframes shimmer {
+        0% {
+            background-position: 200% 0;
+        }
+        100% {
+            background-position: -200% 0;
+        }
+    }
+</style>

@@ -1,0 +1,13 @@
+// =============================================================================
+// TOKEN BARREL EXPORT - Enterprise Design System
+// =============================================================================
+// Central entry point for all design tokens
+// Use: @use '../tokens' as tokens;
+// =============================================================================
+
+@forward 'colors';
+@forward 'typography';
+@forward 'spacing';
+@forward 'shadows';
+@forward 'borders';
+@forward 'z-index';

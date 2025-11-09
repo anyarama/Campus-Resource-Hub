@@ -1,0 +1,251 @@
+// =============================================================================
+// BUTTON COMPONENT - Enterprise Design System
+// =============================================================================
+// Modern button styles with variants and states
+// Apple/Linear aesthetic: Clean, minimal, purposeful
+// =============================================================================
+
+.btn {
+  // Base button styles
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-button-gap);
+  
+  padding: var(--spacing-button-padding-md);
+  
+  font-family: var(--font-family-sans);
+  font-size: var(--typography-button-size);
+  font-weight: var(--typography-button-weight);
+  line-height: var(--typography-button-line-height);
+  letter-spacing: var(--typography-button-letter-spacing);
+  text-decoration: none;
+  white-space: nowrap;
+  
+  border: var(--border-width-1) solid transparent;
+  border-radius: var(--border-radius-button);
+  
+  cursor: pointer;
+  transition: all 0.15s ease;
+  
+  &:focus-visible {
+    outline: 2px solid var(--color-border-focus);
+    outline-offset: 2px;
+  }
+  
+  &:disabled,
+  &.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+  
+  // Icon support
+  svg, .icon {
+    width: 1em;
+    height: 1em;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// SIZE VARIANTS
+// -----------------------------------------------------------------------------
+.btn-sm {
+  padding: var(--spacing-button-padding-sm);
+  font-size: var(--font-size-xs);
+}
+
+.btn-lg {
+  padding: var(--spacing-button-padding-lg);
+  font-size: var(--font-size-base);
+}
+
+// -----------------------------------------------------------------------------
+// COLOR VARIANTS
+// -----------------------------------------------------------------------------
+
+// Primary (Crimson brand)
+.btn-primary {
+  background-color: var(--color-interactive-default);
+  color: var(--color-text-on-primary);
+  border-color: var(--color-interactive-default);
+  box-shadow: var(--shadow-button);
+  
+  &:hover:not(:disabled) {
+    background-color: var(--color-interactive-hover);
+    border-color: var(--color-interactive-hover);
+    box-shadow: var(--shadow-button-hover);
+  }
+  
+  &:active:not(:disabled) {
+    background-color: var(--color-interactive-active);
+    border-color: var(--color-interactive-active);
+    transform: translateY(1px);
+  }
+}
+
+// Secondary (Subtle)
+.btn-secondary {
+  background-color: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+  border-color: var(--color-border-default);
+  box-shadow: var(--shadow-button);
+  
+  &:hover:not(:disabled) {
+    background-color: var(--color-bg-tertiary);
+    border-color: var(--color-border-medium);
+    box-shadow: var(--shadow-button-hover);
+  }
+  
+  &:active:not(:disabled) {
+    background-color: var(--color-gray-200);
+    transform: translateY(1px);
+  }
+}
+
+// Outline
+.btn-outline {
+  background-color: transparent;
+  color: var(--color-interactive-default);
+  border-color: var(--color-interactive-default);
+  
+  &:hover:not(:disabled) {
+    background-color: var(--color-primary-50);
+    border-color: var(--color-interactive-hover);
+  }
+  
+  &:active:not(:disabled) {
+    background-color: var(--color-primary-100);
+    transform: translateY(1px);
+  }
+}
+
+// Ghost (Text-only)
+.btn-ghost {
+  background-color: transparent;
+  color: var(--color-interactive-default);
+  border-color: transparent;
+  
+  &:hover:not(:disabled) {
+    background-color: var(--color-primary-50);
+  }
+  
+  &:active:not(:disabled) {
+    background-color: var(--color-primary-100);
+  }
+}
+
+// Danger (Destructive actions)
+.btn-danger {
+  background-color: var(--color-error);
+  color: var(--color-white);
+  border-color: var(--color-error);
+  box-shadow: var(--shadow-button);
+  
+  &:hover:not(:disabled) {
+    background-color: var(--color-error-dark);
+    border-color: var(--color-error-dark);
+    box-shadow: var(--shadow-button-hover);
+  }
+  
+  &:active:not(:disabled) {
+    background-color: #b91c1c;
+    transform: translateY(1px);
+  }
+}
+
+// Success
+.btn-success {
+  background-color: var(--color-success);
+  color: var(--color-white);
+  border-color: var(--color-success);
+  box-shadow: var(--shadow-button);
+  
+  &:hover:not(:disabled) {
+    background-color: var(--color-success-dark);
+    border-color: var(--color-success-dark);
+    box-shadow: var(--shadow-button-hover);
+  }
+}
+
+// -----------------------------------------------------------------------------
+// BLOCK (Full width)
+// -----------------------------------------------------------------------------
+.btn-block {
+  display: flex;
+  width: 100%;
+}
+
+// -----------------------------------------------------------------------------
+// ICON-ONLY BUTTONS
+// -----------------------------------------------------------------------------
+.btn-icon {
+  padding: var(--spacing-3);
+  width: 40px;
+  height: 40px;
+  
+  &.btn-sm {
+    width: 32px;
+    height: 32px;
+    padding: var(--spacing-2);
+  }
+  
+  &.btn-lg {
+    width: 48px;
+    height: 48px;
+    padding: var(--spacing-4);
+  }
+}
+
+// -----------------------------------------------------------------------------
+// BUTTON GROUPS
+// -----------------------------------------------------------------------------
+.btn-group {
+  display: inline-flex;
+  
+  .btn {
+    border-radius: 0;
+    
+    &:first-child {
+      border-top-left-radius: var(--border-radius-button);
+      border-bottom-left-radius: var(--border-radius-button);
+    }
+    
+    &:last-child {
+      border-top-right-radius: var(--border-radius-button);
+      border-bottom-right-radius: var(--border-radius-button);
+    }
+    
+    &:not(:last-child) {
+      border-right-width: 0;
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// LOADING STATE
+// -----------------------------------------------------------------------------
+.btn-loading {
+  position: relative;
+  color: transparent !important;
+  pointer-events: none;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 1em;
+    height: 1em;
+    margin-top: -0.5em;
+    margin-left: -0.5em;
+    border: 2px solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: btn-spin 0.6s linear infinite;
+  }
+}
+
+@keyframes btn-spin {
+  to { transform: rotate(360deg); }
+}

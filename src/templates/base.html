@@ -6,119 +6,191 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>{% block title %}Campus Resource Hub{% endblock %}</title>
     
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Preconnect for performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
     
-    <!-- Bootstrap Icons -->
+    <!-- Enterprise CSS (Vite build) -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='dist/assets/style-FDlKo-cV.css') }}">
+    
+    <!-- Bootstrap Icons (kept for icon support) -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    
-    <!-- Custom CSS (Phase 5) -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     
     {% block extra_css %}{% endblock %}
 </head>
 <body>
-    <!-- Navigation Bar - Enterprise sticky navbar with glassmorphism -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top shadow-sm" style="backdrop-filter: blur(10px); background-color: rgba(37, 99, 235, 0.95) !important;">
-        <div class="container">
-            <a class="navbar-brand" href="{{ url_for('resources.dashboard') if current_user.is_authenticated else url_for('auth.login') }}">
-                Campus Resource Hub
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    {% if current_user.is_authenticated %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('resources.index') }}">
-                            <i class="bi bi-box-seam"></i> Resources
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('concierge.index') }}">
-                            <i class="bi bi-robot"></i> AI Concierge
-                        </a>
-                    </li>
-                        <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('resources.index') }}">
-                        <i class="bi bi-grid-3x3-gap"></i> Browse Resources
-                    </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('bookings.my_bookings') }}">
-                                <i class="bi bi-calendar-check"></i> My Bookings
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('messages.inbox') }}">
-                                <i class="bi bi-envelope"></i> Messages
-                                <span class="badge bg-danger rounded-pill" id="unreadBadge" style="display: none;">0</span>
-                            </a>
-                        </li>
-                        {% if current_user.role == 'admin' %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('admin.dashboard') }}">
-                                <i class="bi bi-shield-lock"></i> Admin
-                            </a>
-                        </li>
-                        {% endif %}
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
-                                {{ current_user.name }}
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                                <li><a class="dropdown-item" href="{{ url_for('auth.profile') }}">Profile</a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li>
-                                    <form method="POST" action="{{ url_for('auth.logout') }}" style="margin: 0;">
-                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                                        <button type="submit" class="dropdown-item">Logout</button>
-                                    </form>
-                                </li>
-                            </ul>
-                        </li>
-                    {% else %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('auth.register') }}">Register</a>
-                        </li>
-                    {% endif %}
-                </ul>
+    <!-- Skip Link for Accessibility -->
+    <a href="#main" class="skip-link">Skip to main content</a>
+    
+    <div class="{% if current_user.is_authenticated %}app-shell{% else %}guest-layout{% endif %}">
+        {% if current_user.is_authenticated %}
+        <!-- Sidebar (Authenticated Only) -->
+        <aside class="app-sidebar" role="navigation" aria-label="Primary navigation">
+            <div class="sidebar-header">
+                <a href="{{ url_for('resources.dashboard') }}" class="sidebar-brand">
+                    <span class="brand-icon">🎓</span>
+                    <span class="brand-text">CRH</span>
+                </a>
             </div>
-        </div>
-    </nav>
-
-    <!-- Flash Messages -->
-    <div class="container mt-3">
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            
+            <nav class="sidebar-nav">
+                <a href="{{ url_for('resources.dashboard') }}" class="sidebar-link {% if request.endpoint == 'resources.dashboard' %}active{% endif %}">
+                    <i class="bi bi-house-door"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="{{ url_for('resources.index') }}" class="sidebar-link {% if request.endpoint in ['resources.index', 'resources.detail'] %}active{% endif %}">
+                    <i class="bi bi-grid-3x3-gap"></i>
+                    <span>Browse Resources</span>
+                </a>
+                <a href="{{ url_for('resources.my_resources') }}" class="sidebar-link {% if request.endpoint == 'resources.my_resources' %}active{% endif %}">
+                    <i class="bi bi-box-seam"></i>
+                    <span>My Resources</span>
+                </a>
+                <a href="{{ url_for('bookings.my_bookings') }}" class="sidebar-link {% if request.endpoint == 'bookings.my_bookings' %}active{% endif %}">
+                    <i class="bi bi-calendar-check"></i>
+                    <span>My Bookings</span>
+                </a>
+                <a href="{{ url_for('messages.inbox') }}" class="sidebar-link {% if request.endpoint in ['messages.inbox', 'messages.conversation'] %}active{% endif %}">
+                    <i class="bi bi-envelope"></i>
+                    <span>Messages</span>
+                    <span class="badge badge-error" id="msgBadge" style="display: none;">0</span>
+                </a>
+                <a href="{{ url_for('concierge.index') }}" class="sidebar-link {% if request.endpoint == 'concierge.index' %}active{% endif %}">
+                    <i class="bi bi-robot"></i>
+                    <span>AI Concierge</span>
+                </a>
+                
+                {% if current_user.role == 'admin' %}
+                <div class="sidebar-divider"></div>
+                <div class="sidebar-section-title">Administration</div>
+                <a href="{{ url_for('admin.dashboard') }}" class="sidebar-link {% if request.endpoint == 'admin.dashboard' %}active{% endif %}">
+                    <i class="bi bi-speedometer2"></i>
+                    <span>Admin Dashboard</span>
+                </a>
+                <a href="{{ url_for('admin.users') }}" class="sidebar-link {% if request.endpoint in ['admin.users', 'admin.user_detail'] %}active{% endif %}">
+                    <i class="bi bi-people"></i>
+                    <span>Users</span>
+                </a>
+                <a href="{{ url_for('admin.analytics') }}" class="sidebar-link {% if request.endpoint == 'admin.analytics' %}active{% endif %}">
+                    <i class="bi bi-graph-up"></i>
+                    <span>Analytics</span>
+                </a>
+                {% endif %}
+            </nav>
+            
+            <div class="sidebar-footer">
+                <a href="{{ url_for('auth.profile') }}" class="sidebar-user">
+                    <div class="user-avatar">{{ current_user.name[0].upper() }}</div>
+                    <div class="user-info">
+                        <div class="user-name">{{ current_user.name }}</div>
+                        <div class="user-role">{{ current_user.role|title }}</div>
                     </div>
-                {% endfor %}
+                </a>
+            </div>
+        </aside>
+        {% endif %}
+        
+        <!-- Header -->
+        <header class="{% if current_user.is_authenticated %}app-topbar{% else %}guest-header{% endif %}" role="banner">
+            {% if current_user.is_authenticated %}
+            <button class="topbar-toggle" data-sidebar-toggle aria-label="Toggle sidebar">
+                <i class="bi bi-list"></i>
+            </button>
+            
+            <div class="topbar-search">
+                <!-- Optional: Global search -->
+            </div>
+            
+            <div class="topbar-actions">
+                <button class="topbar-action" data-theme-toggle aria-label="Toggle theme">
+                    <span class="theme-icon">🌙</span>
+                </button>
+                
+                <div class="topbar-user-menu">
+                    <button class="topbar-action" data-modal-open="userMenu">
+                        <i class="bi bi-person-circle"></i>
+                    </button>
+                    <div class="dropdown-menu" id="userMenu">
+                        <a href="{{ url_for('auth.profile') }}" class="dropdown-item">
+                            <i class="bi bi-person"></i> Profile
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <form method="POST" action="{{ url_for('auth.logout') }}">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                            <button type="submit" class="dropdown-item">
+                                <i class="bi bi-box-arrow-right"></i> Logout
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="container">
+                <nav class="guest-nav">
+                    <a href="{{ url_for('auth.login') }}" class="guest-brand">
+                        <span class="brand-icon">🎓</span>
+                        <span class="brand-text">Campus Resource Hub</span>
+                    </a>
+                    <div class="guest-actions">
+                        <button class="topbar-action" data-theme-toggle aria-label="Toggle theme">
+                            <span class="theme-icon">🌙</span>
+                        </button>
+                        <a href="{{ url_for('auth.login') }}" class="btn btn-outline">Login</a>
+                        <a href="{{ url_for('auth.register') }}" class="btn btn-primary">Register</a>
+                    </div>
+                </nav>
+            </div>
             {% endif %}
-        {% endwith %}
+        </header>
+        
+        <!-- Main Content Area (SINGLE DECLARATION) -->
+        <main id="main" class="{% if current_user.is_authenticated %}app-main{% else %}guest-main{% endif %}" role="main" tabindex="-1">
+            <div class="{% if current_user.is_authenticated %}page-content{% else %}container{% endif %}">
+                {% if current_user.is_authenticated %}
+                <!-- Breadcrumbs -->
+                {% block breadcrumbs %}{% endblock %}
+                
+                <!-- Page Header -->
+                {% block page_header %}
+                <div class="page-header">
+                    <h1>{% block page_title %}{% endblock %}</h1>
+                    <div class="page-toolbar">
+                        {% block toolbar %}{% endblock %}
+                    </div>
+                </div>
+                {% endblock %}
+                {% endif %}
+                
+                <!-- Flash Messages -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="flash-message" data-type="{{ 'error' if category == 'error' else category }}" style="display: none;">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                
+                <!-- Main Content (SINGLE BLOCK) -->
+                {% block main_content %}{% endblock %}
+            </div>
+        </main>
+        
+        {% if current_user.is_authenticated %}
+        <!-- Mobile Overlay -->
+        <div class="sidebar-overlay"></div>
+        {% else %}
+        <!-- Guest Footer -->
+        <footer class="guest-footer">
+            <div class="container">
+                <p>&copy; 2025 Campus Resource Hub - AiDD Capstone Project</p>
+            </div>
+        </footer>
+        {% endif %}
     </div>
-
-    <!-- Main Content -->
-    <main class="container my-4">
-        {% block content %}{% endblock %}
-    </main>
-
-    <!-- Footer -->
-    <footer class="bg-light text-center py-3 mt-5">
-        <div class="container">
-            <p class="mb-0">&copy; 2025 Campus Resource Hub - AiDD Capstone Project</p>
-        </div>
-    </footer>
-
-    <!-- Bootstrap 5 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Enterprise JS (Vite build) -->
+    <script type="module" src="{{ url_for('static', filename='dist/assets/enterpriseJs-CNnJ7BZk.js') }}"></script>
     
     {% block extra_js %}{% endblock %}
 </body>

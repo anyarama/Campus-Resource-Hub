@@ -1,135 +1,136 @@
 {% extends "base.html" %}
+{% from "_components.html" import form_field, button, card, badge, pagination, empty_state %}
 
 {% block title %}Browse Resources - Campus Resource Hub{% endblock %}
 
-{% block content %}
-<div class="container mt-4">
-    <!-- Page Header -->
-    <div class="row mb-4">
-        <div class="col-md-8">
-            <h1 class="display-5">Browse Resources</h1>
-            <p class="lead text-muted">Discover and book campus resources</p>
-        </div>
-        <div class="col-md-4 text-md-end">
-            {% if current_user.is_authenticated %}
-            <a href="{{ url_for('resources.create') }}" class="btn btn-primary">
-                <i class="bi bi-plus-circle"></i> Create Resource
-            </a>
-            <a href="{{ url_for('resources.my_resources') }}" class="btn btn-outline-secondary">
-                <i class="bi bi-folder"></i> My Resources
-            </a>
-            {% endif %}
-        </div>
-    </div>
+{% block page_title %}Browse Resources{% endblock %}
 
+{% block toolbar %}
+    {% if current_user.is_authenticated %}
+        {{ button(
+            text="Create Resource",
+           icon="bi-plus-circle",
+            href=url_for('resources.create'),
+            variant="primary"
+        ) }}
+        {{ button(
+            text="My Resources",
+            icon="bi-folder",
+            href=url_for('resources.my_resources'),
+            variant="outline"
+        ) }}
+    {% endif %}
+{% endblock %}
+
+{% block main_content %}
+<div class="page-container">
     <!-- Search and Filters -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <form method="GET" action="{{ url_for('resources.index') }}" class="card shadow-sm">
-                <div class="card-body">
-                    <div class="row g-3">
-                        <!-- Search Bar -->
-                        <div class="col-md-6">
-                            <label for="search" class="form-label">Search</label>
-                            <input 
-                                type="text" 
-                                class="form-control" 
-                                id="search" 
-                                name="q" 
-                                value="{{ search_term or '' }}"
-                                placeholder="Search resources..."
-                            >
-                        </div>
-
-                        <!-- Category Filter -->
-                        <div class="col-md-3">
-                            <label for="category" class="form-label">Category</label>
-                            <select class="form-select" id="category" name="category">
-                                <option value="">All Categories</option>
-                                <option value="study_room" {% if category == 'study_room' %}selected{% endif %}>Study Room</option>
-                                <option value="equipment" {% if category == 'equipment' %}selected{% endif %}>Equipment</option>
-                                <option value="lab" {% if category == 'lab' %}selected{% endif %}>Lab</option>
-                                <option value="event_space" {% if category == 'event_space' %}selected{% endif %}>Event Space</option>
-                                <option value="tutoring" {% if category == 'tutoring' %}selected{% endif %}>Tutoring</option>
-                                <option value="other" {% if category == 'other' %}selected{% endif %}>Other</option>
-                            </select>
-                        </div>
-
-                        <!-- Location Filter -->
-                        <div class="col-md-3">
-                            <label for="location" class="form-label">Location</label>
-                            <input 
-                                type="text" 
-                                class="form-control" 
-                                id="location" 
-                                name="location" 
-                                value="{{ location or '' }}"
-                                placeholder="Building or room"
-                            >
-                        </div>
-
-                        <!-- Search Button -->
-                        <div class="col-12">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="bi bi-search"></i> Search
-                            </button>
-                            <a href="{{ url_for('resources.index') }}" class="btn btn-outline-secondary">
-                                <i class="bi bi-x-circle"></i> Clear
-                            </a>
-                        </div>
-                    </div>
+    <div class="filter-section">
+        <form method="GET" action="{{ url_for('resources.index') }}" class="filter-form">
+            <div class="filter-grid">
+                <!-- Search Bar -->
+                <div class="filter-item filter-item--wide">
+                    {{ form_field(
+                        type="text",
+                        name="q",
+                        label="Search",
+                        value=search_term or '',
+                        placeholder="Search resources..."
+                    ) }}
                 </div>
-            </form>
-        </div>
+
+                <!-- Category Filter -->
+                <div class="filter-item">
+                    <label for="category" class="form-label">Category</label>
+                    <select class="form-select" id="category" name="category">
+                        <option value="">All Categories</option>
+                        <option value="study_room" {% if category == 'study_room' %}selected{% endif %}>Study Room</option>
+                        <option value="equipment" {% if category == 'equipment' %}selected{% endif %}>Equipment</option>
+                        <option value="lab" {% if category == 'lab' %}selected{% endif %}>Lab</option>
+                        <option value="event_space" {% if category == 'event_space' %}selected{% endif %}>Event Space</option>
+                        <option value="tutoring" {% if category == 'tutoring' %}selected{% endif %}>Tutoring</option>
+                        <option value="other" {% if category == 'other' %}selected{% endif %}>Other</option>
+                    </select>
+                </div>
+
+                <!-- Location Filter -->
+                <div class="filter-item">
+                    {{ form_field(
+                        type="text",
+                        name="location",
+                        label="Location",
+                        value=location or '',
+                        placeholder="Building or room"
+                    ) }}
+                </div>
+
+                <!-- Filter Actions -->
+                <div class="filter-actions">
+                    {{ button(
+                        text="Search",
+                        icon="bi-search",
+                        type="submit",
+                        variant="primary"
+                    ) }}
+                    {{ button(
+                        text="Clear",
+                        icon="bi-x-circle",
+                        href=url_for('resources.index'),
+                        variant="outline"
+                    ) }}
+                </div>
+            </div>
+        </form>
     </div>
 
-    <!-- Results -->
-    <div class="row mb-3">
-        <div class="col-12">
-            <p class="text-muted">
-                Showing {{ resources|length }} of {{ total }} resources
-                {% if search_term or category or location %}
-                    (filtered)
-                {% endif %}
-            </p>
-        </div>
+    <!-- Results Count -->
+    <div class="results-info">
+        <p class="text-muted">
+            Showing {{ resources|length }} of {{ total }} resources
+            {% if search_term or category or location %}
+                <span class="text-primary">(filtered)</span>
+            {% endif %}
+        </p>
     </div>
 
-    <!-- Resource Cards -->
+    <!-- Resource Cards Grid -->
     {% if resources %}
-    <div class="row g-4">
+    <div class="resource-grid">
         {% for resource in resources %}
-        <div class="col-md-6 col-lg-4">
-            <div class="card h-100 shadow-sm">
+        <div class="resource-card-wrapper">
+            {% call card(class="resource-card") %}
                 <!-- Resource Image -->
-                {% if resource.images %}
-                    {% set images_list = resource.images|tojson|safe %}
-                    {% set first_image = images_list[0] if images_list else None %}
-                    {% if first_image %}
-                    <img src="{{ url_for('static', filename=first_image) }}" 
-                         class="card-img-top"
-                         alt="{{ resource.title }}"
-                         style="height: 200px; object-fit: cover;">
+                <div class="resource-card__image">
+                    {% if resource.images %}
+                        {% set images_list = resource.images|tojson|safe %}
+                        {% set first_image = images_list[0] if images_list else None %}
+                        {% if first_image %}
+                        <img src="{{ url_for('static', filename=first_image) }}" 
+                             alt="{{ resource.title }}">
+                        {% else %}
+                        <div class="resource-card__placeholder">
+                            <i class="bi bi-image"></i>
+                        </div>
+                        {% endif %}
                     {% else %}
-                    <div class="card-img-top bg-secondary d-flex align-items-center justify-content-center" style="height: 200px;">
-                        <i class="bi bi-image fs-1 text-white"></i>
+                    <div class="resource-card__placeholder">
+                        <i class="bi bi-image"></i>
                     </div>
                     {% endif %}
-                {% else %}
-                <div class="card-img-top bg-secondary d-flex align-items-center justify-content-center" style="height: 200px;">
-                    <i class="bi bi-image fs-1 text-white"></i>
                 </div>
-                {% endif %}
 
-                <div class="card-body">
+                <div class="resource-card__content">
                     <!-- Category Badge -->
-                    <span class="badge bg-info text-dark mb-2">{{ resource.category|replace('_', ' ')|title }}</span>
+                    {{ badge(
+                        text=resource.category|replace('_', ' ')|title,
+                        variant="info"
+                    ) }}
 
                     <!-- Title -->
-                    <h5 class="card-title">{{ resource.title }}</h5>
+                    <h3 class="resource-card__title">{{ resource.title }}</h3>
 
                     <!-- Description -->
-                    <p class="card-text text-muted small">
+                    <p class="resource-card__description">
                         {% if resource.description %}
                             {{ resource.description[:100] }}{% if resource.description|length > 100 %}...{% endif %}
                         {% else %}
@@ -137,93 +138,58 @@
                         {% endif %}
                     </p>
 
-                    <!-- Location -->
-                    {% if resource.location %}
-                    <p class="card-text small">
-                        <i class="bi bi-geo-alt"></i> {{ resource.location }}
-                    </p>
-                    {% endif %}
+                    <!-- Meta Information -->
+                    <div class="resource-card__meta">
+                        {% if resource.location %}
+                        <span class="meta-item">
+                            <i class="bi bi-geo-alt"></i> {{ resource.location }}
+                        </span>
+                        {% endif %}
 
-                    <!-- Capacity -->
-                    {% if resource.capacity %}
-                    <p class="card-text small">
-                        <i class="bi bi-people"></i> Capacity: {{ resource.capacity }}
-                    </p>
-                    {% endif %}
+                        {% if resource.capacity %}
+                        <span class="meta-item">
+                            <i class="bi bi-people"></i> Capacity: {{ resource.capacity }}
+                        </span>
+                        {% endif %}
+                    </div>
                 </div>
 
-                <div class="card-footer bg-white">
-                    <a href="{{ url_for('resources.detail', resource_id=resource.resource_id) }}" 
-                       class="btn btn-primary btn-sm w-100">
-                        View Details
-                    </a>
+                <div class="resource-card__footer">
+                    {{ button(
+                        text="View Details",
+                        href=url_for('resources.detail', resource_id=resource.resource_id),
+                        variant="primary",
+                        size="sm",
+                        full_width=true
+                    ) }}
                 </div>
-            </div>
+            {% endcall %}
         </div>
         {% endfor %}
     </div>
     {% else %}
     <!-- Empty State -->
-    <div class="text-center py-5">
-        <i class="bi bi-inbox fs-1 text-muted"></i>
-        <h3 class="mt-3">No resources found</h3>
-        <p class="text-muted">
-            {% if search_term or category or location %}
-                Try adjusting your search filters
-            {% else %}
-                Be the first to create a resource!
-            {% endif %}
-        </p>
-        {% if current_user.is_authenticated %}
-        <a href="{{ url_for('resources.create') }}" class="btn btn-primary mt-3">
-            <i class="bi bi-plus-circle"></i> Create Resource
-        </a>
-        {% endif %}
+    <div class="empty-state-wrapper">
+        {{ empty_state(
+            icon="bi-inbox",
+            title="No resources found",
+            message="Try adjusting your search filters" if (search_term or category or location) else "Be the first to create a resource!",
+            action_text="Create Resource" if current_user.is_authenticated else none,
+            action_url=url_for('resources.create') if current_user.is_authenticated else none
+        ) }}
     </div>
     {% endif %}
 
     <!-- Pagination -->
     {% if total > per_page %}
-    <div class="row mt-4">
-        <div class="col-12">
-            <nav aria-label="Resource pagination">
-                <ul class="pagination justify-content-center">
-                    <!-- Previous Page -->
-                    <li class="page-item {% if page == 1 %}disabled{% endif %}">
-                        <a class="page-link" href="{{ url_for('resources.index', page=page-1, q=search_term, category=category, location=location) }}">
-                            Previous
-                        </a>
-                    </li>
-
-                    <!-- Page Numbers -->
-                    {% set max_pages = (total / per_page)|round(0, 'ceil')|int %}
-                    {% for p in range(1, max_pages + 1) %}
-                        {% if p == page %}
-                        <li class="page-item active">
-                            <span class="page-link">{{ p }}</span>
-                        </li>
-                        {% elif (p - page)|abs <= 2 or p == 1 or p == max_pages %}
-                        <li class="page-item">
-                            <a class="page-link" href="{{ url_for('resources.index', page=p, q=search_term, category=category, location=location) }}">
-                                {{ p }}
-                            </a>
-                        </li>
-                        {% elif (p - page)|abs == 3 %}
-                        <li class="page-item disabled">
-                            <span class="page-link">...</span>
-                        </li>
-                        {% endif %}
-                    {% endfor %}
-
-                    <!-- Next Page -->
-                    <li class="page-item {% if page * per_page >= total %}disabled{% endif %}">
-                        <a class="page-link" href="{{ url_for('resources.index', page=page+1, q=search_term, category=category, location=location) }}">
-                            Next
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-        </div>
+    <div class="pagination-wrapper">
+        {% set max_pages = (total / per_page)|round(0, 'ceil')|int %}
+        {{ pagination(
+            page=page,
+            total_pages=max_pages,
+            endpoint='resources.index',
+            query_params={'q': search_term, 'category': category, 'location': location}
+        ) }}
     </div>
     {% endif %}
 </div>

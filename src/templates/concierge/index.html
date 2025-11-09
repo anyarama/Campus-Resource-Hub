@@ -8,8 +8,9 @@
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
         padding: 3rem 0;
-        margin: -2rem -15px 2rem;
+        margin: -1.5rem -1.5rem 2rem;
         text-align: center;
+        border-radius: 0.5rem 0.5rem 0 0;
     }
     
     .concierge-hero h1 {
@@ -258,7 +259,7 @@
             
             <!-- Example Queries -->
             <div class="example-queries">
-                <small class="text-muted mb-2 d-block">Try these examples:</small>
+                <small class="text-muted  d-block">Try these examples:</small>
                 {% for example in examples %}
                 <span class="example-chip" data-query="{{ example }}">{{ example }}</span>
                 {% endfor %}
@@ -285,7 +286,7 @@
             <i class="bi bi-inbox"></i>
             <h4>No results found</h4>
             <p>Try adjusting your search or browse all resources.</p>
-            <a href="{{ url_for('resources.index') }}" class="btn btn-outline-primary mt-3">
+            <a href="{{ url_for('resources.index') }}" class="btn btn-outline-primary ">
                 Browse All Resources
             </a>
         </div>
@@ -317,7 +318,6 @@
             <p>All results come from real, available resources</p>
         </div>
     </div>
-</div>
 {% endblock %}
 
 {% block extra_js %}
@@ -412,7 +412,7 @@ document.addEventListener('DOMContentLoaded', function() {
         return message
             .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
             .replace(/\n\n/g, '<br><br>')
-            .replace(/•/g, '<i class="bi bi-check-circle text-success me-2"></i>');
+            .replace(/•/g, '<i class="bi bi-check-circle text-success "></i>');
     }
     
     function createResourceCard(resource) {
@@ -425,9 +425,9 @@ document.addEventListener('DOMContentLoaded', function() {
             <div class="resource-meta">
                 ${resource.capacity ? `<span><i class="bi bi-people"></i> ${resource.capacity}</span>` : ''}
                 ${resource.location ? `<span><i class="bi bi-geo-alt"></i> ${resource.location}</span>` : ''}
-                ${resource.category ? `<span class="badge bg-primary">${resource.category}</span>` : ''}
+                ${resource.category ? `<span class="badge badge-primary">${resource.category}</span>` : ''}
             </div>
-            <a href="${resource.url}" class="btn btn-primary btn-sm w-100 mt-2">
+            <a href="${resource.url}" class="btn btn-primary ">
                 View Details <i class="bi bi-arrow-right"></i>
             </a>
         `;

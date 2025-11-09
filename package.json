@@ -1,0 +1,17 @@
+{
+  "name": "campus-resource-hub",
+  "version": "1.0.0",
+  "description": "Enterprise UI for Campus Resource Hub",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0",
+    "sass": "^1.69.0",
+    "autoprefixer": "^10.4.16",
+    "postcss": "^8.4.31"
+  }
+}

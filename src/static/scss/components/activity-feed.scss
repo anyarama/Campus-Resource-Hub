@@ -1,0 +1,694 @@
+// =============================================================================
+// ACTIVITY FEED COMPONENT
+// =============================================================================
+// Timeline/feed of recent activities, notifications, and updates
+// Used in admin dashboards, user profiles, and notification panels
+
+@use '../tokens' as *;
+
+// -----------------------------------------------------------------------------
+// Activity Feed Container
+// -----------------------------------------------------------------------------
+.activity-feed {
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  border: 1px solid var(--color-gray-200);
+  border-radius: $border-radius-lg;
+  overflow: hidden;
+}
+
+// -----------------------------------------------------------------------------
+// Activity Feed Header
+// -----------------------------------------------------------------------------
+.activity-feed__header {
+  padding: $spacing-5 $spacing-6;
+  border-bottom: 1px solid var(--color-gray-200);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  
+  &-title {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    color: var(--color-gray-900);
+  }
+  
+  &-action {
+    font-size: $font-size-sm;
+    color: var(--color-primary);
+    text-decoration: none;
+    font-weight: $font-weight-medium;
+    
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Activity Feed List
+// -----------------------------------------------------------------------------
+.activity-feed__list {
+  display: flex;
+  flex-direction: column;
+  max-height: 600px;
+  overflow-y: auto;
+  
+  // Custom scrollbar
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: var(--color-gray-300);
+    border-radius: $border-radius-full;
+    
+    &:hover {
+      background: var(--color-gray-400);
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Activity Item
+// -----------------------------------------------------------------------------
+.activity-item {
+  display: flex;
+  gap: $spacing-4;
+  padding: $spacing-4 $spacing-6;
+  border-bottom: 1px solid var(--color-gray-100);
+  transition: background-color 0.2s;
+  position: relative;
+  
+  &:last-child {
+    border-bottom: none;
+  }
+  
+  &:hover {
+    background-color: var(--color-gray-50);
+  }
+  
+  // Unread indicator
+  &.is-unread {
+    background-color: var(--color-primary-50);
+    
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background-color: var(--color-primary);
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Activity Icon/Avatar
+// -----------------------------------------------------------------------------
+.activity-item__icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+  
+  // Avatar image
+  img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  
+  // Icon (for system events)
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+  
+  // Type indicator badge
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 2px solid white;
+  }
+  
+  // Event type colors
+  &--booking::after {
+    background-color: var(--color-success-500);
+  }
+  
+  &--message::after {
+    background-color: #3b82f6;
+  }
+  
+  &--review::after {
+    background-color: var(--color-warning-500);
+  }
+  
+  &--alert::after {
+    background-color: var(--color-error-500);
+  }
+  
+  &--resource::after {
+    background-color: #8b5cf6;
+  }
+}
+
+// Icon-only activity (no avatar)
+.activity-item__icon--system {
+  background-color: var(--color-gray-100);
+  color: var(--color-gray-600);
+}
+
+// -----------------------------------------------------------------------------
+// Activity Content
+// -----------------------------------------------------------------------------
+.activity-item__content {
+  flex: 1;
+  min-width: 0; // Allow text truncation
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-1;
+}
+
+.activity-item__text {
+  font-size: $font-size-sm;
+  color: var(--color-gray-700);
+  line-height: 1.5;
+  
+  // Bold user names and actions
+  strong {
+    font-weight: $font-weight-semibold;
+    color: var(--color-gray-900);
+  }
+  
+  // Links within activity text
+  a {
+    color: var(--color-primary);
+    text-decoration: none;
+    
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.activity-item__meta {
+  display: flex;
+  align-items: center;
+  gap: $spacing-2;
+  font-size: $font-size-xs;
+  color: var(--color-gray-500);
+}
+
+.activity-item__time {
+  display: flex;
+  align-items: center;
+  gap: $spacing-1;
+  
+  svg {
+    width: 12px;
+    height: 12px;
+  }
+}
+
+.activity-item__location {
+  display: flex;
+  align-items: center;
+  gap: $spacing-1;
+  
+  svg {
+    width: 12px;
+    height: 12px;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Activity Actions (buttons, links on hover)
+// -----------------------------------------------------------------------------
+.activity-item__actions {
+  display: flex;
+  gap: $spacing-2;
+  margin-top: $spacing-2;
+}
+
+.activity-item__action {
+  padding: $spacing-1 $spacing-3;
+  border: 1px solid var(--color-gray-300);
+  border-radius: $border-radius-md;
+  background: white;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  color: var(--color-gray-700);
+  cursor: pointer;
+  transition: all 0.2s;
+  
+  &:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+    background-color: var(--color-primary-50);
+  }
+  
+  &--primary {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+    color: white;
+    
+    &:hover {
+      background-color: var(--color-primary-dark);
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Activity Types (Campus-Specific)
+// -----------------------------------------------------------------------------
+
+// Booking activity
+.activity-item--booking {
+  .activity-item__icon--system {
+    background-color: var(--color-success-50);
+    color: var(--color-success-600);
+  }
+}
+
+// Message activity
+.activity-item--message {
+  .activity-item__icon--system {
+    background-color: #eff6ff;
+    color: #3b82f6;
+  }
+}
+
+// Review activity
+.activity-item--review {
+  .activity-item__icon--system {
+    background-color: var(--color-warning-50);
+    color: var(--color-warning-600);
+  }
+  
+  .activity-item__rating {
+    display: inline-flex;
+    gap: $spacing-1;
+    margin-left: $spacing-2;
+    
+    svg {
+      width: 14px;
+      height: 14px;
+      fill: var(--color-warning-500);
+    }
+  }
+}
+
+// Resource activity (created, updated, archived)
+.activity-item--resource {
+  .activity-item__icon--system {
+    background-color: #faf5ff;
+    color: #9333ea;
+  }
+}
+
+// Alert/notification activity
+.activity-item--alert {
+  .activity-item__icon--system {
+    background-color: var(--color-error-50);
+    color: var(--color-error-600);
+  }
+}
+
+// User activity (joined, updated profile)
+.activity-item--user {
+  .activity-item__icon--system {
+    background-color: #eff6ff;
+    color: #3b82f6;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Activity Timeline (vertical line connecting items)
+// -----------------------------------------------------------------------------
+.activity-feed--timeline {
+  .activity-item {
+    padding-left: $spacing-8;
+    position: relative;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      left: 39px; // Center of icon
+      top: 40px;
+      bottom: -$spacing-4;
+      width: 2px;
+      background-color: var(--color-gray-200);
+    }
+    
+    &:last-child::before {
+      display: none;
+    }
+  }
+  
+  .activity-item__icon {
+    position: absolute;
+    left: $spacing-5;
+    top: $spacing-4;
+    border: 3px solid white;
+    box-shadow: 0 0 0 1px var(--color-gray-200);
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Activity Feed Empty State
+// -----------------------------------------------------------------------------
+.activity-feed__empty {
+  padding: $spacing-12 $spacing-6;
+  text-align: center;
+  color: var(--color-gray-500);
+  
+  &-icon {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto $spacing-4;
+    color: var(--color-gray-400);
+  }
+  
+  &-title {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    color: var(--color-gray-700);
+    margin-bottom: $spacing-2;
+  }
+  
+  &-description {
+    font-size: $font-size-sm;
+    color: var(--color-gray-500);
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Activity Feed Loading State
+// -----------------------------------------------------------------------------
+.activity-feed__loading {
+  padding: $spacing-8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-gray-500);
+  
+  .spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid var(--color-gray-200);
+    border-top-color: var(--color-primary);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Activity Feed Grouping (by date/time)
+// -----------------------------------------------------------------------------
+.activity-group {
+  &__header {
+    padding: $spacing-3 $spacing-6;
+    background-color: var(--color-gray-50);
+    border-bottom: 1px solid var(--color-gray-200);
+    font-size: $font-size-xs;
+    font-weight: $font-weight-semibold;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-gray-600);
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Compact Activity Feed (smaller items)
+// -----------------------------------------------------------------------------
+.activity-feed--compact {
+  .activity-item {
+    padding: $spacing-3 $spacing-4;
+    gap: $spacing-3;
+  }
+  
+  .activity-item__icon {
+    width: 32px;
+    height: 32px;
+    
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+    
+    &::after {
+      width: 12px;
+      height: 12px;
+    }
+  }
+  
+  .activity-item__text {
+    font-size: $font-size-xs;
+  }
+  
+  .activity-item__meta {
+    font-size: 11px;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Activity Feed with Filters
+// -----------------------------------------------------------------------------
+.activity-feed__filters {
+  padding: $spacing-4 $spacing-6;
+  border-bottom: 1px solid var(--color-gray-200);
+  display: flex;
+  gap: $spacing-2;
+  flex-wrap: wrap;
+}
+
+.activity-filter {
+  padding: $spacing-1 $spacing-3;
+  border: 1px solid var(--color-gray-300);
+  border-radius: $border-radius-full;
+  background: white;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  color: var(--color-gray-700);
+  cursor: pointer;
+  transition: all 0.2s;
+  
+  &:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+  }
+  
+  &.is-active {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+    color: white;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Activity Feed Load More Button
+// -----------------------------------------------------------------------------
+.activity-feed__load-more {
+  padding: $spacing-4;
+  border-top: 1px solid var(--color-gray-200);
+  text-align: center;
+  
+  button {
+    padding: $spacing-2 $spacing-4;
+    border: 1px solid var(--color-gray-300);
+    border-radius: $border-radius-md;
+    background: white;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: var(--color-gray-700);
+    cursor: pointer;
+    transition: all 0.2s;
+    
+    &:hover {
+      border-color: var(--color-primary);
+      color: var(--color-primary);
+      background-color: var(--color-primary-50);
+    }
+    
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Responsive Adjustments
+// -----------------------------------------------------------------------------
+@media (max-width: 768px) {
+  .activity-feed__header {
+    padding: $spacing-4;
+  }
+  
+  .activity-item {
+    padding: $spacing-3 $spacing-4;
+    gap: $spacing-3;
+  }
+  
+  .activity-item__icon {
+    width: 36px;
+    height: 36px;
+    
+    svg {
+      width: 18px;
+      height: 18px;
+    }
+  }
+  
+  .activity-item__text {
+    font-size: $font-size-xs;
+  }
+  
+  .activity-item__actions {
+    flex-direction: column;
+    
+    .activity-item__action {
+      width: 100%;
+    }
+  }
+  
+  .activity-feed--timeline {
+    .activity-item {
+      padding-left: $spacing-6;
+    }
+    
+    .activity-item__icon {
+      left: $spacing-4;
+      width: 32px;
+      height: 32px;
+    }
+    
+    .activity-item::before {
+      left: 35px;
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Dark Theme Adjustments
+// -----------------------------------------------------------------------------
+@media (prefers-color-scheme: dark) {
+  .activity-feed {
+    background-color: var(--color-gray-900);
+    border-color: var(--color-gray-800);
+  }
+  
+  .activity-feed__header {
+    border-bottom-color: var(--color-gray-800);
+    
+    &-title {
+      color: white;
+    }
+  }
+  
+  .activity-item {
+    border-bottom-color: var(--color-gray-800);
+    
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+    
+    &.is-unread {
+      background-color: rgba(var(--color-primary), 0.1);
+    }
+  }
+  
+  .activity-item__text {
+    color: var(--color-gray-300);
+    
+    strong {
+      color: white;
+    }
+  }
+  
+  .activity-item__meta {
+    color: var(--color-gray-500);
+  }
+  
+  .activity-item__icon--system {
+    background-color: var(--color-gray-800);
+    color: var(--color-gray-400);
+  }
+  
+  .activity-group__header {
+    background-color: var(--color-gray-800);
+    border-bottom-color: var(--color-gray-700);
+  }
+  
+  .activity-feed__empty {
+    color: var(--color-gray-400);
+    
+    &-title {
+      color: var(--color-gray-300);
+    }
+  }
+  
+  .activity-filter {
+    background-color: var(--color-gray-800);
+    border-color: var(--color-gray-700);
+    color: var(--color-gray-300);
+    
+    &:hover {
+      border-color: var(--color-primary);
+      color: var(--color-primary);
+    }
+    
+    &.is-active {
+      background-color: var(--color-primary);
+      border-color: var(--color-primary);
+      color: white;
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Print Styles
+// -----------------------------------------------------------------------------
+@media print {
+  .activity-feed__header-action,
+  .activity-item__actions,
+  .activity-feed__filters,
+  .activity-feed__load-more {
+    display: none;
+  }
+  
+  .activity-feed__list {
+    max-height: none;
+  }
+  
+  .activity-item {
+    break-inside: avoid;
+  }
+}

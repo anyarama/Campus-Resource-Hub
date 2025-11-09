@@ -1,0 +1,61 @@
+// =============================================================================
+// MAIN STYLESHEET - Campus Resource Hub Enterprise Design System
+// =============================================================================
+// IU/Kelley Crimson Brand (#990000)
+// Modern, clean, enterprise-grade aesthetic (Apple/Linear/Atlassian-inspired)
+// =============================================================================
+
+// -----------------------------------------------------------------------------
+// DESIGN TOKENS
+// -----------------------------------------------------------------------------
+// Import all design tokens (colors, typography, spacing, shadows, borders, z-index)
+@use 'tokens';
+
+// -----------------------------------------------------------------------------
+// BASE STYLES
+// -----------------------------------------------------------------------------
+// CSS Reset + Base HTML element styles
+@use 'base/reset';
+@use 'base/typography';
+@use 'base/layout';
+
+// -----------------------------------------------------------------------------
+// THEMES (TODO: Add after base testing)
+// -----------------------------------------------------------------------------
+// @use 'themes/light';
+// @use 'themes/dark';
+
+// -----------------------------------------------------------------------------
+// BOOTSTRAP COMPATIBILITY LAYER
+// -----------------------------------------------------------------------------
+// Maps Bootstrap 5 class names to Phase 12 design system
+@use 'compat/bootstrap-bridge';
+
+// -----------------------------------------------------------------------------
+// COMPONENTS - All 15 Enterprise Components
+// -----------------------------------------------------------------------------
+@use 'components/button';
+@use 'components/form';
+@use 'components/card';
+@use 'components/table';
+@use 'components/badge';
+@use 'components/alert';
+@use 'components/modal';
+@use 'components/tabs';
+@use 'components/pagination';
+@use 'components/skeleton';
+@use 'components/sidebar';
+@use 'components/navbar';
+@use 'components/filter-drawer';
+@use 'components/kpi-tile';
+@use 'components/activity-feed';
+
+// -----------------------------------------------------------------------------
+// PAGE-SPECIFIC STYLES - All 6 Page Layouts
+// -----------------------------------------------------------------------------
+@use 'pages/auth';
+@use 'pages/dashboard';
+@use 'pages/resources';
+@use 'pages/bookings';
+@use 'pages/messages';
+@use 'pages/admin';

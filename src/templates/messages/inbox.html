@@ -2,131 +2,112 @@
 
 {% block title %}Messages{% endblock %}
 
-{% block content %}
-<div class="container mt-4">
-    <!-- Page Header -->
-    <div class="row mb-4">
-        <div class="col-md-8">
-            <h2>
-                <i class="bi bi-envelope me-2"></i>Messages
-            </h2>
-            <p class="text-muted">Communicate with resource owners and bookers</p>
-        </div>
-        <div class="col-md-4 text-md-end">
-            {% if unread_count > 0 %}
-                <span class="badge bg-danger fs-6">{{ unread_count }} Unread</span>
-            {% endif %}
-        </div>
-    </div>
+{% block page_title %}Messages{% endblock %}
 
+{% block toolbar %}
+    {% if unread_count > 0 %}
+        <span class="badge badge-error">{{ unread_count }} Unread</span>
+    {% endif %}
+{% endblock %}
+
+{% block main_content %}
     <!-- Stats Cards -->
-    <div class="row mb-4">
-        <div class="col-md-3">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body text-center">
-                    <i class="bi bi-chat-dots text-primary" style="font-size: 2rem;"></i>
-                    <h4 class="mt-2 mb-0">{{ stats.conversations }}</h4>
-                    <small class="text-muted">Conversations</small>
-                </div>
+    <div class="stats-grid">
+        <div class="kpi-tile">
+            <div class="kpi-icon kpi-primary">
+                <i class="bi bi-chat-dots"></i>
             </div>
+            <div class="kpi-value">{{ stats.conversations }}</div>
+            <div class="kpi-label">Conversations</div>
         </div>
-        <div class="col-md-3">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body text-center">
-                    <i class="bi bi-envelope-open text-success" style="font-size: 2rem;"></i>
-                    <h4 class="mt-2 mb-0">{{ stats.total_received }}</h4>
-                    <small class="text-muted">Received</small>
-                </div>
+        <div class="kpi-tile">
+            <div class="kpi-icon kpi-success">
+                <i class="bi bi-envelope-open"></i>
             </div>
+            <div class="kpi-value">{{ stats.total_received }}</div>
+            <div class="kpi-label">Received</div>
         </div>
-        <div class="col-md-3">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body text-center">
-                    <i class="bi bi-send text-info" style="font-size: 2rem;"></i>
-                    <h4 class="mt-2 mb-0">{{ stats.total_sent }}</h4>
-                    <small class="text-muted">Sent</small>
-                </div>
+        <div class="kpi-tile">
+            <div class="kpi-icon kpi-info">
+                <i class="bi bi-send"></i>
             </div>
+            <div class="kpi-value">{{ stats.total_sent }}</div>
+            <div class="kpi-label">Sent</div>
         </div>
-        <div class="col-md-3">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body text-center">
-                    <i class="bi bi-exclamation-circle text-warning" style="font-size: 2rem;"></i>
-                    <h4 class="mt-2 mb-0">{{ stats.unread }}</h4>
-                    <small class="text-muted">Unread</small>
-                </div>
+        <div class="kpi-tile">
+            <div class="kpi-icon kpi-warning">
+                <i class="bi bi-exclamation-circle"></i>
             </div>
+            <div class="kpi-value">{{ stats.unread }}</div>
+            <div class="kpi-label">Unread</div>
         </div>
     </div>
 
     <!-- Conversations List -->
-    <div class="card shadow-sm">
-        <div class="card-header bg-white">
-            <h5 class="mb-0">
-                <i class="bi bi-list-ul me-2"></i>Conversations
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title">
+                <i class="bi bi-list-ul"></i>Conversations
             </h5>
         </div>
-        <div class="card-body p-0">
+        <div class="card-body card-body-flush">
             {% if conversations %}
-                <div class="list-group list-group-flush">
+                <div class="conversation-list">
                     {% for conv in conversations %}
                         <a href="{{ url_for('messages.conversation', user_id=conv.other_user.user_id) }}" 
-                           class="list-group-item list-group-item-action {{ 'list-group-item-warning' if conv.unread_count > 0 }}">
-                            <div class="d-flex align-items-start">
+                           class="conversation-item {{ 'conversation-unread' if conv.unread_count > 0 }}">
+                            <div class="conversation-content">
                                 <!-- User Avatar -->
-                                <div class="me-3">
+                                <div class="conversation-avatar">
                                     {% if conv.other_user.profile_image %}
                                         <img src="{{ url_for('static', filename='uploads/' + conv.other_user.profile_image) }}" 
                                              alt="{{ conv.other_user.name }}"
-                                             class="rounded-circle"
-                                             width="50" 
-                                             height="50"
-                                             style="object-fit: cover;">
+                                             class="avatar avatar-lg">
                                     {% else %}
-                                        <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center"
-                                             style="width: 50px; height: 50px;">
-                                            <span class="text-white fw-bold">{{ conv.other_user.name[0].upper() }}</span>
+                                        <div class="avatar avatar-lg">
+                                            {{ conv.other_user.name[0].upper() }}
                                         </div>
                                     {% endif %}
                                 </div>
 
                                 <!-- Conversation Info -->
-                                <div class="flex-grow-1">
-                                    <div class="d-flex justify-content-between align-items-start">
-                                        <div>
-                                            <h6 class="mb-1">
+                                <div class="conversation-details">
+                                    <div class="conversation-header">
+                                        <div class="conversation-user">
+                                            <h6 class="conversation-name">
                                                 {{ conv.other_user.name }}
-                                                {% if conv.unread_count > 0 %}
-                                                    <span class="badge bg-danger rounded-pill ms-2">{{ conv.unread_count }}</span>
-                                                {% endif %}
                                             </h6>
-                                            <p class="mb-0 text-muted small">
-                                                <i class="bi bi-envelope me-1"></i>{{ conv.other_user.email }}
-                                            </p>
+                                            {% if conv.unread_count > 0 %}
+                                                <span class="badge badge-error">{{ conv.unread_count }}</span>
+                                            {% endif %}
                                         </div>
-                                        <small class="text-muted">
+                                        <span class="conversation-time">
                                             {{ conv.last_message.timestamp.strftime('%b %d, %I:%M %p') }}
-                                        </small>
+                                        </span>
                                     </div>
                                     
+                                    <p class="conversation-email">
+                                        <i class="bi bi-envelope"></i>{{ conv.other_user.email }}
+                                    </p>
+                                    
                                     <!-- Last Message Preview -->
-                                    <p class="mb-0 mt-2 text-muted">
+                                    <p class="conversation-preview">
                                         {% if conv.last_message.sender_id == current_user.user_id %}
-                                            <i class="bi bi-reply me-1"></i><strong>You:</strong>
+                                            <i class="bi bi-reply"></i><strong>You:</strong>
                                         {% else %}
-                                            <i class="bi bi-arrow-left me-1"></i>
+                                            <i class="bi bi-arrow-left"></i>
                                         {% endif %}
                                         {{ conv.last_message.get_preview(80) }}
                                     </p>
                                     
-                                    <small class="text-muted">
-                                        <i class="bi bi-chat-dots me-1"></i>{{ conv.message_count }} message{{ 's' if conv.message_count != 1 }}
-                                    </small>
+                                    <span class="conversation-count">
+                                        <i class="bi bi-chat-dots"></i>{{ conv.message_count }} message{{ 's' if conv.message_count != 1 }}
+                                    </span>
                                 </div>
 
                                 <!-- Arrow -->
-                                <div class="ms-2">
-                                    <i class="bi bi-chevron-right text-muted"></i>
+                                <div class="conversation-action">
+                                    <i class="bi bi-chevron-right"></i>
                                 </div>
                             </div>
                         </a>
@@ -134,12 +115,12 @@
                 </div>
             {% else %}
                 <!-- Empty State -->
-                <div class="text-center py-5">
-                    <i class="bi bi-inbox text-muted" style="font-size: 4rem;"></i>
-                    <h4 class="mt-3 text-muted">No Messages Yet</h4>
-                    <p class="text-muted">Start a conversation by messaging a resource owner</p>
-                    <a href="{{ url_for('resources.index') }}" class="btn btn-primary mt-3">
-                        <i class="bi bi-search me-2"></i>Browse Resources
+                <div class="empty-state">
+                    <i class="bi bi-inbox empty-state-icon"></i>
+                    <h4 class="empty-state-title">No Messages Yet</h4>
+                    <p class="empty-state-text">Start a conversation by messaging a resource owner</p>
+                    <a href="{{ url_for('resources.index') }}" class="btn btn-primary">
+                        <i class="bi bi-search"></i>Browse Resources
                     </a>
                 </div>
             {% endif %}
@@ -147,12 +128,12 @@
     </div>
 
     <!-- Help Section -->
-    <div class="card border-0 bg-light mt-4">
+    <div class="card card-muted">
         <div class="card-body">
-            <h6 class="mb-3">
-                <i class="bi bi-info-circle me-2"></i>Messaging Tips
+            <h6 class="help-heading">
+                <i class="bi bi-info-circle"></i>Messaging Tips
             </h6>
-            <ul class="mb-0">
+            <ul class="help-list">
                 <li>Click on a conversation to view full message history</li>
                 <li>Unread messages are highlighted in yellow</li>
                 <li>Message resource owners directly from resource detail pages</li>
@@ -160,5 +141,4 @@
             </ul>
         </div>
     </div>
-</div>
 {% endblock %}

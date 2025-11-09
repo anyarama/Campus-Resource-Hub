@@ -173,24 +173,26 @@ def register_error_handlers(app: Flask) -> None:
 
     Per .clinerules: Error messages should NOT expose sensitive data.
     """
+    from flask import render_template
 
     @app.errorhandler(404)
     def not_found_error(error):
-        return {"error": "Resource not found"}, 404
+        return render_template('errors/404.html'), 404
 
     @app.errorhandler(403)
     def forbidden_error(error):
-        return {"error": "Access forbidden"}, 403
+        app.logger.error(f"403 Forbidden error: {error}")
+        return render_template('errors/403.html'), 403
 
     @app.errorhandler(500)
     def internal_error(error):
         db.session.rollback()  # Rollback any failed transactions
         app.logger.error(f"Internal error: {error}")
-        return {"error": "Internal server error"}, 500
+        return render_template('errors/500.html'), 500
 
     @app.errorhandler(401)
     def unauthorized_error(error):
-        return {"error": "Authentication required"}, 401
+        return render_template('errors/401.html'), 401
 
 
 def register_shell_context(app: Flask) -> None:

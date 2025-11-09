@@ -2,151 +2,138 @@
 
 {% block title %}Conversation with {{ other_user.name }}{% endblock %}
 
-{% block content %}
-<div class="container mt-4">
-    <!-- Back Button & Header -->
-    <div class="mb-3">
-        <a href="{{ url_for('messages.inbox') }}" class="btn btn-outline-secondary btn-sm">
-            <i class="bi bi-arrow-left me-1"></i>Back to Messages
-        </a>
-    </div>
+{% block page_title %}Conversation{% endblock %}
 
-    <!-- Conversation Header -->
-    <div class="card shadow-sm mb-3">
-        <div class="card-body">
-            <div class="d-flex align-items-center">
-                <!-- User Avatar -->
-                <div class="me-3">
-                    {% if other_user.profile_image %}
-                        <img src="{{ url_for('static', filename='uploads/' + other_user.profile_image) }}" 
-                             alt="{{ other_user.name }}"
-                             class="rounded-circle"
-                             width="60" 
-                             height="60"
-                             style="object-fit: cover;">
-                    {% else %}
-                        <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center"
-                             style="width: 60px; height: 60px;">
-                            <span class="text-white fw-bold fs-4">{{ other_user.name[0].upper() }}</span>
-                        </div>
-                    {% endif %}
-                </div>
+{% block main_content %}
+    <div class="page-width-narrow">
+        <!-- Conversation Header -->
+        <div class="card">
+            <div class="card-body">
+                <div class="conversation-header">
+                    <!-- User Avatar -->
+                    <div class="conversation-avatar">
+                        {% if other_user.profile_image %}
+                            <img src="{{ url_for('static', filename='uploads/' + other_user.profile_image) }}" 
+                                 alt="{{ other_user.name }}"
+                                 class="avatar avatar-xl">
+                        {% else %}
+                            <div class="avatar avatar-xl">
+                                {{ other_user.name[0].upper() }}
+                            </div>
+                        {% endif %}
+                    </div>
 
-                <!-- User Info -->
-                <div class="flex-grow-1">
-                    <h4 class="mb-1">{{ other_user.name }}</h4>
-                    <p class="mb-0 text-muted">
-                        <i class="bi bi-envelope me-1"></i>{{ other_user.email }}
-                    </p>
-                    <small class="text-muted">
-                        <span class="badge bg-{{ 'danger' if other_user.role == 'admin' else 'primary' if other_user.role == 'staff' else 'success' }}">
+                    <!-- User Info -->
+                    <div class="conversation-meta">
+                        <h2 class="conversation-name">{{ other_user.name }}</h2>
+                        <p class="conversation-email">
+                            <i class="bi bi-envelope"></i>{{ other_user.email }}
+                        </p>
+                        <span class="badge badge-{{ 'error' if other_user.role == 'admin' else 'primary' if other_user.role == 'staff' else 'success' }}">
                             {{ other_user.role|capitalize }}
                         </span>
-                    </small>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Messages Container -->
-    <div class="card shadow-sm mb-3">
-        <div class="card-body" style="max-height: 500px; overflow-y: auto;" id="messagesContainer">
-            {% if messages %}
-                {% for message in messages %}
-                    <div class="message-bubble mb-3 {{ 'text-end' if message.sender_id == current_user.user_id else 'text-start' }}">
-                        <!-- Message Card -->
-                        <div class="d-inline-block" style="max-width: 70%;">
-                            <div class="card {{ 'bg-primary text-white' if message.sender_id == current_user.user_id else 'bg-light' }} border-0 shadow-sm">
-                                <div class="card-body py-2 px-3">
+        <!-- Messages Container -->
+        <div class="card message-thread">
+            <div class="message-list" id="messagesContainer">
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="message-bubble {{ 'message-sent' if message.sender_id == current_user.user_id else 'message-received' }}">
+                            <!-- Message Card -->
+                            <div class="message-content">
+                                <div class="message-card">
                                     <!-- Sender Name (for received messages) -->
                                     {% if message.sender_id != current_user.user_id %}
-                                        <small class="text-muted d-block mb-1">
-                                            <strong>{{ message.sender.name }}</strong>
-                                        </small>
+                                        <div class="message-sender">
+                                            {{ message.sender.name }}
+                                        </div>
                                     {% endif %}
 
                                     <!-- Message Content -->
-                                    <p class="mb-0" style="white-space: pre-wrap;">{{ message.content }}</p>
+                                    <p class="message-text">{{ message.content }}</p>
 
                                     <!-- Timestamp -->
-                                    <small class="{{ 'text-white-50' if message.sender_id == current_user.user_id else 'text-muted' }} d-block mt-2">
-                                        <i class="bi bi-clock me-1"></i>
+                                    <div class="message-timestamp">
+                                        <i class="bi bi-clock"></i>
                                         {{ message.timestamp.strftime('%b %d, %Y at %I:%M %p') }}
                                         {% if message.sender_id == current_user.user_id %}
-                                            <i class="bi bi-check2-all ms-1" title="Sent"></i>
+                                            <i class="bi bi-check2-all" title="Sent"></i>
                                         {% endif %}
-                                    </small>
+                                    </div>
                                 </div>
+
+                                <!-- Delete Button (for sender only) -->
+                                {% if message.sender_id == current_user.user_id %}
+                                    <form method="POST" action="{{ url_for('messages.delete', message_id=message.message_id) }}" 
+                                          class="message-delete" 
+                                          onsubmit="return confirm('Delete this message?');">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                        <button type="submit" class="btn-icon btn-danger" title="Delete message">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                {% endif %}
                             </div>
-
-                            <!-- Delete Button (for sender only) -->
-                            {% if message.sender_id == current_user.user_id %}
-                                <form method="POST" action="{{ url_for('messages.delete', message_id=message.message_id) }}" 
-                                      class="d-inline mt-1" 
-                                      onsubmit="return confirm('Delete this message?');">
-                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                                    <button type="submit" class="btn btn-link btn-sm text-danger p-0" title="Delete message">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </form>
-                            {% endif %}
                         </div>
+                    {% endfor %}
+                {% else %}
+                    <!-- No Messages Yet -->
+                    <div class="empty-state">
+                        <i class="bi bi-chat-dots empty-state-icon"></i>
+                        <p class="empty-state-text">No messages yet. Start the conversation below!</p>
                     </div>
-                {% endfor %}
-            {% else %}
-                <!-- No Messages Yet -->
-                <div class="text-center py-5 text-muted">
-                    <i class="bi bi-chat-dots" style="font-size: 3rem;"></i>
-                    <p class="mt-3">No messages yet. Start the conversation below!</p>
-                </div>
-            {% endif %}
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Reply Form -->
+        <div class="card message-composer">
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('messages.send') }}" id="replyForm">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                    <input type="hidden" name="receiver_id" value="{{ other_user.user_id }}">
+                    
+                    <div class="form-group">
+                        <label for="content" class="form-label">
+                            <i class="bi bi-pencil"></i>Your Message
+                        </label>
+                        <textarea class="input" 
+                                  id="content" 
+                                  name="content" 
+                                  rows="4" 
+                                  placeholder="Type your message here..."
+                                  required
+                                  maxlength="10000"></textarea>
+                        <div class="form-hint">Maximum 10,000 characters</div>
+                    </div>
+
+                    <div class="form-actions">
+                        <small class="form-note">
+                            <i class="bi bi-info-circle"></i>Messages cannot contain HTML
+                        </small>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-send"></i>Send Message
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Tips -->
+        <div class="card card-muted">
+            <div class="card-body">
+                <small class="tip-text">
+                    <i class="bi bi-lightbulb"></i>
+                    <strong>Tip:</strong> Keep conversations professional and respectful. 
+                    Messages are plain text only for security.
+                </small>
+            </div>
         </div>
     </div>
-
-    <!-- Reply Form -->
-    <div class="card shadow-sm">
-        <div class="card-body">
-            <form method="POST" action="{{ url_for('messages.send') }}" id="replyForm">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                <input type="hidden" name="receiver_id" value="{{ other_user.user_id }}">
-                
-                <div class="mb-3">
-                    <label for="content" class="form-label">
-                        <i class="bi bi-pencil me-1"></i>Your Message
-                    </label>
-                    <textarea class="form-control" 
-                              id="content" 
-                              name="content" 
-                              rows="4" 
-                              placeholder="Type your message here..."
-                              required
-                              maxlength="10000"></textarea>
-                    <div class="form-text">Maximum 10,000 characters</div>
-                </div>
-
-                <div class="d-flex justify-content-between align-items-center">
-                    <small class="text-muted">
-                        <i class="bi bi-info-circle me-1"></i>Messages cannot contain HTML
-                    </small>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="bi bi-send me-1"></i>Send Message
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Tips -->
-    <div class="card border-0 bg-light mt-3">
-        <div class="card-body">
-            <small class="text-muted">
-                <i class="bi bi-lightbulb me-1"></i>
-                <strong>Tip:</strong> Keep conversations professional and respectful. 
-                Messages are plain text only for security.
-            </small>
-        </div>
-    </div>
-</div>
 {% endblock %}
 
 {% block extra_js %}
@@ -168,9 +155,9 @@
             if (helpText) {
                 helpText.textContent = `${remaining.toLocaleString()} characters remaining`;
                 if (remaining < 100) {
-                    helpText.classList.add('text-warning');
+                    helpText.classList.add('warning');
                 } else {
-                    helpText.classList.remove('text-warning');
+                    helpText.classList.remove('warning');
                 }
             }
         });

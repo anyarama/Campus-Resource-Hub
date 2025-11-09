@@ -2,53 +2,40 @@
 
 {% block title %}New Message to {{ recipient.name }}{% endblock %}
 
-{% block content %}
-<div class="container mt-4">
-    <!-- Back Button -->
-    <div class="mb-3">
-        <a href="{{ url_for('messages.inbox') }}" class="btn btn-outline-secondary btn-sm">
-            <i class="bi bi-arrow-left me-1"></i>Back to Messages
-        </a>
-    </div>
+{% block page_title %}New Message{% endblock %}
 
-    <div class="row justify-content-center">
-        <div class="col-md-8">
+{% block main_content %}
+    <div class="page-width-narrow">
             <!-- Compose Card -->
-            <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">
-                        <i class="bi bi-pencil-square me-2"></i>New Message
-                    </h5>
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        <i class="bi bi-pencil-square"></i>Compose Message
+                    </h2>
                 </div>
                 <div class="card-body">
                     <!-- Recipient Info -->
                     <div class="alert alert-info">
-                        <div class="d-flex align-items-center">
-                            <div class="me-3">
+                        <div class="recipient-info">
+                            <div class="recipient-avatar">
                                 {% if recipient.profile_image %}
                                     <img src="{{ url_for('static', filename='uploads/' + recipient.profile_image) }}" 
                                          alt="{{ recipient.name }}"
-                                         class="rounded-circle"
-                                         width="50" 
-                                         height="50"
-                                         style="object-fit: cover;">
+                                         class="avatar avatar-lg">
                                 {% else %}
-                                    <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center"
-                                         style="width: 50px; height: 50px;">
-                                        <span class="text-white fw-bold">{{ recipient.name[0].upper() }}</span>
+                                    <div class="avatar avatar-lg">
+                                        {{ recipient.name[0].upper() }}
                                     </div>
                                 {% endif %}
                             </div>
-                            <div>
-                                <strong>To: {{ recipient.name }}</strong>
-                                <p class="mb-0 small text-muted">
-                                    <i class="bi bi-envelope me-1"></i>{{ recipient.email }}
-                                </p>
-                                <small>
-                                    <span class="badge bg-{{ 'danger' if recipient.role == 'admin' else 'primary' if recipient.role == 'staff' else 'success' }}">
-                                        {{ recipient.role|capitalize }}
-                                    </span>
-                                </small>
+                            <div class="recipient-details">
+                                <div class="recipient-name">To: {{ recipient.name }}</div>
+                                <div class="recipient-email">
+                                    <i class="bi bi-envelope"></i>{{ recipient.email }}
+                                </div>
+                                <span class="badge badge-{{ 'error' if recipient.role == 'admin' else 'primary' if recipient.role == 'staff' else 'success' }}">
+                                    {{ recipient.role|capitalize }}
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -57,26 +44,26 @@
                     <form method="POST" action="{{ url_for('messages.compose', user_id=recipient.user_id) }}">
                         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                         
-                        <div class="mb-3">
+                        <div class="form-group">
                             <label for="content" class="form-label">
-                                <i class="bi bi-chat-left-text me-1"></i>Message
+                                <i class="bi bi-chat-left-text"></i>Message
                             </label>
-                            <textarea class="form-control" 
+                            <textarea class="input" 
                                       id="content" 
                                       name="content" 
                                       rows="8" 
                                       placeholder="Type your message here..."
                                       required
                                       maxlength="10000"></textarea>
-                            <div class="form-text">Maximum 10,000 characters</div>
+                            <div class="form-hint">Maximum 10,000 characters</div>
                         </div>
 
                         <!-- Guidelines -->
-                        <div class="alert alert-light border">
+                        <div class="alert alert-neutral">
                             <h6 class="alert-heading">
-                                <i class="bi bi-info-circle me-1"></i>Messaging Guidelines
+                                <i class="bi bi-info-circle"></i>Messaging Guidelines
                             </h6>
-                            <ul class="mb-0 small">
+                            <ul class="guideline-list">
                                 <li>Be professional and respectful</li>
                                 <li>Clearly state your reason for messaging</li>
                                 <li>Include any relevant booking or resource details</li>
@@ -85,12 +72,12 @@
                         </div>
 
                         <!-- Action Buttons -->
-                        <div class="d-flex justify-content-between">
-                            <a href="{{ url_for('messages.inbox') }}" class="btn btn-outline-secondary">
-                                <i class="bi bi-x-circle me-1"></i>Cancel
+                        <div class="form-actions">
+                            <a href="{{ url_for('messages.inbox') }}" class="btn btn-secondary">
+                                <i class="bi bi-x-circle"></i>Cancel
                             </a>
                             <button type="submit" class="btn btn-primary">
-                                <i class="bi bi-send me-1"></i>Send Message
+                                <i class="bi bi-send"></i>Send Message
                             </button>
                         </div>
                     </form>
@@ -98,21 +85,19 @@
             </div>
 
             <!-- Help Card -->
-            <div class="card border-0 bg-light mt-3">
+            <div class="card card-muted">
                 <div class="card-body">
-                    <h6 class="mb-2">
-                        <i class="bi bi-question-circle me-1"></i>Need Help?
+                    <h6 class="help-heading">
+                        <i class="bi bi-question-circle"></i>Need Help?
                     </h6>
-                    <p class="mb-0 small text-muted">
+                    <p class="help-text">
                         Use messaging to ask questions about resources, coordinate bookings, 
                         or discuss any concerns with other users. All conversations are private 
                         between you and the recipient.
                     </p>
                 </div>
             </div>
-        </div>
     </div>
-</div>
 {% endblock %}
 
 {% block extra_js %}
@@ -126,9 +111,9 @@
             if (helpText) {
                 helpText.textContent = `${remaining.toLocaleString()} characters remaining`;
                 if (remaining < 100) {
-                    helpText.classList.add('text-warning');
+                    helpText.classList.add('warning');
                 } else {
-                    helpText.classList.remove('text-warning');
+                    helpText.classList.remove('warning');
                 }
             }
         });

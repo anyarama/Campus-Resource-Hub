@@ -1,0 +1,656 @@
+// =============================================================================
+// SKELETON COMPONENT
+// =============================================================================
+// Loading placeholders that mimic content structure while data is being fetched
+// Progressive shimmer animation for better perceived performance
+
+@use '../tokens' as *;
+
+// -----------------------------------------------------------------------------
+// Base Skeleton
+// -----------------------------------------------------------------------------
+.skeleton {
+  display: block;
+  background: linear-gradient(
+    90deg,
+    var(--color-gray-200) 0%,
+    var(--color-gray-100) 50%,
+    var(--color-gray-200) 100%
+  );
+  background-size: 200% 100%;
+  border-radius: $border-radius-sm;
+  animation: shimmer 1.5s ease-in-out infinite;
+  position: relative;
+  overflow: hidden;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.6) 50%,
+      transparent 100%
+    );
+    animation: shimmer-wave 1.5s ease-in-out infinite;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes shimmer-wave {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Skeleton Shapes
+// -----------------------------------------------------------------------------
+
+// Text skeleton (single line)
+.skeleton--text {
+  height: 1em; // Matches text height
+  width: 100%;
+  border-radius: $border-radius-sm;
+}
+
+// Heading skeleton
+.skeleton--heading {
+  height: 1.5em;
+  width: 60%;
+  border-radius: $border-radius-sm;
+}
+
+// Circle skeleton (profile images, avatars)
+.skeleton--circle {
+  border-radius: 50%;
+  aspect-ratio: 1;
+}
+
+// Rectangular skeleton (images, cards)
+.skeleton--rect {
+  border-radius: $border-radius-md;
+}
+
+// Square skeleton
+.skeleton--square {
+  aspect-ratio: 1;
+  border-radius: $border-radius-md;
+}
+
+// -----------------------------------------------------------------------------
+// Skeleton Sizes for Circles/Avatars
+// -----------------------------------------------------------------------------
+.skeleton--xs {
+  width: 24px;
+  height: 24px;
+}
+
+.skeleton--sm {
+  width: 32px;
+  height: 32px;
+}
+
+.skeleton--md {
+  width: 48px;
+  height: 48px;
+}
+
+.skeleton--lg {
+  width: 64px;
+  height: 64px;
+}
+
+.skeleton--xl {
+  width: 96px;
+  height: 96px;
+}
+
+// -----------------------------------------------------------------------------
+// Skeleton Text Widths (for varying line lengths)
+// -----------------------------------------------------------------------------
+.skeleton--w-full {
+  width: 100%;
+}
+
+.skeleton--w-90 {
+  width: 90%;
+}
+
+.skeleton--w-80 {
+  width: 80%;
+}
+
+.skeleton--w-75 {
+  width: 75%;
+}
+
+.skeleton--w-60 {
+  width: 60%;
+}
+
+.skeleton--w-50 {
+  width: 50%;
+}
+
+.skeleton--w-40 {
+  width: 40%;
+}
+
+.skeleton--w-25 {
+  width: 25%;
+}
+
+// -----------------------------------------------------------------------------
+// Skeleton Patterns (Common UI Structures)
+// -----------------------------------------------------------------------------
+
+// Card skeleton (resource card, booking card)
+.skeleton-card {
+  padding: $spacing-4;
+  border: 1px solid var(--color-gray-200);
+  border-radius: $border-radius-lg;
+  background-color: white;
+  
+  &__image {
+    @extend .skeleton, .skeleton--rect;
+    height: 180px;
+    width: 100%;
+    margin-bottom: $spacing-4;
+  }
+  
+  &__title {
+    @extend .skeleton, .skeleton--heading;
+    margin-bottom: $spacing-3;
+  }
+  
+  &__text {
+    @extend .skeleton, .skeleton--text;
+    margin-bottom: $spacing-2;
+    
+    &:last-of-type {
+      width: 70%;
+    }
+  }
+  
+  &__footer {
+    display: flex;
+    gap: $spacing-2;
+    margin-top: $spacing-4;
+    
+    .skeleton {
+      height: 20px;
+      width: 60px;
+      border-radius: $border-radius-sm;
+    }
+  }
+}
+
+// List item skeleton
+.skeleton-list-item {
+  display: flex;
+  gap: $spacing-4;
+  padding: $spacing-4;
+  border-bottom: 1px solid var(--color-gray-200);
+  
+  &__avatar {
+    @extend .skeleton, .skeleton--circle, .skeleton--md;
+    flex-shrink: 0;
+  }
+  
+  &__content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-2;
+  }
+  
+  &__title {
+    @extend .skeleton, .skeleton--text;
+    width: 40%;
+  }
+  
+  &__subtitle {
+    @extend .skeleton, .skeleton--text;
+    width: 60%;
+  }
+  
+  &__meta {
+    @extend .skeleton, .skeleton--text;
+    width: 30%;
+    height: 14px;
+  }
+}
+
+// Table skeleton
+.skeleton-table {
+  &__header {
+    display: flex;
+    gap: $spacing-3;
+    padding: $spacing-3 $spacing-4;
+    border-bottom: 2px solid var(--color-gray-200);
+    
+    .skeleton {
+      height: 16px;
+      flex: 1;
+    }
+  }
+  
+  &__row {
+    display: flex;
+    gap: $spacing-3;
+    padding: $spacing-3 $spacing-4;
+    border-bottom: 1px solid var(--color-gray-200);
+    
+    .skeleton {
+      height: 14px;
+      flex: 1;
+    }
+  }
+}
+
+// Profile skeleton
+.skeleton-profile {
+  display: flex;
+  align-items: center;
+  gap: $spacing-4;
+  
+  &__avatar {
+    @extend .skeleton, .skeleton--circle, .skeleton--xl;
+  }
+  
+  &__info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-2;
+  }
+  
+  &__name {
+    @extend .skeleton, .skeleton--heading;
+    width: 200px;
+  }
+  
+  &__role {
+    @extend .skeleton, .skeleton--text;
+    width: 120px;
+  }
+}
+
+// Form skeleton
+.skeleton-form {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-4;
+  
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-2;
+  }
+  
+  &__label {
+    @extend .skeleton, .skeleton--text;
+    width: 120px;
+    height: 14px;
+  }
+  
+  &__input {
+    @extend .skeleton;
+    height: 40px;
+    border-radius: $border-radius-md;
+  }
+  
+  &__textarea {
+    @extend .skeleton;
+    height: 120px;
+    border-radius: $border-radius-md;
+  }
+  
+  &__button {
+    @extend .skeleton;
+    height: 44px;
+    width: 120px;
+    border-radius: $border-radius-md;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Campus-Specific Skeleton Patterns
+// -----------------------------------------------------------------------------
+
+// Resource card grid skeleton
+.skeleton-resource-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: $spacing-6;
+  
+  .skeleton-card {
+    height: 380px;
+  }
+}
+
+// Booking card skeleton
+.skeleton-booking {
+  padding: $spacing-4;
+  border: 1px solid var(--color-gray-200);
+  border-radius: $border-radius-lg;
+  border-left: 4px solid var(--color-gray-300);
+  
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: $spacing-3;
+  }
+  
+  &__title {
+    @extend .skeleton, .skeleton--text;
+    width: 60%;
+    height: 18px;
+  }
+  
+  &__badge {
+    @extend .skeleton;
+    width: 80px;
+    height: 24px;
+    border-radius: $border-radius-full;
+  }
+  
+  &__meta {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-2;
+    margin-bottom: $spacing-3;
+  }
+  
+  &__date {
+    @extend .skeleton, .skeleton--text;
+    width: 40%;
+    height: 14px;
+  }
+  
+  &__location {
+    @extend .skeleton, .skeleton--text;
+    width: 50%;
+    height: 14px;
+  }
+  
+  &__actions {
+    display: flex;
+    gap: $spacing-2;
+    
+    .skeleton {
+      height: 36px;
+      width: 100px;
+      border-radius: $border-radius-md;
+    }
+  }
+}
+
+// Message thread skeleton
+.skeleton-message {
+  display: flex;
+  gap: $spacing-3;
+  padding: $spacing-4;
+  border-bottom: 1px solid var(--color-gray-200);
+  
+  &__avatar {
+    @extend .skeleton, .skeleton--circle, .skeleton--md;
+  }
+  
+  &__content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-2;
+  }
+  
+  &__sender {
+    @extend .skeleton, .skeleton--text;
+    width: 140px;
+    height: 16px;
+  }
+  
+  &__preview {
+    @extend .skeleton, .skeleton--text;
+    width: 80%;
+  }
+  
+  &__time {
+    @extend .skeleton, .skeleton--text;
+    width: 60px;
+    height: 12px;
+  }
+}
+
+// Admin KPI tile skeleton
+.skeleton-kpi {
+  padding: $spacing-5;
+  border: 1px solid var(--color-gray-200);
+  border-radius: $border-radius-lg;
+  
+  &__label {
+    @extend .skeleton, .skeleton--text;
+    width: 80px;
+    height: 12px;
+    margin-bottom: $spacing-3;
+  }
+  
+  &__value {
+    @extend .skeleton, .skeleton--heading;
+    width: 100px;
+    height: 36px;
+    margin-bottom: $spacing-2;
+  }
+  
+  &__change {
+    @extend .skeleton, .skeleton--text;
+    width: 60px;
+    height: 14px;
+  }
+}
+
+// Review skeleton
+.skeleton-review {
+  padding: $spacing-4;
+  border-bottom: 1px solid var(--color-gray-200);
+  
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: $spacing-3;
+    margin-bottom: $spacing-3;
+  }
+  
+  &__avatar {
+    @extend .skeleton, .skeleton--circle, .skeleton--sm;
+  }
+  
+  &__author {
+    @extend .skeleton, .skeleton--text;
+    width: 120px;
+    height: 14px;
+  }
+  
+  &__rating {
+    @extend .skeleton;
+    width: 100px;
+    height: 16px;
+    border-radius: $border-radius-sm;
+  }
+  
+  &__comment {
+    @extend .skeleton, .skeleton--text;
+    margin-bottom: $spacing-1;
+    
+    &:nth-child(2) {
+      width: 95%;
+    }
+    
+    &:nth-child(3) {
+      width: 85%;
+    }
+    
+    &:last-child {
+      width: 70%;
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Skeleton Containers (multiple items)
+// -----------------------------------------------------------------------------
+.skeleton-list {
+  display: flex;
+  flex-direction: column;
+  
+  &--cards {
+    gap: $spacing-4;
+  }
+  
+  &--compact {
+    gap: 0;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Skeleton with Pulse Animation (alternative to shimmer)
+// -----------------------------------------------------------------------------
+.skeleton--pulse {
+  animation: pulse 1.5s ease-in-out infinite;
+  
+  &::after {
+    display: none;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Skeleton without Animation (for reduced motion preference)
+// -----------------------------------------------------------------------------
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+    
+    &::after {
+      display: none;
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Skeleton Visibility Utilities
+// -----------------------------------------------------------------------------
+.is-loading {
+  .skeleton {
+    display: block;
+  }
+  
+  .loaded-content {
+    display: none;
+  }
+}
+
+.is-loaded {
+  .skeleton {
+    display: none;
+  }
+  
+  .loaded-content {
+    display: block;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Dark Theme Adjustments
+// -----------------------------------------------------------------------------
+@media (prefers-color-scheme: dark) {
+  .skeleton {
+    background: linear-gradient(
+      90deg,
+      var(--color-gray-700) 0%,
+      var(--color-gray-600) 50%,
+      var(--color-gray-700) 100%
+    );
+    
+    &::after {
+      background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.1) 50%,
+        transparent 100%
+      );
+    }
+  }
+  
+  .skeleton-card,
+  .skeleton-booking,
+  .skeleton-kpi {
+    background-color: var(--color-gray-800);
+    border-color: var(--color-gray-700);
+  }
+  
+  .skeleton-list-item,
+  .skeleton-message,
+  .skeleton-review {
+    border-bottom-color: var(--color-gray-700);
+  }
+  
+  .skeleton-table__header {
+    border-bottom-color: var(--color-gray-700);
+  }
+  
+  .skeleton-table__row {
+    border-bottom-color: var(--color-gray-700);
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Responsive Adjustments
+// -----------------------------------------------------------------------------
+@media (max-width: 768px) {
+  .skeleton-resource-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .skeleton-list-item {
+    padding: $spacing-3;
+    
+    &__avatar {
+      width: 40px;
+      height: 40px;
+    }
+  }
+  
+  .skeleton-profile {
+    &__avatar {
+      width: 64px;
+      height: 64px;
+    }
+    
+    &__name {
+      width: 150px;
+    }
+  }
+}

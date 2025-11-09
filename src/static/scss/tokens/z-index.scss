@@ -1,0 +1,58 @@
+// =============================================================================
+// Z-INDEX TOKENS - Enterprise Design System
+// =============================================================================
+// Layering System: Consistent stacking order for overlays and UI elements
+// =============================================================================
+
+// -----------------------------------------------------------------------------
+// Z-INDEX SCALE
+// -----------------------------------------------------------------------------
+$z-index-base: 0;
+$z-index-dropdown: 1000;
+$z-index-sticky: 1020;
+$z-index-fixed: 1030;
+$z-index-modal-backdrop: 1040;
+$z-index-modal: 1050;
+$z-index-popover: 1060;
+$z-index-tooltip: 1070;
+$z-index-notification: 1080;
+$z-index-max: 9999;
+
+// -----------------------------------------------------------------------------
+// CSS CUSTOM PROPERTIES (CSS Variables)
+// -----------------------------------------------------------------------------
+:root {
+  // Base Z-Index Scale
+  --z-index-base: #{$z-index-base};
+  --z-index-dropdown: #{$z-index-dropdown};
+  --z-index-sticky: #{$z-index-sticky};
+  --z-index-fixed: #{$z-index-fixed};
+  --z-index-modal-backdrop: #{$z-index-modal-backdrop};
+  --z-index-modal: #{$z-index-modal};
+  --z-index-popover: #{$z-index-popover};
+  --z-index-tooltip: #{$z-index-tooltip};
+  --z-index-notification: #{$z-index-notification};
+  --z-index-max: #{$z-index-max};
+  
+  // -----------------------------------------------------------------------------
+  // SEMANTIC Z-INDEX TOKENS
+  // -----------------------------------------------------------------------------
+  // Layout Elements
+  --z-index-navbar: #{$z-index-fixed};
+  --z-index-sidebar: #{$z-index-fixed};
+  --z-index-sidebar-overlay: #{$z-index-modal-backdrop};
+  
+  // Interactive Elements
+  --z-index-filter-drawer: #{$z-index-modal};
+  --z-index-dropdown-menu: #{$z-index-dropdown};
+  --z-index-autocomplete: #{$z-index-dropdown};
+  
+  // Overlays
+  --z-index-modal-overlay: #{$z-index-modal-backdrop};
+  --z-index-modal-content: #{$z-index-modal};
+  --z-index-toast: #{$z-index-notification};
+  
+  // Sticky Elements
+  --z-index-sticky-header: #{$z-index-sticky};
+  --z-index-sticky-cta: #{$z-index-sticky};
+}

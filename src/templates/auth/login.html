@@ -1,46 +1,54 @@
 {% extends "base.html" %}
+{% from "_components.html" import form_field, button, card %}
 
 {% block title %}Login - Campus Resource Hub{% endblock %}
 
-{% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-6 col-lg-5">
-        <div class="card shadow">
-            <div class="card-body p-4">
-                <h2 class="card-title text-center mb-4">Login</h2>
+{% block main_content %}
+<div class="auth-container">
+    <div class="auth-card">
+        {% call card(title="Login to Campus Resource Hub") %}
+            <form method="POST" action="{{ url_for('auth.login') }}" novalidate class="form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                 
-                <form method="POST" action="{{ url_for('auth.login') }}" novalidate>
-                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                    
-                    <div class="mb-3">
-                        <label for="email" class="form-label">Email Address</label>
-                        <input type="email" class="form-control" id="email" name="email" 
-                               value="{{ email or '' }}" required autofocus 
-                               aria-describedby="emailHelp">
-                        <div id="emailHelp" class="form-text">Your registered email address</div>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="password" class="form-label">Password</label>
-                        <input type="password" class="form-control" id="password" name="password" required>
-                    </div>
-                    
-                    <div class="mb-3 form-check">
-                        <input type="checkbox" class="form-check-input" id="remember" name="remember">
-                        <label class="form-check-label" for="remember">Remember me</label>
-                    </div>
-                    
-                    <button type="submit" class="btn btn-primary w-100">Login</button>
-                </form>
+                {{ form_field(
+                    type="email",
+                    name="email",
+                    label="Email Address",
+                    value=email or '',
+                    required=true,
+                    autofocus=true,
+                    help_text="Your registered email address"
+                ) }}
                 
-                <hr class="my-4">
+                {{ form_field(
+                    type="password",
+                    name="password",
+                    label="Password",
+                    required=true
+                ) }}
                 
-                <p class="text-center mb-0">
-                    Don't have an account? 
-                    <a href="{{ url_for('auth.register') }}">Register here</a>
-                </p>
-            </div>
-        </div>
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" name="remember" id="remember" class="checkbox-input">
+                        <span class="checkbox-text">Remember me</span>
+                    </label>
+                </div>
+                
+                {{ button(
+                    text="Login",
+                    type="submit",
+                    variant="primary",
+                    full_width=true
+                ) }}
+            </form>
+            
+            <div class="auth-divider"></div>
+            
+            <p class="auth-footer-text">
+                Don't have an account? 
+                <a href="{{ url_for('auth.register') }}" class="link-primary">Register here</a>
+            </p>
+        {% endcall %}
     </div>
 </div>
 {% endblock %}

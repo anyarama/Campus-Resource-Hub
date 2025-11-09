@@ -1,0 +1,490 @@
+// =============================================================================
+// ALERT COMPONENT
+// =============================================================================
+// Contextual feedback messages for user actions (success, warning, error, info)
+// Dismissible alerts, inline validation messages, system notifications
+
+@use '../tokens' as *;
+
+// -----------------------------------------------------------------------------
+// Base Alert
+// -----------------------------------------------------------------------------
+.alert {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: $spacing-3;
+  padding: $spacing-4;
+  border: 1px solid transparent;
+  border-radius: $border-radius-md;
+  font-size: $font-size-sm;
+  line-height: 1.5;
+  
+  // Alert icon
+  &__icon {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    margin-top: 2px; // Align with first line of text
+  }
+  
+  // Alert content area
+  &__content {
+    flex: 1;
+    min-width: 0; // Allow text to wrap
+  }
+  
+  // Alert title (optional)
+  &__title {
+    font-weight: $font-weight-semibold;
+    margin-bottom: $spacing-1;
+    color: inherit;
+  }
+  
+  // Alert message
+  &__message {
+    color: inherit;
+    
+    a {
+      color: inherit;
+      text-decoration: underline;
+      font-weight: $font-weight-medium;
+      
+      &:hover {
+        opacity: 0.8;
+      }
+    }
+  }
+  
+  // Alert actions (buttons)
+  &__actions {
+    display: flex;
+    gap: $spacing-2;
+    margin-top: $spacing-2;
+  }
+  
+  // Dismiss button
+  &__dismiss {
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    padding: $spacing-1;
+    cursor: pointer;
+    color: inherit;
+    opacity: 0.6;
+    border-radius: $border-radius-sm;
+    transition: opacity 0.2s;
+    
+    &:hover {
+      opacity: 1;
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+    
+    &:focus-visible {
+      outline: 2px solid currentColor;
+      outline-offset: 2px;
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Alert Variants (Color-based)
+// -----------------------------------------------------------------------------
+
+// Default/Neutral Alert
+.alert--default {
+  background-color: var(--color-gray-50);
+  border-color: var(--color-gray-200);
+  color: var(--color-gray-900);
+}
+
+// Info Alert (Blue)
+.alert--info {
+  background-color: #e3f2fd; // Light blue
+  border-color: #90caf9;
+  color: #0d47a1; // Dark blue
+  
+  .alert__icon {
+    color: #1976d2; // Medium blue
+  }
+}
+
+// Success Alert (Green)
+.alert--success {
+  background-color: var(--color-success-50);
+  border-color: var(--color-success-200);
+  color: var(--color-success-900);
+  
+  .alert__icon {
+    color: var(--color-success-600);
+  }
+}
+
+// Warning Alert (Amber/Orange)
+.alert--warning {
+  background-color: var(--color-warning-50);
+  border-color: var(--color-warning-200);
+  color: var(--color-warning-900);
+  
+  .alert__icon {
+    color: var(--color-warning-600);
+  }
+}
+
+// Error/Danger Alert (Red)
+.alert--error,
+.alert--danger {
+  background-color: var(--color-error-50);
+  border-color: var(--color-error-200);
+  color: var(--color-error-900);
+  
+  .alert__icon {
+    color: var(--color-error-600);
+  }
+}
+
+// Primary Alert (Kelley Crimson)
+.alert--primary {
+  background-color: rgba(var(--color-primary), 0.05);
+  border-color: rgba(var(--color-primary), 0.2);
+  color: var(--color-primary-dark);
+  
+  .alert__icon {
+    color: var(--color-primary);
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Alert Styles (Filled vs. Outlined)
+// -----------------------------------------------------------------------------
+
+// Filled/Solid Alert Variants
+.alert--filled {
+  border: none;
+  color: white;
+  
+  &.alert--info {
+    background-color: #1976d2;
+  }
+  
+  &.alert--success {
+    background-color: var(--color-success-600);
+  }
+  
+  &.alert--warning {
+    background-color: var(--color-warning-600);
+  }
+  
+  &.alert--error,
+  &.alert--danger {
+    background-color: var(--color-error-600);
+  }
+  
+  &.alert--primary {
+    background-color: var(--color-primary);
+  }
+  
+  .alert__icon {
+    color: white;
+  }
+  
+  .alert__dismiss:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+  }
+}
+
+// Outlined Alert (subtle, border-only)
+.alert--outlined {
+  background-color: transparent;
+  border-width: 1px;
+  
+  &.alert--info {
+    border-color: #1976d2;
+    color: #0d47a1;
+  }
+  
+  &.alert--success {
+    border-color: var(--color-success-600);
+    color: var(--color-success-900);
+  }
+  
+  &.alert--warning {
+    border-color: var(--color-warning-600);
+    color: var(--color-warning-900);
+  }
+  
+  &.alert--error,
+  &.alert--danger {
+    border-color: var(--color-error-600);
+    color: var(--color-error-900);
+  }
+  
+  &.alert--primary {
+    border-color: var(--color-primary);
+    color: var(--color-primary-dark);
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Alert Sizes
+// -----------------------------------------------------------------------------
+.alert--sm {
+  padding: $spacing-2 $spacing-3;
+  font-size: $font-size-xs;
+  gap: $spacing-2;
+  
+  .alert__icon {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+.alert--lg {
+  padding: $spacing-5 $spacing-6;
+  font-size: $font-size-base;
+  gap: $spacing-4;
+  
+  .alert__icon {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Alert with Left Border Accent
+// -----------------------------------------------------------------------------
+.alert--accent {
+  border-left-width: 4px;
+  padding-left: $spacing-4;
+  
+  &.alert--info {
+    border-left-color: #1976d2;
+  }
+  
+  &.alert--success {
+    border-left-color: var(--color-success-600);
+  }
+  
+  &.alert--warning {
+    border-left-color: var(--color-warning-600);
+  }
+  
+  &.alert--error,
+  &.alert--danger {
+    border-left-color: var(--color-error-600);
+  }
+  
+  &.alert--primary {
+    border-left-color: var(--color-primary);
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Inline Alert (for form validation)
+// -----------------------------------------------------------------------------
+.alert--inline {
+  padding: $spacing-2 $spacing-3;
+  font-size: $font-size-xs;
+  border-radius: $border-radius-sm;
+  margin-top: $spacing-2;
+  
+  .alert__icon {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+// Form field error state
+.form-field--error {
+  .form-input,
+  .form-textarea,
+  .form-select {
+    border-color: var(--color-error-500);
+    
+    &:focus {
+      outline-color: var(--color-error-500);
+      box-shadow: 0 0 0 3px rgba(var(--color-error-500), 0.1);
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Toast Notifications (fixed positioning for global alerts)
+// -----------------------------------------------------------------------------
+.alert-toast {
+  position: fixed;
+  top: $spacing-6;
+  right: $spacing-6;
+  max-width: 420px;
+  z-index: var(--z-index-toast);
+  box-shadow: $shadow-lg;
+  animation: slideInRight 0.3s ease-out;
+  
+  @media (max-width: 768px) {
+    top: $spacing-4;
+    right: $spacing-4;
+    left: $spacing-4;
+    max-width: none;
+  }
+}
+
+// Toast container (for multiple toasts)
+.alert-toast-container {
+  position: fixed;
+  top: $spacing-6;
+  right: $spacing-6;
+  z-index: var(--z-index-toast);
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-3;
+  max-width: 420px;
+  
+  @media (max-width: 768px) {
+    top: $spacing-4;
+    right: $spacing-4;
+    left: $spacing-4;
+    max-width: none;
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+// Alert dismissing animation
+.alert--dismissing {
+  animation: fadeOut 0.2s ease-out forwards;
+}
+
+// -----------------------------------------------------------------------------
+// Campus-Specific Alert Use Cases
+// -----------------------------------------------------------------------------
+
+// Booking conflict alert
+.alert--booking-conflict {
+  position: relative;
+  
+  &::before {
+    content: '⚠';
+    font-size: 20px;
+    margin-right: $spacing-2;
+  }
+}
+
+// Maintenance alert (banner style)
+.alert--maintenance {
+  border-radius: 0;
+  border-left: none;
+  border-right: none;
+  
+  &.alert--warning {
+    background-color: var(--color-warning-100);
+    border-color: var(--color-warning-300);
+  }
+}
+
+// Resource availability alert
+.alert--availability {
+  display: inline-flex;
+  padding: $spacing-1 $spacing-2;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  border-radius: $border-radius-full;
+}
+
+// Flash message (from Flask flash())
+.flash-message {
+  margin-bottom: $spacing-4;
+  
+  &.flash-success {
+    @extend .alert, .alert--success;
+  }
+  
+  &.flash-error,
+  &.flash-danger {
+    @extend .alert, .alert--error;
+  }
+  
+  &.flash-warning {
+    @extend .alert, .alert--warning;
+  }
+  
+  &.flash-info {
+    @extend .alert, .alert--info;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Banner Alert (full-width, typically at top of page)
+// -----------------------------------------------------------------------------
+.alert-banner {
+  border-radius: 0;
+  border-left: none;
+  border-right: none;
+  border-top: none;
+  padding: $spacing-4 0;
+  text-align: center;
+  
+  .alert__content {
+    text-align: center;
+  }
+  
+  // Container wrapper for banner
+  .container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $spacing-3;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Alert Lists (multiple alerts grouped)
+// -----------------------------------------------------------------------------
+.alert-list {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-3;
+}
+
+// Alert inside cards
+.card .alert {
+  margin: $spacing-4 0;
+  
+  &:first-child {
+    margin-top: 0;
+  }
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+// Dark theme adjustments
+@media (prefers-color-scheme: dark) {
+  .alert--default {
+    background-color: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+    color: var(--color-gray-100);
+  }
+  
+  .alert__dismiss:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+}

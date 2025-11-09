@@ -1,0 +1,325 @@
+// =============================================================================
+// BADGE COMPONENT - Enterprise Design System
+// =============================================================================
+// Status badges, labels, and tags for semantic information
+// Clean, minimal badges with color variants
+// =============================================================================
+
+// -----------------------------------------------------------------------------
+// BASE BADGE
+// -----------------------------------------------------------------------------
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-1);
+  
+  padding: 2px var(--spacing-2);
+  
+  font-family: var(--font-family-sans);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.5;
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  white-space: nowrap;
+  
+  border-radius: var(--border-radius-badge);
+  border: var(--border-width-1) solid transparent;
+  
+  transition: all 0.15s ease;
+}
+
+// -----------------------------------------------------------------------------
+// SIZE VARIANTS
+// -----------------------------------------------------------------------------
+.badge-sm {
+  padding: 1px var(--spacing-1);
+  font-size: 10px;
+}
+
+.badge-lg {
+  padding: var(--spacing-1) var(--spacing-3);
+  font-size: var(--font-size-sm);
+}
+
+// -----------------------------------------------------------------------------
+// COLOR VARIANTS
+// -----------------------------------------------------------------------------
+
+// Default (Neutral)
+.badge-default {
+  background-color: var(--color-bg-tertiary);
+  color: var(--color-text-primary);
+  border-color: var(--color-border-default);
+}
+
+// Primary (Crimson)
+.badge-primary {
+  background-color: var(--color-primary-600);
+  color: var(--color-white);
+}
+
+// Secondary (Subtle)
+.badge-secondary {
+  background-color: var(--color-gray-200);
+  color: var(--color-gray-700);
+}
+
+// Success
+.badge-success {
+  background-color: var(--color-success);
+  color: var(--color-white);
+}
+
+// Warning
+.badge-warning {
+  background-color: var(--color-warning);
+  color: var(--color-white);
+}
+
+// Error/Danger
+.badge-error,
+.badge-danger {
+  background-color: var(--color-error);
+  color: var(--color-white);
+}
+
+// Info
+.badge-info {
+  background-color: var(--color-info);
+  color: var(--color-white);
+}
+
+// -----------------------------------------------------------------------------
+// OUTLINE VARIANTS
+// -----------------------------------------------------------------------------
+.badge-outline {
+  background-color: transparent;
+  
+  &.badge-default {
+    border-color: var(--color-border-medium);
+    color: var(--color-text-primary);
+  }
+  
+  &.badge-primary {
+    border-color: var(--color-primary-600);
+    color: var(--color-primary-600);
+  }
+  
+  &.badge-success {
+    border-color: var(--color-success);
+    color: var(--color-success);
+  }
+  
+  &.badge-warning {
+    border-color: var(--color-warning);
+    color: var(--color-warning);
+  }
+  
+  &.badge-error,
+  &.badge-danger {
+    border-color: var(--color-error);
+    color: var(--color-error);
+  }
+  
+  &.badge-info {
+    border-color: var(--color-info);
+    color: var(--color-info);
+  }
+}
+
+// -----------------------------------------------------------------------------
+// SOFT VARIANTS (Lighter backgrounds)
+// -----------------------------------------------------------------------------
+.badge-soft {
+  border: none;
+  
+  &.badge-primary {
+    background-color: var(--color-primary-100);
+    color: var(--color-primary-700);
+  }
+  
+  &.badge-success {
+    background-color: var(--color-success-light);
+    color: var(--color-success-dark);
+  }
+  
+  &.badge-warning {
+    background-color: var(--color-warning-light);
+    color: var(--color-warning-dark);
+  }
+  
+  &.badge-error,
+  &.badge-danger {
+    background-color: var(--color-error-light);
+    color: var(--color-error-dark);
+  }
+  
+  &.badge-info {
+    background-color: var(--color-info-light);
+    color: var(--color-info-dark);
+  }
+}
+
+// -----------------------------------------------------------------------------
+// BADGE WITH DOT
+// -----------------------------------------------------------------------------
+.badge-dot {
+  &::before {
+    content: '';
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: currentColor;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// PILL BADGE (Rounded)
+// -----------------------------------------------------------------------------
+.badge-pill {
+  border-radius: 999px;
+}
+
+// -----------------------------------------------------------------------------
+// REMOVABLE BADGE (with close button)
+// -----------------------------------------------------------------------------
+.badge-removable {
+  padding-right: var(--spacing-1);
+  
+  .badge-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    margin-left: var(--spacing-1);
+    padding: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.15s ease;
+    
+    &:hover {
+      opacity: 1;
+    }
+    
+    &::before {
+      content: '×';
+      font-size: 16px;
+      line-height: 1;
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// BADGE AS LINK
+// -----------------------------------------------------------------------------
+a.badge {
+  text-decoration: none;
+  cursor: pointer;
+  
+  &:hover {
+    opacity: 0.85;
+    transform: translateY(-1px);
+  }
+}
+
+// -----------------------------------------------------------------------------
+// STATUS BADGES (Specific for Campus Resource Hub)
+// -----------------------------------------------------------------------------
+
+// Booking status
+.badge-booking-pending {
+  @extend .badge;
+  @extend .badge-soft;
+  @extend .badge-warning;
+}
+
+.badge-booking-approved {
+  @extend .badge;
+  @extend .badge-soft;
+  @extend .badge-success;
+}
+
+.badge-booking-rejected,
+.badge-booking-cancelled {
+  @extend .badge;
+  @extend .badge-soft;
+  @extend .badge-error;
+}
+
+.badge-booking-completed {
+  @extend .badge;
+  @extend .badge-soft;
+  @extend .badge-info;
+}
+
+// Resource status
+.badge-resource-published {
+  @extend .badge;
+  @extend .badge-success;
+}
+
+.badge-resource-draft {
+  @extend .badge;
+  @extend .badge-secondary;
+}
+
+.badge-resource-archived {
+  @extend .badge;
+  @extend .badge-outline;
+}
+
+// User role badges
+.badge-role-admin {
+  @extend .badge;
+  @extend .badge-primary;
+}
+
+.badge-role-staff {
+  @extend .badge;
+  @extend .badge-info;
+}
+
+.badge-role-student {
+  @extend .badge;
+  @extend .badge-default;
+}
+
+// -----------------------------------------------------------------------------
+// NOTIFICATION BADGE (Counter)
+// -----------------------------------------------------------------------------
+.badge-notification {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 var(--spacing-1);
+  
+  font-size: 11px;
+  font-weight: var(--font-weight-semibold);
+  line-height: 1;
+  
+  background-color: var(--color-error);
+  color: var(--color-white);
+  border-radius: var(--border-radius-full);
+  
+  // Position on top of element
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  z-index: 1;
+  
+  &.badge-notification-sm {
+    min-width: 16px;
+    height: 16px;
+    font-size: 10px;
+    top: -6px;
+    right: -6px;
+  }
+}

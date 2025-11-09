@@ -1,0 +1,70 @@
+// =============================================================================
+// BORDER TOKENS - Enterprise Design System
+// =============================================================================
+// Border Radius: Subtle roundness (4, 8, 12, 16px)
+// Border Width: Consistent stroke weights
+// =============================================================================
+
+// -----------------------------------------------------------------------------
+// BORDER RADIUS
+// -----------------------------------------------------------------------------
+$border-radius-none: 0;
+$border-radius-sm: 0.25rem;  // 4px
+$border-radius-md: 0.5rem;   // 8px
+$border-radius-lg: 0.75rem;  // 12px
+$border-radius-xl: 1rem;     // 16px
+$border-radius-2xl: 1.5rem;  // 24px
+$border-radius-full: 9999px; // Circular
+
+// -----------------------------------------------------------------------------
+// BORDER WIDTH
+// -----------------------------------------------------------------------------
+$border-width-0: 0;
+$border-width-1: 1px;
+$border-width-2: 2px;
+$border-width-4: 4px;
+$border-width-8: 8px;
+
+// -----------------------------------------------------------------------------
+// CSS CUSTOM PROPERTIES (CSS Variables)
+// -----------------------------------------------------------------------------
+:root {
+  // Border Radius
+  --border-radius-none: #{$border-radius-none};
+  --border-radius-sm: #{$border-radius-sm};
+  --border-radius-md: #{$border-radius-md};
+  --border-radius-lg: #{$border-radius-lg};
+  --border-radius-xl: #{$border-radius-xl};
+  --border-radius-2xl: #{$border-radius-2xl};
+  --border-radius-full: #{$border-radius-full};
+  
+  // Border Width
+  --border-width-0: #{$border-width-0};
+  --border-width-1: #{$border-width-1};
+  --border-width-2: #{$border-width-2};
+  --border-width-4: #{$border-width-4};
+  --border-width-8: #{$border-width-8};
+  
+  // -----------------------------------------------------------------------------
+  // SEMANTIC BORDER TOKENS
+  // -----------------------------------------------------------------------------
+  // Default Border
+  --border-default: #{$border-width-1} solid var(--color-border-default);
+  --border-medium: #{$border-width-1} solid var(--color-border-medium);
+  --border-strong: #{$border-width-2} solid var(--color-border-strong);
+  --border-focus: #{$border-width-2} solid var(--color-border-focus);
+  
+  // Component Borders
+  --border-card: #{$border-width-1} solid var(--color-card-border);
+  --border-input: #{$border-width-1} solid var(--color-input-border);
+  --border-input-focus: #{$border-width-2} solid var(--color-input-focus-border);
+  
+  // Border Radius by Component
+  --border-radius-button: #{$border-radius-md};
+  --border-radius-input: #{$border-radius-md};
+  --border-radius-card: #{$border-radius-lg};
+  --border-radius-modal: #{$border-radius-xl};
+  --border-radius-badge: #{$border-radius-full};
+  --border-radius-avatar: #{$border-radius-full};
+  --border-radius-dropdown: #{$border-radius-lg};
+}

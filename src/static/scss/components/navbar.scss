@@ -1,0 +1,802 @@
+// =============================================================================
+// NAVBAR COMPONENT
+// =============================================================================
+// Top navigation bar with logo, search, notifications, user menu
+// Responsive, sticky, with mobile hamburger menu
+
+@use '../tokens' as *;
+
+// -----------------------------------------------------------------------------
+// Navbar Container
+// -----------------------------------------------------------------------------
+.navbar {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  height: 64px;
+  background-color: white;
+  border-bottom: 1px solid var(--color-gray-200);
+  z-index: var(--z-index-navbar);
+  display: flex;
+  align-items: center;
+  padding: 0 $spacing-6;
+  transition: box-shadow 0.2s;
+  
+  // Add shadow when scrolled
+  &.is-scrolled {
+    box-shadow: $shadow-sm;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Navbar Inner Container (max-width wrapper)
+// -----------------------------------------------------------------------------
+.navbar__container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+  gap: $spacing-6;
+}
+
+// -----------------------------------------------------------------------------
+// Navbar Brand/Logo
+// -----------------------------------------------------------------------------
+.navbar__brand {
+  display: flex;
+  align-items: center;
+  gap: $spacing-3;
+  text-decoration: none;
+  flex-shrink: 0;
+  
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 4px;
+    border-radius: $border-radius-sm;
+  }
+  
+  &-logo {
+    width: 36px;
+    height: 36px;
+  }
+  
+  &-text {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-bold;
+    color: var(--color-gray-900);
+    white-space: nowrap;
+    
+    @media (max-width: 768px) {
+      display: none;
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Navbar Search Bar
+// -----------------------------------------------------------------------------
+.navbar__search {
+  flex: 1;
+  max-width: 600px;
+  position: relative;
+  
+  @media (max-width: 768px) {
+    display: none; // Hidden on mobile, shown in overlay
+  }
+  
+  input {
+    width: 100%;
+    height: 40px;
+    padding: 0 $spacing-10 0 $spacing-10;
+    border: 1px solid var(--color-gray-300);
+    border-radius: $border-radius-full;
+    font-size: $font-size-sm;
+    background-color: var(--color-gray-50);
+    transition: all 0.2s;
+    
+    &::placeholder {
+      color: var(--color-gray-500);
+    }
+    
+    &:focus {
+      outline: none;
+      border-color: var(--color-primary);
+      background-color: white;
+      box-shadow: 0 0 0 3px rgba(var(--color-primary), 0.1);
+    }
+  }
+  
+  &-icon {
+    position: absolute;
+    left: $spacing-3;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 18px;
+    height: 18px;
+    color: var(--color-gray-500);
+    pointer-events: none;
+  }
+  
+  &-clear {
+    position: absolute;
+    right: $spacing-3;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 24px;
+    height: 24px;
+    background: none;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    color: var(--color-gray-500);
+    display: none;
+    
+    &.is-visible {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    &:hover {
+      background-color: var(--color-gray-200);
+    }
+  }
+}
+
+// Search results dropdown
+.navbar__search-results {
+  position: absolute;
+  top: calc(100% + $spacing-2);
+  left: 0;
+  right: 0;
+  background-color: white;
+  border: 1px solid var(--color-gray-200);
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow-lg;
+  max-height: 400px;
+  overflow-y: auto;
+  display: none;
+  
+  &.is-open {
+    display: block;
+  }
+  
+  &-item {
+    padding: $spacing-3 $spacing-4;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    border-bottom: 1px solid var(--color-gray-100);
+    
+    &:last-child {
+      border-bottom: none;
+    }
+    
+    &:hover,
+    &.is-selected {
+      background-color: var(--color-gray-50);
+    }
+    
+    &-title {
+      font-size: $font-size-sm;
+      font-weight: $font-weight-medium;
+      color: var(--color-gray-900);
+      margin-bottom: $spacing-1;
+    }
+    
+    &-meta {
+      font-size: $font-size-xs;
+      color: var(--color-gray-600);
+    }
+  }
+  
+  &-empty {
+    padding: $spacing-6;
+    text-align: center;
+    color: var(--color-gray-500);
+    font-size: $font-size-sm;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Navbar Actions (right side icons/buttons)
+// -----------------------------------------------------------------------------
+.navbar__actions {
+  display: flex;
+  align-items: center;
+  gap: $spacing-2;
+  flex-shrink: 0;
+}
+
+// Action button (icon button)
+.navbar__action {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-gray-700);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  
+  &:hover {
+    background-color: var(--color-gray-100);
+    color: var(--color-gray-900);
+  }
+  
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+  
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+  
+  // Notification dot
+  &::after {
+    content: '';
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 8px;
+    height: 8px;
+    background-color: var(--color-error-500);
+    border: 2px solid white;
+    border-radius: 50%;
+    display: none;
+  }
+  
+  &.has-notification::after {
+    display: block;
+  }
+  
+  // Badge counter
+  .badge {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 $spacing-1;
+    background-color: var(--color-error-500);
+    color: white;
+    font-size: 11px;
+    font-weight: $font-weight-bold;
+    border-radius: $border-radius-full;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+// Mobile search button
+.navbar__search-toggle {
+  @media (min-width: 769px) {
+    display: none;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Navbar User Menu
+// -----------------------------------------------------------------------------
+.navbar__user {
+  position: relative;
+  
+  &-button {
+    display: flex;
+    align-items: center;
+    gap: $spacing-2;
+    padding: $spacing-1 $spacing-2;
+    border-radius: $border-radius-full;
+    background: none;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s;
+    
+    &:hover {
+      background-color: var(--color-gray-50);
+      border-color: var(--color-gray-200);
+    }
+    
+    &:focus-visible {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 2px;
+    }
+  }
+  
+  &-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  
+  &-name {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: var(--color-gray-900);
+    
+    @media (max-width: 1024px) {
+      display: none;
+    }
+  }
+  
+  &-chevron {
+    width: 16px;
+    height: 16px;
+    color: var(--color-gray-500);
+    transition: transform 0.2s;
+    
+    @media (max-width: 1024px) {
+      display: none;
+    }
+  }
+  
+  &.is-open &-chevron {
+    transform: rotate(180deg);
+  }
+}
+
+// User dropdown menu
+.navbar__dropdown {
+  position: absolute;
+  top: calc(100% + $spacing-2);
+  right: 0;
+  min-width: 240px;
+  background-color: white;
+  border: 1px solid var(--color-gray-200);
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow-lg;
+  padding: $spacing-2;
+  display: none;
+  
+  &.is-open {
+    display: block;
+    animation: dropdownSlideIn 0.2s ease-out;
+  }
+  
+  @keyframes dropdownSlideIn {
+    from {
+      opacity: 0;
+      transform: translateY(-8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  &-header {
+    padding: $spacing-3 $spacing-3 $spacing-2;
+    border-bottom: 1px solid var(--color-gray-200);
+    
+    &-name {
+      font-size: $font-size-sm;
+      font-weight: $font-weight-semibold;
+      color: var(--color-gray-900);
+    }
+    
+    &-email {
+      font-size: $font-size-xs;
+      color: var(--color-gray-600);
+      margin-top: $spacing-1;
+    }
+  }
+  
+  &-section {
+    padding: $spacing-1 0;
+    border-bottom: 1px solid var(--color-gray-200);
+    
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+  
+  &-item {
+    display: flex;
+    align-items: center;
+    gap: $spacing-3;
+    width: 100%;
+    padding: $spacing-2 $spacing-3;
+    border-radius: $border-radius-md;
+    background: none;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    font-size: $font-size-sm;
+    color: var(--color-gray-700);
+    text-decoration: none;
+    transition: background-color 0.2s;
+    
+    &:hover {
+      background-color: var(--color-gray-50);
+      color: var(--color-gray-900);
+    }
+    
+    svg {
+      width: 18px;
+      height: 18px;
+      color: inherit;
+      flex-shrink: 0;
+    }
+    
+    &--danger {
+      color: var(--color-error-600);
+      
+      &:hover {
+        background-color: var(--color-error-50);
+      }
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Mobile Hamburger Menu
+// -----------------------------------------------------------------------------
+.navbar__hamburger {
+  width: 40px;
+  height: 40px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  border-radius: $border-radius-md;
+  
+  @media (max-width: 1024px) {
+    display: flex;
+  }
+  
+  &:hover {
+    background-color: var(--color-gray-100);
+  }
+  
+  span {
+    width: 20px;
+    height: 2px;
+    background-color: var(--color-gray-700);
+    border-radius: 2px;
+    transition: all 0.3s;
+  }
+  
+  // Animated hamburger to X
+  &.is-open {
+    span:nth-child(1) {
+      transform: translateY(7px) rotate(45deg);
+    }
+    
+    span:nth-child(2) {
+      opacity: 0;
+    }
+    
+    span:nth-child(3) {
+      transform: translateY(-7px) rotate(-45deg);
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Navbar Variants
+// -----------------------------------------------------------------------------
+
+// Transparent navbar (for hero sections)
+.navbar--transparent {
+  background-color: transparent;
+  border-bottom-color: transparent;
+  
+  &.is-scrolled {
+    background-color: white;
+    border-bottom-color: var(--color-gray-200);
+  }
+  
+  .navbar__brand-text {
+    color: white;
+  }
+  
+  .navbar__action {
+    color: white;
+    
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+  }
+}
+
+// Dark navbar
+.navbar--dark {
+  background-color: var(--color-gray-900);
+  border-bottom-color: var(--color-gray-800);
+  
+  .navbar__brand-text {
+    color: white;
+  }
+  
+  .navbar__search input {
+    background-color: var(--color-gray-800);
+    border-color: var(--color-gray-700);
+    color: white;
+    
+    &::placeholder {
+      color: var(--color-gray-400);
+    }
+    
+    &:focus {
+      background-color: var(--color-gray-700);
+      border-color: var(--color-primary);
+    }
+  }
+  
+  .navbar__action {
+    color: var(--color-gray-300);
+    
+    &:hover {
+      background-color: var(--color-gray-800);
+      color: white;
+    }
+  }
+}
+
+// Compact navbar (shorter height)
+.navbar--compact {
+  height: 56px;
+  padding: 0 $spacing-4;
+  
+  .navbar__brand-logo {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .navbar__search input {
+    height: 36px;
+  }
+  
+  .navbar__action {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Navbar Breadcrumbs (optional)
+// -----------------------------------------------------------------------------
+.navbar__breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: $spacing-2;
+  margin-left: $spacing-4;
+  
+  @media (max-width: 768px) {
+    display: none;
+  }
+  
+  a, span {
+    font-size: $font-size-sm;
+    color: var(--color-gray-600);
+    text-decoration: none;
+    
+    &:hover {
+      color: var(--color-gray-900);
+    }
+  }
+  
+  .separator {
+    color: var(--color-gray-400);
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Campus-Specific Navbar Use Cases
+// -----------------------------------------------------------------------------
+
+// Resource browse navbar with category filters
+.navbar--browse {
+  .navbar__filters {
+    display: flex;
+    gap: $spacing-2;
+    margin-left: auto;
+    
+    @media (max-width: 1024px) {
+      display: none;
+    }
+  }
+  
+  .filter-button {
+    padding: $spacing-2 $spacing-4;
+    border: 1px solid var(--color-gray-300);
+    border-radius: $border-radius-full;
+    background: white;
+    font-size: $font-size-sm;
+    cursor: pointer;
+    transition: all 0.2s;
+    
+    &:hover {
+      border-color: var(--color-primary);
+      color: var(--color-primary);
+    }
+    
+    &.is-active {
+      background-color: var(--color-primary);
+      border-color: var(--color-primary);
+      color: white;
+    }
+  }
+}
+
+// Admin navbar with quick stats
+.navbar--admin {
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+  border-bottom: none;
+  
+  .navbar__brand-text,
+  .navbar__action {
+    color: white;
+  }
+  
+  .navbar__action:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+  
+  .navbar__stats {
+    display: flex;
+    gap: $spacing-6;
+    margin-left: auto;
+    
+    @media (max-width: 1024px) {
+      display: none;
+    }
+  }
+  
+  .stat {
+    text-align: center;
+    
+    &-value {
+      font-size: $font-size-xl;
+      font-weight: $font-weight-bold;
+      color: white;
+    }
+    
+    &-label {
+      font-size: $font-size-xs;
+      color: rgba(255, 255, 255, 0.8);
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Notification Dropdown
+// -----------------------------------------------------------------------------
+.navbar__notifications {
+  position: absolute;
+  top: calc(100% + $spacing-2);
+  right: 0;
+  width: 360px;
+  max-width: 90vw;
+  background-color: white;
+  border: 1px solid var(--color-gray-200);
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow-lg;
+  display: none;
+  
+  &.is-open {
+    display: block;
+  }
+  
+  &-header {
+    padding: $spacing-4;
+    border-bottom: 1px solid var(--color-gray-200);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    
+    h3 {
+      font-size: $font-size-base;
+      font-weight: $font-weight-semibold;
+      color: var(--color-gray-900);
+      margin: 0;
+    }
+    
+    button {
+      font-size: $font-size-xs;
+      color: var(--color-primary);
+      background: none;
+      border: none;
+      cursor: pointer;
+      
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+  
+  &-list {
+    max-height: 400px;
+    overflow-y: auto;
+  }
+  
+  &-item {
+    padding: $spacing-3 $spacing-4;
+    border-bottom: 1px solid var(--color-gray-100);
+    cursor: pointer;
+    transition: background-color 0.2s;
+    
+    &:hover {
+      background-color: var(--color-gray-50);
+    }
+    
+    &.is-unread {
+      background-color: var(--color-primary-50);
+    }
+    
+    &-title {
+      font-size: $font-size-sm;
+      font-weight: $font-weight-medium;
+      color: var(--color-gray-900);
+      margin-bottom: $spacing-1;
+    }
+    
+    &-message {
+      font-size: $font-size-xs;
+      color: var(--color-gray-600);
+      margin-bottom: $spacing-1;
+    }
+    
+    &-time {
+      font-size: $font-size-xs;
+      color: var(--color-gray-500);
+    }
+  }
+  
+  &-empty {
+    padding: $spacing-8;
+    text-align: center;
+    color: var(--color-gray-500);
+    font-size: $font-size-sm;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Responsive Mobile Search Overlay
+// -----------------------------------------------------------------------------
+.navbar__search-overlay {
+  position: fixed;
+  top: 64px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: white;
+  z-index: var(--z-index-dropdown-menu);
+  display: none;
+  
+  @media (max-width: 768px) {
+    &.is-open {
+      display: block;
+    }
+  }
+  
+  .navbar__search {
+    display: block;
+    max-width: none;
+    padding: $spacing-4;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Dark Theme System Preference
+// -----------------------------------------------------------------------------
+@media (prefers-color-scheme: dark) {
+  .navbar:not(.navbar--dark):not(.navbar--transparent) {
+    background-color: var(--color-gray-900);
+    border-bottom-color: var(--color-gray-800);
+  }
+}

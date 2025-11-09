@@ -1,0 +1,378 @@
+// =============================================================================
+// FORM COMPONENT - Enterprise Design System
+// =============================================================================
+// Modern form controls with floating labels and validation states
+// Clean, accessible, enterprise-grade inputs
+// =============================================================================
+
+// -----------------------------------------------------------------------------
+// FORM GROUP (Field container)
+// -----------------------------------------------------------------------------
+.form-group {
+  margin-bottom: var(--spacing-form-field-gap);
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// LABELS
+// -----------------------------------------------------------------------------
+.form-label {
+  display: block;
+  margin-bottom: var(--spacing-form-label-margin);
+  
+  font-size: var(--typography-label-size);
+  font-weight: var(--typography-label-weight);
+  line-height: var(--typography-label-line-height);
+  letter-spacing: var(--typography-label-letter-spacing);
+  color: var(--color-text-primary);
+  
+  .required {
+    color: var(--color-error);
+    margin-left: 2px;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// INPUT FIELDS (text, email, password, number, tel, url, date, etc.)
+// -----------------------------------------------------------------------------
+.form-input,
+.form-control {
+  width: 100%;
+  padding: var(--spacing-form-input-padding);
+  
+  font-family: var(--font-family-sans);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-normal);
+  color: var(--color-text-primary);
+  
+  background-color: var(--color-input-bg);
+  border: var(--border-input);
+  border-radius: var(--border-radius-input);
+  
+  box-shadow: var(--shadow-input-default);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  
+  &::placeholder {
+    color: var(--color-text-tertiary);
+  }
+  
+  &:hover:not(:disabled):not(:focus) {
+    border-color: var(--color-border-medium);
+  }
+  
+  &:focus {
+    outline: none;
+    border-color: var(--color-input-focus-border);
+    box-shadow: var(--shadow-input-focus);
+  }
+  
+  &:disabled {
+    background-color: var(--color-bg-secondary);
+    color: var(--color-text-disabled);
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+  
+  &.is-invalid,
+  &.error {
+    border-color: var(--color-error);
+    
+    &:focus {
+      border-color: var(--color-error);
+      box-shadow: var(--shadow-input-error);
+    }
+  }
+  
+  &.is-valid,
+  &.success {
+    border-color: var(--color-success);
+    
+    &:focus {
+      border-color: var(--color-success);
+    }
+  }
+}
+
+// Input sizes
+.form-input-sm {
+  padding: var(--spacing-2) var(--spacing-3);
+  font-size: var(--font-size-sm);
+}
+
+.form-input-lg {
+  padding: var(--spacing-4) var(--spacing-5);
+  font-size: var(--font-size-lg);
+}
+
+// -----------------------------------------------------------------------------
+// TEXTAREA
+// -----------------------------------------------------------------------------
+textarea.form-input,
+textarea.form-control {
+  resize: vertical;
+  min-height: 100px;
+}
+
+// -----------------------------------------------------------------------------
+// SELECT DROPDOWN
+// -----------------------------------------------------------------------------
+.form-select {
+  @extend .form-input;
+  
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23737373' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--spacing-3) center;
+  background-size: 12px;
+  padding-right: var(--spacing-8);
+  
+  &:hover:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// CHECKBOX & RADIO
+// -----------------------------------------------------------------------------
+.form-check {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-2);
+  margin-bottom: var(--spacing-3);
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.form-check-input {
+  width: 20px;
+  height: 20px;
+  margin-top: 2px;
+  flex-shrink: 0;
+  
+  appearance: none;
+  background-color: var(--color-input-bg);
+  border: var(--border-input);
+  border-radius: var(--border-radius-sm);
+  
+  cursor: pointer;
+  transition: all 0.15s ease;
+  
+  &:hover:not(:disabled) {
+    border-color: var(--color-border-medium);
+  }
+  
+  &:focus {
+    outline: none;
+    border-color: var(--color-input-focus-border);
+    box-shadow: var(--shadow-input-focus);
+  }
+  
+  &:checked {
+    background-color: var(--color-interactive-default);
+    border-color: var(--color-interactive-default);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='white'%3E%3Cpath d='M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z'/%3E%3C/svg%3E");
+    background-position: center;
+    background-size: 12px;
+    background-repeat: no-repeat;
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  // Radio buttons
+  &[type="radio"] {
+    border-radius: var(--border-radius-full);
+    
+    &:checked {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='white'%3E%3Ccircle cx='8' cy='8' r='3'/%3E%3C/svg%3E");
+      background-size: 8px;
+    }
+  }
+}
+
+.form-check-label {
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-normal);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  user-select: none;
+}
+
+// -----------------------------------------------------------------------------
+// HELP TEXT
+// -----------------------------------------------------------------------------
+.form-help,
+.form-text {
+  display: block;
+  margin-top: var(--spacing-2);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+  color: var(--color-text-tertiary);
+}
+
+// -----------------------------------------------------------------------------
+// VALIDATION FEEDBACK
+// -----------------------------------------------------------------------------
+.invalid-feedback,
+.error-message {
+  display: none;
+  margin-top: var(--spacing-2);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+  color: var(--color-error);
+  
+  .is-invalid ~ &,
+  .error ~ & {
+    display: block;
+  }
+}
+
+.valid-feedback,
+.success-message {
+  display: none;
+  margin-top: var(--spacing-2);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+  color: var(--color-success);
+  
+  .is-valid ~ &,
+  .success ~ & {
+    display: block;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// INPUT GROUPS (with icons or buttons)
+// -----------------------------------------------------------------------------
+.input-group {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  
+  .form-input,
+  .form-control {
+    flex: 1;
+    min-width: 0;
+  }
+  
+  // Prepend/Append
+  .input-group-prepend,
+  .input-group-append {
+    display: flex;
+    align-items: center;
+  }
+  
+  .input-group-text {
+    display: flex;
+    align-items: center;
+    padding: var(--spacing-form-input-padding);
+    background-color: var(--color-bg-secondary);
+    border: var(--border-input);
+    color: var(--color-text-secondary);
+    white-space: nowrap;
+  }
+  
+  // Border radius adjustments
+  .input-group-prepend {
+    .input-group-text {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+      border-right: 0;
+    }
+    
+    ~ .form-input,
+    ~ .form-control {
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+    }
+  }
+  
+  .input-group-append {
+    .input-group-text {
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+      border-left: 0;
+    }
+  }
+  
+  .form-input:not(:last-child),
+  .form-control:not(:last-child) {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// FLOATING LABELS (Modern input style)
+// -----------------------------------------------------------------------------
+.form-floating {
+  position: relative;
+  
+  .form-input,
+  .form-control {
+    height: 58px;
+    padding-top: 20px;
+    padding-bottom: 8px;
+    
+    &::placeholder {
+      color: transparent;
+    }
+    
+    &:focus,
+    &:not(:placeholder-shown) {
+      ~ .form-label {
+        transform: translateY(-8px);
+        font-size: var(--font-size-xs);
+        color: var(--color-text-secondary);
+      }
+    }
+  }
+  
+  .form-label {
+    position: absolute;
+    top: 16px;
+    left: var(--spacing-4);
+    pointer-events: none;
+    transform-origin: 0 0;
+    transition: all 0.15s ease;
+    margin-bottom: 0;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// FORM LAYOUTS
+// -----------------------------------------------------------------------------
+.form-row {
+  display: flex;
+  gap: var(--spacing-4);
+  margin-bottom: var(--spacing-form-field-gap);
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+  
+  @media (max-width: 767px) {
+    flex-direction: column;
+    gap: var(--spacing-form-field-gap);
+  }
+}
+
+.form-col {
+  flex: 1;
+  min-width: 0;
+}
+
+// Inline forms
+.form-inline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-3);
+}

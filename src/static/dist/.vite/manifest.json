@@ -1,0 +1,12 @@
+{
+  "js/enterprise.js": {
+    "file": "assets/enterpriseJs-CNnJ7BZk.js",
+    "name": "enterpriseJs",
+    "src": "js/enterprise.js",
+    "isEntry": true
+  },
+  "style.css": {
+    "file": "assets/style-FDlKo-cV.css",
+    "src": "style.css"
+  }
+}

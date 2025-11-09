@@ -3,36 +3,35 @@
 {% block title %}Profile - {{ current_user.name }}{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
     <div class="row justify-content-center">
-        <div class="col-md-8">
+        <div class="grid-col-md-8">
             <!-- Profile Header -->
-            <div class="card shadow-sm mb-4">
+            <div class="card shadow-sm ">
                 <div class="card-body text-center">
                     {% if current_user.profile_image %}
                         <img src="{{ url_for('static', filename='uploads/' + current_user.profile_image) }}" 
                              alt="Profile Image" 
-                             class="rounded-circle mb-3" 
+                             class="rounded-circle " 
                              width="120" 
                              height="120"
                              style="object-fit: cover;">
                     {% else %}
-                        <div class="rounded-circle bg-secondary d-inline-flex align-items-center justify-content-center mb-3" 
+                        <div class="rounded-circle bg-secondary d-inline-flex align-items-center justify-content-center " 
                              style="width: 120px; height: 120px;">
                             <span class="text-white fs-1">{{ current_user.name[0].upper() }}</span>
                         </div>
                     {% endif %}
                     
                     <h2 class="mb-1">{{ current_user.name }}</h2>
-                    <p class="text-muted mb-2">{{ current_user.email }}</p>
+                    <p class="text-muted ">{{ current_user.email }}</p>
                     
                     <!-- Role Badge -->
                     {% if current_user.role == 'admin' %}
-                        <span class="badge bg-danger fs-6">Admin</span>
+                        <span class="badge badge-danger fs-6">Admin</span>
                     {% elif current_user.role == 'staff' %}
-                        <span class="badge bg-primary fs-6">Staff</span>
+                        <span class="badge badge-primary fs-6">Staff</span>
                     {% else %}
-                        <span class="badge bg-success fs-6">Student</span>
+                        <span class="badge badge-success fs-6">Student</span>
                     {% endif %}
                 </div>
             </div>
@@ -43,65 +42,65 @@
                     <h5 class="mb-0">Profile Information</h5>
                 </div>
                 <div class="card-body">
-                    <div class="row mb-3">
-                        <div class="col-sm-4">
+                    <div class="row ">
+                        <div class="grid-col-sm-4">
                             <strong>User ID:</strong>
                         </div>
-                        <div class="col-sm-8">
+                        <div class="grid-col-sm-8">
                             {{ current_user.user_id }}
                         </div>
                     </div>
 
-                    <div class="row mb-3">
-                        <div class="col-sm-4">
+                    <div class="row ">
+                        <div class="grid-col-sm-4">
                             <strong>Name:</strong>
                         </div>
-                        <div class="col-sm-8">
+                        <div class="grid-col-sm-8">
                             {{ current_user.name }}
                         </div>
                     </div>
 
-                    <div class="row mb-3">
-                        <div class="col-sm-4">
+                    <div class="row ">
+                        <div class="grid-col-sm-4">
                             <strong>Email:</strong>
                         </div>
-                        <div class="col-sm-8">
+                        <div class="grid-col-sm-8">
                             {{ current_user.email }}
                         </div>
                     </div>
 
-                    <div class="row mb-3">
-                        <div class="col-sm-4">
+                    <div class="row ">
+                        <div class="grid-col-sm-4">
                             <strong>Role:</strong>
                         </div>
-                        <div class="col-sm-8">
+                        <div class="grid-col-sm-8">
                             <span class="text-capitalize">{{ current_user.role }}</span>
                         </div>
                     </div>
 
                     {% if current_user.department %}
-                    <div class="row mb-3">
-                        <div class="col-sm-4">
+                    <div class="row ">
+                        <div class="grid-col-sm-4">
                             <strong>Department:</strong>
                         </div>
-                        <div class="col-sm-8">
+                        <div class="grid-col-sm-8">
                             {{ current_user.department }}
                         </div>
                     </div>
                     {% endif %}
 
-                    <div class="row mb-3">
-                        <div class="col-sm-4">
+                    <div class="row ">
+                        <div class="grid-col-sm-4">
                             <strong>Member Since:</strong>
                         </div>
-                        <div class="col-sm-8">
+                        <div class="grid-col-sm-8">
                             {{ current_user.created_at.strftime('%B %d, %Y') if current_user.created_at else 'N/A' }}
                         </div>
                     </div>
                 </div>
 
                 <div class="card-footer bg-white text-end">
-                    <a href="{{ url_for('resources.dashboard') }}" class="btn btn-outline-primary">
+                    <a href="{{ url_for('resources.dashboard') }}" class="btn btn-secondary">
                         <i class="bi bi-arrow-left"></i> Back to Dashboard
                     </a>
                     {# Future: Edit Profile button #}
@@ -119,5 +118,4 @@
             {% endif %}
         </div>
     </div>
-</div>
 {% endblock %}

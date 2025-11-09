@@ -1,0 +1,59 @@
+// ============================================
+// LIGHT THEME
+// ============================================
+@import './tokens';
+
+[data-theme="light"] {
+  // Background
+  --bg-primary: #{$neutral-50};
+  --bg-secondary: #{$neutral-100};
+  --bg-tertiary: #{$neutral-200};
+  --bg-elevated: #FFFFFF;
+  --bg-overlay: rgba(0, 0, 0, 0.5);
+  
+  // Text
+  --text-primary: #{$neutral-900};
+  --text-secondary: #{$neutral-700};
+  --text-tertiary: #{$neutral-500};
+  --text-inverse: #FFFFFF;
+  
+  // Borders
+  --border-primary: #{$neutral-200};
+  --border-secondary: #{$neutral-300};
+  --border-focus: #{$brand-primary};
+  
+  // Brand
+  --color-primary: #{$brand-primary};
+  --color-primary-hover: #{$brand-primary-dark};
+  --color-primary-light: #{$brand-primary-light};
+  --color-accent: #{$brand-accent};
+  --color-accent-hover: #{$brand-accent-dark};
+  
+  // Semantic
+  --color-success: #{$success};
+  --color-success-bg: #{$success-light};
+  --color-warning: #{$warning};
+  --color-warning-bg: #{$warning-light};
+  --color-error: #{$error};
+  --color-error-bg: #{$error-light};
+  --color-info: #{$info};
+  --color-info-bg: #{$info-light};
+  
+  // Shadows
+  --shadow-sm: #{$shadow-sm};
+  --shadow-md: #{$shadow-md};
+  --shadow-lg: #{$shadow-lg};
+  --shadow-xl: #{$shadow-xl};
+  
+  // Components
+  --sidebar-bg: #FFFFFF;
+  --sidebar-border: #{$neutral-200};
+  --topbar-bg: #FFFFFF;
+  --topbar-border: #{$neutral-200};
+  --card-bg: #FFFFFF;
+  --input-bg: #FFFFFF;
+  --input-border: #{$neutral-300};
+  --input-focus-border: #{$brand-primary};
+  
+  color-scheme: light;
+}

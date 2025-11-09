@@ -1,0 +1,276 @@
+// =============================================================================
+// RESOURCES PAGE STYLES
+// =============================================================================
+// Resource browsing, detail views, create/edit forms
+// Grid layouts, filters, image galleries
+
+@use '../tokens' as *;
+
+// -----------------------------------------------------------------------------
+// Resource Browse/List Layout
+// -----------------------------------------------------------------------------
+.resources-page {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: $spacing-8;
+  padding: $spacing-8;
+  max-width: 1800px;
+  margin: 0 auto;
+  align-items: start;
+  
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr;
+    padding: $spacing-6;
+  }
+  
+  @media (max-width: 768px) {
+    padding: $spacing-4;
+  }
+}
+
+// Filter sidebar (uses filter-drawer component on mobile)
+.resources-page__filters {
+  position: sticky;
+  top: 80px;
+  
+  @media (max-width: 1024px) {
+    display: none; // Hidden, shown as drawer on mobile
+  }
+}
+
+// Main content area
+.resources-page__content {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-6;
+}
+
+// -----------------------------------------------------------------------------
+// Resource Grid
+// -----------------------------------------------------------------------------
+.resource-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: $spacing-6;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: $spacing-4;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Resource Detail Page
+// -----------------------------------------------------------------------------
+.resource-detail {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: $spacing-8;
+  
+  @media (max-width: 768px) {
+    padding: $spacing-4;
+  }
+  
+  &__breadcrumbs {
+    margin-bottom: $spacing-6;
+  }
+  
+  &__header {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: $spacing-8;
+    margin-bottom: $spacing-8;
+    
+    @media (max-width: 1024px) {
+      grid-template-columns: 1fr;
+      gap: $spacing-6;
+    }
+  }
+  
+  &__gallery {
+    position: relative;
+  }
+  
+  &__main-image {
+    width: 100%;
+    height: 500px;
+    object-fit: cover;
+    border-radius: $border-radius-lg;
+    margin-bottom: $spacing-4;
+    
+    @media (max-width: 768px) {
+      height: 300px;
+    }
+  }
+  
+  &__thumbnails {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: $spacing-2;
+    
+    img {
+      width: 100%;
+      height: 80px;
+      object-fit: cover;
+      border-radius: $border-radius-md;
+      cursor: pointer;
+      border: 2px solid transparent;
+      
+      &:hover, &.is-active {
+        border-color: var(--color-primary);
+      }
+    }
+  }
+  
+  &__info {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-4;
+  }
+  
+  &__title {
+    font-size: $font-size-4xl;
+    font-weight: $font-weight-bold;
+    color: var(--color-gray-900);
+    margin-bottom: $spacing-2;
+  }
+  
+  &__meta {
+    display: flex;
+    align-items: center;
+    gap: $spacing-4;
+    flex-wrap: wrap;
+    padding-bottom: $spacing-4;
+    border-bottom: 1px solid var(--color-gray-200);
+  }
+  
+  &__owner {
+    display: flex;
+    align-items: center;
+    gap: $spacing-2;
+    
+    img {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+    }
+  }
+  
+  &__rating {
+    display: flex;
+    align-items: center;
+    gap: $spacing-1;
+  }
+  
+  &__description {
+    line-height: 1.7;
+    color: var(--color-gray-700);
+  }
+  
+  &__features {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: $spacing-3;
+    padding: $spacing-4;
+    background-color: var(--color-gray-50);
+    border-radius: $border-radius-md;
+  }
+  
+  &__feature {
+    display: flex;
+    align-items: center;
+    gap: $spacing-2;
+    font-size: $font-size-sm;
+    
+    svg {
+      width: 20px;
+      height: 20px;
+      color: var(--color-primary);
+    }
+  }
+  
+  &__booking-card {
+    position: sticky;
+    top: 80px;
+    background-color: white;
+    border: 1px solid var(--color-gray-200);
+    border-radius: $border-radius-lg;
+    padding: $spacing-6;
+    box-shadow: $shadow-lg;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Resource Form (Create/Edit)
+// -----------------------------------------------------------------------------
+.resource-form {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: $spacing-8;
+  
+  @media (max-width: 768px) {
+    padding: $spacing-4;
+  }
+  
+  &__section {
+    background-color: white;
+    border: 1px solid var(--color-gray-200);
+    border-radius: $border-radius-lg;
+    padding: $spacing-6;
+    margin-bottom: $spacing-6;
+    
+    &-title {
+      font-size: $font-size-xl;
+      font-weight: $font-weight-semibold;
+      color: var(--color-gray-900);
+      margin-bottom: $spacing-4;
+      padding-bottom: $spacing-3;
+      border-bottom: 1px solid var(--color-gray-200);
+    }
+  }
+  
+  &__image-upload {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-4;
+  }
+  
+  &__image-preview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: $spacing-3;
+  }
+  
+  &__image-preview {
+    position: relative;
+    aspect-ratio: 1;
+    border-radius: $border-radius-md;
+    overflow: hidden;
+    
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    &-remove {
+      position: absolute;
+      top: $spacing-2;
+      right: $spacing-2;
+      width: 28px;
+      height: 28px;
+      background-color: var(--color-error-500);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      
+      &:hover {
+        background-color: var(--color-error-600);
+      }
+    }
+  }
+}

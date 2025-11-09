@@ -1,0 +1,361 @@
+{# ============================================ #}
+{# COMPONENT MACROS - Reusable Jinja Components #}
+{# ============================================ #}
+
+{# BUTTON COMPONENT #}
+{% macro button(text, variant='primary', size='md', icon=None, href=None, type='button', full_width=False, disabled=False, attrs='') %}
+  {% set tag = 'a' if href else 'button' %}
+  {% set classes = 'btn btn-' ~ variant ~ ' btn-' ~ size %}
+  {% if full_width %}{% set classes = classes ~ ' btn-block' %}{% endif %}
+  {% if disabled %}{% set classes = classes ~ ' btn-disabled' %}{% endif %}
+  
+  <{{ tag }} 
+    {% if href %}href="{{ href }}"{% endif %}
+    {% if not href %}type="{{ type }}"{% endif %}
+    class="{{ classes }}"
+    {% if disabled %}disabled aria-disabled="true"{% endif %}
+    {{ attrs|safe }}
+  >
+    {% if icon %}<i class="bi bi-{{ icon }}"></i>{% endif %}
+    {{ text }}
+  </{{ tag }}>
+{% endmacro %}
+
+{# FORM FIELD COMPONENT #}
+{% macro form_field(type='text', name='', label=None, value='', required=False, autofocus=False, help_text=None, placeholder='', min_length=None, max_length=None, disabled=False, readonly=False, errors=None) %}
+  <div class="form-group">
+    {% if label %}
+      <label for="{{ name }}" class="form-label">
+        {{ label }}
+        {% if required %}<span class="required">*</span>{% endif %}
+      </label>
+    {% endif %}
+    
+    {% if type == 'textarea' %}
+      <textarea 
+        id="{{ name }}"
+        name="{{ name }}"
+        class="form-textarea {% if errors %}is-invalid{% endif %}"
+        {% if required %}required{% endif %}
+        {% if autofocus %}autofocus{% endif %}
+        {% if placeholder %}placeholder="{{ placeholder }}"{% endif %}
+        {% if min_length %}minlength="{{ min_length }}"{% endif %}
+        {% if max_length %}maxlength="{{ max_length }}"{% endif %}
+        {% if disabled %}disabled{% endif %}
+        {% if readonly %}readonly{% endif %}
+      >{{ value }}</textarea>
+    {% elif type == 'select' %}
+      <select 
+        id="{{ name }}"
+        name="{{ name }}"
+        class="form-select {% if errors %}is-invalid{% endif %}"
+        {% if required %}required{% endif %}
+        {% if autofocus %}autofocus{% endif %}
+        {% if disabled %}disabled{% endif %}
+      >
+        {{ caller() if caller }}
+      </select>
+    {% else %}
+      <input 
+        type="{{ type }}"
+        id="{{ name }}"
+        name="{{ name }}"
+        value="{{ value }}"
+        class="form-input {% if errors %}is-invalid{% endif %}"
+        {% if required %}required{% endif %}
+        {% if autofocus %}autofocus{% endif %}
+        {% if placeholder %}placeholder="{{ placeholder }}"{% endif %}
+        {% if min_length %}minlength="{{ min_length }}"{% endif %}
+        {% if max_length %}maxlength="{{ max_length }}"{% endif %}
+        {% if disabled %}disabled{% endif %}
+        {% if readonly %}readonly{% endif %}
+      />
+    {% endif %}
+    
+    {% if help_text %}
+      <span class="form-help">{{ help_text }}</span>
+    {% endif %}
+    
+    {% if errors %}
+      {% for error in errors %}
+        <span class="form-error">{{ error }}</span>
+      {% endfor %}
+    {% endif %}
+  </div>
+{% endmacro %}
+
+{# CARD COMPONENT #}
+{% macro card(title=None, subtitle=None, body=None, actions=None, image=None, footer=None) %}
+  <div class="card">
+    {% if image %}
+      <div class="card-image">
+        <img src="{{ image }}" alt="{{ title if title else 'Card image' }}" loading="lazy">
+      </div>
+    {% endif %}
+    
+    {% if title or subtitle %}
+      <div class="card-header">
+        {% if title %}<h3 class="card-title">{{ title }}</h3>{% endif %}
+        {% if subtitle %}<p class="card-subtitle">{{ subtitle }}</p>{% endif %}
+      </div>
+    {% endif %}
+    
+    {% if body or caller %}
+      <div class="card-body">
+        {{ body|safe if body else caller() }}
+      </div>
+    {% endif %}
+    
+    {% if actions %}
+      <div class="card-actions">
+        {{ actions|safe }}
+      </div>
+    {% endif %}
+    
+    {% if footer %}
+      <div class="card-footer">
+        {{ footer|safe }}
+      </div>
+    {% endif %}
+  </div>
+{% endmacro %}
+
+{# TABLE COMPONENT #}
+{% macro table(headers, rows, dense=False, sortable=False, striped=True) %}
+  <div class="table-wrapper">
+    <table class="table {% if dense %}table-dense{% endif %} {% if striped %}table-striped{% endif %}">
+      <thead>
+        <tr>
+          {% for header in headers %}
+            <th {% if sortable %}class="sortable"{% endif %}>
+              {{ header }}
+              {% if sortable %}<i class="bi bi-chevron-expand"></i>{% endif %}
+            </th>
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {% if rows %}
+          {% for row in rows %}
+            <tr>
+              {% for cell in row %}
+                <td>{{ cell|safe }}</td>
+              {% endfor %}
+            </tr>
+          {% endfor %}
+        {% else %}
+          <tr>
+            <td colspan="{{ headers|length }}" class="table-empty">
+              No data available
+            </td>
+          </tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+{% endmacro %}
+
+{# BADGE COMPONENT #}
+{% macro badge(status, text=None) %}
+  {% set badge_text = text if text else status|title %}
+  <span class="badge badge-{{ status }}">{{ badge_text }}</span>
+{% endmacro %}
+
+{# ALERT COMPONENT #}
+{% macro alert(kind, message, dismissible=False) %}
+  <div class="alert alert-{{ kind }} {% if dismissible %}alert-dismissible{% endif %}" role="alert">
+    <div class="alert-content">
+      {{ message|safe }}
+    </div>
+    {% if dismissible %}
+      <button class="alert-close" aria-label="Close">
+        <i class="bi bi-x"></i>
+      </button>
+    {% endif %}
+  </div>
+{% endmacro %}
+
+{# MODAL COMPONENT #}
+{% macro modal(id, title, body=None, actions=None, size='md') %}
+  <div class="modal modal-{{ size }}" id="{{ id }}" role="dialog" aria-labelledby="{{ id }}-title" aria-modal="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title" id="{{ id }}-title">{{ title }}</h2>
+          <button class="modal-close" data-modal-close aria-label="Close">
+            <i class="bi bi-x"></i>
+          </button>
+        </div>
+        
+        <div class="modal-body">
+          {{ body|safe if body else caller() }}
+        </div>
+        
+        {% if actions %}
+          <div class="modal-footer">
+            {{ actions|safe }}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{% endmacro %}
+
+{# TABS COMPONENT #}
+{% macro tabs(items, active=0) %}
+  <div class="tabs" data-tabs>
+    <div class="tabs-list" role="tablist">
+      {% for item in items %}
+        <button 
+          class="tabs-trigger {% if loop.index0 == active %}active{% endif %}"
+          data-tab-trigger="{{ item.id }}"
+          role="tab"
+          aria-selected="{{ 'true' if loop.index0 == active else 'false' }}"
+          aria-controls="{{ item.id }}"
+        >
+          {% if item.icon %}<i class="bi bi-{{ item.icon }}"></i>{% endif %}
+          {{ item.title }}
+        </button>
+      {% endfor %}
+    </div>
+    
+    <div class="tabs-content">
+      {% for item in items %}
+        <div 
+          class="tabs-panel {% if loop.index0 == active %}active{% endif %}"
+          id="{{ item.id }}"
+          role="tabpanel"
+          {% if loop.index0 != active %}hidden{% endif %}
+        >
+          {{ item.content|safe }}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+{% endmacro %}
+
+{# PAGINATION COMPONENT #}
+{% macro pagination(page, total_pages, base_url, params={}) %}
+  {% if total_pages > 1 %}
+    <nav class="pagination" aria-label="Pagination">
+      <ul class="pagination-list">
+        {# Previous Button #}
+        <li class="pagination-item {% if page <= 1 %}disabled{% endif %}">
+          {% if page > 1 %}
+            {% set prev_params = params.copy() %}
+            {% set _ = prev_params.update({'page': page - 1}) %}
+            <a href="{{ base_url }}?{{ prev_params|urlencode }}" class="pagination-link" aria-label="Previous page">
+              <i class="bi bi-chevron-left"></i>
+            </a>
+          {% else %}
+            <span class="pagination-link" aria-disabled="true">
+              <i class="bi bi-chevron-left"></i>
+            </span>
+          {% endif %}
+        </li>
+        
+        {# Page Numbers #}
+        {% set start_page = [1, page - 2]|max %}
+        {% set end_page = [total_pages, page + 2]|min %}
+        
+        {% if start_page > 1 %}
+          {% set first_params = params.copy() %}
+          {% set _ = first_params.update({'page': 1}) %}
+          <li class="pagination-item">
+            <a href="{{ base_url }}?{{ first_params|urlencode }}" class="pagination-link">1</a>
+          </li>
+          {% if start_page > 2 %}
+            <li class="pagination-item disabled">
+              <span class="pagination-ellipsis">...</span>
+            </li>
+          {% endif %}
+        {% endif %}
+        
+        {% for p in range(start_page, end_page + 1) %}
+          <li class="pagination-item {% if p == page %}active{% endif %}">
+            {% if p == page %}
+              <span class="pagination-link" aria-current="page">{{ p }}</span>
+            {% else %}
+              {% set page_params = params.copy() %}
+              {% set _ = page_params.update({'page': p}) %}
+              <a href="{{ base_url }}?{{ page_params|urlencode }}" class="pagination-link">{{ p }}</a>
+            {% endif %}
+          </li>
+        {% endfor %}
+        
+        {% if end_page < total_pages %}
+          {% if end_page < total_pages - 1 %}
+            <li class="pagination-item disabled">
+              <span class="pagination-ellipsis">...</span>
+            </li>
+          {% endif %}
+          {% set last_params = params.copy() %}
+          {% set _ = last_params.update({'page': total_pages}) %}
+          <li class="pagination-item">
+            <a href="{{ base_url }}?{{ last_params|urlencode }}" class="pagination-link">{{ total_pages }}</a>
+          </li>
+        {% endif %}
+        
+        {# Next Button #}
+        <li class="pagination-item {% if page >= total_pages %}disabled{% endif %}">
+          {% if page < total_pages %}
+            {% set next_params = params.copy() %}
+            {% set _ = next_params.update({'page': page + 1}) %}
+            <a href="{{ base_url }}?{{ next_params|urlencode }}" class="pagination-link" aria-label="Next page">
+              <i class="bi bi-chevron-right"></i>
+            </a>
+          {% else %}
+            <span class="pagination-link" aria-disabled="true">
+              <i class="bi bi-chevron-right"></i>
+            </span>
+          {% endif %}
+        </li>
+      </ul>
+    </nav>
+  {% endif %}
+{% endmacro %}
+
+{# SKELETON COMPONENT (Loading State) #}
+{% macro skeleton(lines=3, type='text') %}
+  <div class="skeleton skeleton-{{ type }}" aria-busy="true" aria-live="polite">
+    {% if type == 'text' %}
+      {% for i in range(lines) %}
+        <div class="skeleton-line"></div>
+      {% endfor %}
+    {% elif type == 'card' %}
+      <div class="skeleton-image"></div>
+      <div class="skeleton-line"></div>
+      <div class="skeleton-line" style="width: 70%;"></div>
+    {% elif type == 'avatar' %}
+      <div class="skeleton-avatar"></div>
+    {% endif %}
+  </div>
+{% endmacro %}
+
+{# EMPTY STATE COMPONENT #}
+{% macro empty_state(icon, title, message, action_text=None, action_href=None) %}
+  <div class="empty-state">
+    <div class="empty-state-icon">
+      <i class="bi bi-{{ icon }}"></i>
+    </div>
+    <h3 class="empty-state-title">{{ title }}</h3>
+    <p class="empty-state-message">{{ message }}</p>
+    {% if action_text and action_href %}
+      {{ button(action_text, href=action_href, variant='primary') }}
+    {% endif %}
+  </div>
+{% endmacro %}
+
+{# BREADCRUMBS COMPONENT #}
+{% macro breadcrumbs(items) %}
+  <nav class="breadcrumbs" aria-label="Breadcrumb">
+    {% for item in items %}
+      {% if not loop.last %}
+        <a href="{{ item.url }}">{{ item.title }}</a>
+        <span class="breadcrumb-separator">/</span>
+      {% else %}
+        <span class="breadcrumb-current" aria-current="page">{{ item.title }}</span>
+      {% endif %}
+    {% endfor %}
+  </nav>
+{% endmacro %}

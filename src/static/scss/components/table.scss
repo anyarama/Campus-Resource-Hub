@@ -1,0 +1,415 @@
+// =============================================================================
+// TABLE COMPONENT - Enterprise Design System
+// =============================================================================
+// Modern data tables with sorting, responsive behavior, and row actions
+// Clean, readable tables for admin and data display
+// =============================================================================
+
+// -----------------------------------------------------------------------------
+// BASE TABLE
+// -----------------------------------------------------------------------------
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+  
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-normal);
+  color: var(--color-text-primary);
+  
+  background-color: var(--color-card-bg);
+  border-radius: var(--border-radius-card);
+  overflow: hidden;
+}
+
+// -----------------------------------------------------------------------------
+// TABLE HEAD
+// -----------------------------------------------------------------------------
+.table thead {
+  background-color: var(--color-bg-secondary);
+  border-bottom: var(--border-width-2) solid var(--color-border-default);
+}
+
+.table th {
+  padding: var(--spacing-4);
+  text-align: left;
+  
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-normal);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+  
+  white-space: nowrap;
+  
+  &.text-center {
+    text-align: center;
+  }
+  
+  &.text-right {
+    text-align: right;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// TABLE BODY
+// -----------------------------------------------------------------------------
+.table tbody {
+  tr {
+    border-bottom: var(--border-default);
+    transition: background-color 0.15s ease;
+    
+    &:last-child {
+      border-bottom: none;
+    }
+    
+    &:hover {
+      background-color: var(--color-card-hover);
+    }
+    
+    &.row-selected {
+      background-color: var(--color-primary-50);
+    }
+    
+    &.row-disabled {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+  }
+}
+
+.table td {
+  padding: var(--spacing-4);
+  vertical-align: middle;
+  
+  &.text-center {
+    text-align: center;
+  }
+  
+  &.text-right {
+    text-align: right;
+  }
+  
+  // Truncate long text
+  &.cell-truncate {
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// SORTABLE COLUMNS
+// -----------------------------------------------------------------------------
+.table-sortable {
+  th {
+    cursor: pointer;
+    user-select: none;
+    position: relative;
+    padding-right: var(--spacing-8);
+    
+    &:hover {
+      background-color: var(--color-bg-tertiary);
+    }
+    
+    // Sort indicator
+    &::after {
+      content: '⇅';
+      position: absolute;
+      right: var(--spacing-3);
+      opacity: 0.3;
+      font-size: var(--font-size-sm);
+    }
+    
+    &.sorted-asc::after {
+      content: '↑';
+      opacity: 1;
+      color: var(--color-primary-600);
+    }
+    
+    &.sorted-desc::after {
+      content: '↓';
+      opacity: 1;
+      color: var(--color-primary-600);
+    }
+    
+    &.not-sortable {
+      cursor: default;
+      
+      &:hover {
+        background-color: transparent;
+      }
+      
+      &::after {
+        display: none;
+      }
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// TABLE VARIANTS
+// -----------------------------------------------------------------------------
+
+// Bordered table
+.table-bordered {
+  border: var(--border-default);
+  
+  th,
+  td {
+    border-right: var(--border-default);
+    
+    &:last-child {
+      border-right: none;
+    }
+  }
+}
+
+// Striped table
+.table-striped {
+  tbody tr:nth-child(even) {
+    background-color: var(--color-bg-secondary);
+    
+    &:hover {
+      background-color: var(--color-card-hover);
+    }
+  }
+}
+
+// Compact table (less padding)
+.table-compact {
+  th,
+  td {
+    padding: var(--spacing-2) var(--spacing-3);
+  }
+}
+
+// Hover-only highlighting
+.table-hover {
+  tbody tr {
+    &:hover {
+      background-color: var(--color-card-hover);
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// TABLE ACTIONS (Action buttons in cells)
+// -----------------------------------------------------------------------------
+.table-actions {
+  display: flex;
+  gap: var(--spacing-2);
+  align-items: center;
+  justify-content: flex-end;
+  
+  .btn {
+    padding: var(--spacing-1) var(--spacing-2);
+    font-size: var(--font-size-xs);
+  }
+}
+
+// -----------------------------------------------------------------------------
+// TABLE CONTAINER (For responsive scrolling)
+// -----------------------------------------------------------------------------
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  
+  border: var(--border-default);
+  border-radius: var(--border-radius-card);
+  
+  &::-webkit-scrollbar {
+    height: 8px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background-color: var(--color-bg-secondary);
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--color-border-medium);
+    border-radius: 4px;
+    
+    &:hover {
+      background-color: var(--color-border-strong);
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// RESPONSIVE TABLE (Stack on mobile)
+// -----------------------------------------------------------------------------
+@media (max-width: 767px) {
+  .table-responsive {
+    thead {
+      display: none;
+    }
+    
+    tbody,
+    tr,
+    td {
+      display: block;
+      width: 100%;
+    }
+    
+    tr {
+      margin-bottom: var(--spacing-4);
+      border: var(--border-default);
+      border-radius: var(--border-radius-card);
+      padding: var(--spacing-4);
+    }
+    
+    td {
+      text-align: right;
+      padding: var(--spacing-2) 0;
+      border: none;
+      
+      &::before {
+        content: attr(data-label);
+        float: left;
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-text-secondary);
+      }
+      
+      &.table-actions {
+        justify-content: flex-start;
+        margin-top: var(--spacing-3);
+        padding-top: var(--spacing-3);
+        border-top: var(--border-default);
+      }
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// TABLE EMPTY STATE
+// -----------------------------------------------------------------------------
+.table-empty {
+  td {
+    padding: var(--spacing-12) var(--spacing-4);
+    text-align: center;
+    color: var(--color-text-tertiary);
+    font-size: var(--font-size-base);
+  }
+}
+
+// -----------------------------------------------------------------------------
+// TABLE FOOTER (For pagination, etc.)
+// -----------------------------------------------------------------------------
+.table-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-4);
+  border-top: var(--border-default);
+  background-color: var(--color-bg-secondary);
+  
+  @media (max-width: 767px) {
+    flex-direction: column;
+    gap: var(--spacing-3);
+    align-items: flex-start;
+  }
+}
+
+.table-info {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+// -----------------------------------------------------------------------------
+// TABLE SELECTION (Checkbox column)
+// -----------------------------------------------------------------------------
+.table-select {
+  width: 40px;
+  text-align: center;
+  
+  input[type="checkbox"] {
+    cursor: pointer;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// STATUS INDICATORS in Tables
+// -----------------------------------------------------------------------------
+.status-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: var(--spacing-2);
+  
+  &.status-active,
+  &.status-approved {
+    background-color: var(--color-success);
+  }
+  
+  &.status-pending {
+    background-color: var(--color-warning);
+  }
+  
+  &.status-inactive,
+  &.status-rejected,
+  &.status-cancelled {
+    background-color: var(--color-error);
+  }
+  
+  &.status-draft {
+    background-color: var(--color-gray-400);
+  }
+}
+
+// -----------------------------------------------------------------------------
+// TABLE LOADING STATE
+// -----------------------------------------------------------------------------
+.table-loading {
+  position: relative;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// ADMIN TABLE STYLES (Specific to Campus Resource Hub)
+// -----------------------------------------------------------------------------
+.admin-table {
+  @extend .table;
+  @extend .table-hover;
+  @extend .table-sortable;
+  
+  .user-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--border-radius-full);
+    object-fit: cover;
+  }
+  
+  .user-info {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    
+    .user-name {
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-primary);
+    }
+    
+    .user-email {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+    }
+  }
+}

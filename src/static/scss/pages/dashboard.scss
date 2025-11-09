@@ -1,0 +1,585 @@
+// =============================================================================
+// DASHBOARD PAGE STYLES
+// =============================================================================
+// Main dashboard landing page layout and specific compositions
+// Combines KPI tiles, activity feed, quick actions, and resource showcase
+
+@use '../tokens' as *;
+
+// -----------------------------------------------------------------------------
+// Dashboard Container
+// -----------------------------------------------------------------------------
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-8;
+  padding: $spacing-8;
+  max-width: 1600px;
+  margin: 0 auto;
+  
+  @media (max-width: 1024px) {
+    padding: $spacing-6;
+    gap: $spacing-6;
+  }
+  
+  @media (max-width: 768px) {
+    padding: $spacing-4;
+    gap: $spacing-5;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Dashboard Hero Section
+// -----------------------------------------------------------------------------
+.dashboard__hero {
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+  border-radius: $border-radius-xl;
+  padding: $spacing-10 $spacing-8;
+  color: white;
+  position: relative;
+  overflow: hidden;
+  
+  // Decorative background pattern
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  
+  @media (max-width: 768px) {
+    padding: $spacing-8 $spacing-5;
+  }
+}
+
+.dashboard__hero-content {
+  position: relative;
+  z-index: 1;
+  max-width: 800px;
+}
+
+.dashboard__greeting {
+  font-size: $font-size-3xl;
+  font-weight: $font-weight-bold;
+  margin-bottom: $spacing-2;
+  
+  @media (max-width: 768px) {
+    font-size: $font-size-2xl;
+  }
+}
+
+.dashboard__subtitle {
+  font-size: $font-size-lg;
+  opacity: 0.9;
+  margin-bottom: $spacing-6;
+  
+  @media (max-width: 768px) {
+    font-size: $font-size-base;
+  }
+}
+
+.dashboard__quick-actions {
+  display: flex;
+  gap: $spacing-3;
+  flex-wrap: wrap;
+  
+  .btn {
+    background-color: white;
+    color: var(--color-primary);
+    
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.9);
+      transform: translateY(-2px);
+    }
+  }
+  
+  .btn--secondary {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.3);
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Dashboard Search Bar (prominent)
+// -----------------------------------------------------------------------------
+.dashboard__search {
+  position: relative;
+  max-width: 600px;
+  
+  input {
+    width: 100%;
+    height: 56px;
+    padding: 0 $spacing-12 0 $spacing-12;
+    border: none;
+    border-radius: $border-radius-full;
+    font-size: $font-size-base;
+    box-shadow: $shadow-lg;
+    transition: all 0.2s;
+    
+    &:focus {
+      outline: none;
+      box-shadow: $shadow-xl;
+      transform: translateY(-2px);
+    }
+  }
+  
+  &-icon {
+    position: absolute;
+    left: $spacing-5;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 24px;
+    height: 24px;
+    color: var(--color-gray-500);
+  }
+  
+  &-button {
+    position: absolute;
+    right: $spacing-2;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: $spacing-2 $spacing-5;
+    background-color: var(--color-primary);
+    color: white;
+    border: none;
+    border-radius: $border-radius-full;
+    font-weight: $font-weight-medium;
+    cursor: pointer;
+    transition: all 0.2s;
+    
+    &:hover {
+      background-color: var(--color-primary-dark);
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Dashboard Stats Overview (KPI Grid)
+// -----------------------------------------------------------------------------
+.dashboard__stats {
+  // Uses .kpi-grid--4 from kpi-tile.scss
+  // Custom dashboard-specific additions:
+  
+  .kpi-tile {
+    animation: fadeInUp 0.5s ease-out;
+    animation-fill-mode: both;
+    
+    @for $i from 1 through 4 {
+      &:nth-child(#{$i}) {
+        animation-delay: #{($i - 1) * 0.1}s;
+      }
+    }
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Dashboard Main Content Grid
+// -----------------------------------------------------------------------------
+.dashboard__content {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: $spacing-8;
+  align-items: start;
+  
+  @media (max-width: 1280px) {
+    grid-template-columns: 1fr;
+  }
+  
+  @media (max-width: 1024px) {
+    gap: $spacing-6;
+  }
+}
+
+// Main content area (left column)
+.dashboard__main {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-8;
+  
+  @media (max-width: 1024px) {
+    gap: $spacing-6;
+  }
+}
+
+// Sidebar content (right column)
+.dashboard__sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-6;
+  position: sticky;
+  top: 80px; // Below navbar
+  
+  @media (max-width: 1280px) {
+    position: static;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Featured Resources Section
+// -----------------------------------------------------------------------------
+.dashboard__featured {
+  &-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: $spacing-5;
+  }
+  
+  &-title {
+    font-size: $font-size-2xl;
+    font-weight: $font-weight-bold;
+    color: var(--color-gray-900);
+  }
+  
+  &-link {
+    color: var(--color-primary);
+    text-decoration: none;
+    font-weight: $font-weight-medium;
+    display: inline-flex;
+    align-items: center;
+    gap: $spacing-1;
+    
+    &:hover {
+      text-decoration: underline;
+    }
+    
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+  }
+  
+  &-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: $spacing-6;
+    
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+      gap: $spacing-4;
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Recent Bookings Section
+// -----------------------------------------------------------------------------
+.dashboard__bookings {
+  background-color: white;
+  border: 1px solid var(--color-gray-200);
+  border-radius: $border-radius-lg;
+  padding: $spacing-6;
+  
+  &-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: $spacing-5;
+    padding-bottom: $spacing-4;
+    border-bottom: 1px solid var(--color-gray-200);
+  }
+  
+  &-title {
+    font-size: $font-size-xl;
+    font-weight: $font-weight-semibold;
+    color: var(--color-gray-900);
+  }
+  
+  &-list {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-3;
+  }
+  
+  &-empty {
+    text-align: center;
+    padding: $spacing-8;
+    color: var(--color-gray-500);
+    
+    svg {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto $spacing-4;
+      color: var(--color-gray-400);
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Upcoming Events/Calendar Widget
+// -----------------------------------------------------------------------------
+.dashboard__calendar {
+  background-color: white;
+  border: 1px solid var(--color-gray-200);
+  border-radius: $border-radius-lg;
+  padding: $spacing-6;
+  
+  &-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: $spacing-4;
+  }
+  
+  &-title {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    color: var(--color-gray-900);
+  }
+  
+  &-nav {
+    display: flex;
+    gap: $spacing-2;
+    
+    button {
+      width: 32px;
+      height: 32px;
+      border: 1px solid var(--color-gray-300);
+      border-radius: $border-radius-md;
+      background: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      
+      &:hover {
+        background-color: var(--color-gray-50);
+      }
+      
+      svg {
+        width: 16px;
+        height: 16px;
+      }
+    }
+  }
+  
+  &-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: $spacing-1;
+    margin-top: $spacing-4;
+  }
+  
+  &-day {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-medium;
+    border-radius: $border-radius-sm;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    
+    &:hover {
+      background-color: var(--color-gray-100);
+    }
+    
+    &--today {
+      background-color: var(--color-primary);
+      color: white;
+    }
+    
+    &--has-event::after {
+      content: '';
+      position: absolute;
+      bottom: 4px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background-color: var(--color-primary);
+    }
+    
+    &--today.dashboard__calendar-day--has-event::after {
+      background-color: white;
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Quick Stats Cards (compact KPIs)
+// -----------------------------------------------------------------------------
+.dashboard__quick-stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $spacing-4;
+}
+
+.quick-stat {
+  background-color: white;
+  border: 1px solid var(--color-gray-200);
+  border-radius: $border-radius-lg;
+  padding: $spacing-4;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-2;
+  
+  &__label {
+    font-size: $font-size-xs;
+    font-weight: $font-weight-medium;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-gray-600);
+  }
+  
+  &__value {
+    font-size: $font-size-3xl;
+    font-weight: $font-weight-bold;
+    color: var(--color-gray-900);
+  }
+  
+  &__change {
+    font-size: $font-size-xs;
+    color: var(--color-success-600);
+    display: flex;
+    align-items: center;
+    gap: $spacing-1;
+    
+    &--negative {
+      color: var(--color-error-600);
+    }
+    
+    svg {
+      width: 12px;
+      height: 12px;
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Announcements/Alerts Section
+// -----------------------------------------------------------------------------
+.dashboard__announcements {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-3;
+  
+  .alert {
+    animation: slideInRight 0.3s ease-out;
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Responsive Dashboard Adjustments
+// -----------------------------------------------------------------------------
+@media (max-width: 768px) {
+  .dashboard__hero {
+    text-align: center;
+    
+    &-content {
+      margin: 0 auto;
+    }
+  }
+  
+  .dashboard__quick-actions {
+    justify-content: center;
+  }
+  
+  .dashboard__search {
+    input {
+      height: 48px;
+      font-size: $font-size-sm;
+    }
+    
+    &-button {
+      padding: $spacing-2 $spacing-4;
+      font-size: $font-size-xs;
+    }
+  }
+  
+  .dashboard__featured-header,
+  .dashboard__bookings-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $spacing-3;
+  }
+  
+  .dashboard__quick-stats {
+    grid-template-columns: 1fr;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Dashboard Loading State
+// -----------------------------------------------------------------------------
+.dashboard--loading {
+  .dashboard__stats,
+  .dashboard__featured,
+  .dashboard__bookings,
+  .dashboard__sidebar {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Empty Dashboard State (first-time users)
+// -----------------------------------------------------------------------------
+.dashboard__empty {
+  text-align: center;
+  padding: $spacing-16 $spacing-8;
+  
+  &-icon {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto $spacing-6;
+    color: var(--color-gray-400);
+  }
+  
+  &-title {
+    font-size: $font-size-3xl;
+    font-weight: $font-weight-bold;
+    color: var(--color-gray-900);
+    margin-bottom: $spacing-3;
+  }
+  
+  &-description {
+    font-size: $font-size-lg;
+    color: var(--color-gray-600);
+    margin-bottom: $spacing-8;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  &-actions {
+    display: flex;
+    justify-content: center;
+    gap: $spacing-3;
+    flex-wrap: wrap;
+  }
+}

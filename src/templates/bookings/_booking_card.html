@@ -1,9 +1,9 @@
 {% macro render_booking_card(booking, resource, show_actions=True) %}
-<div class="card booking-card shadow-sm mb-3">
+<div class="card booking-card shadow-sm ">
     <div class="card-body">
-        <div class="row">
+        <div class="grid">
             <!-- Resource Image -->
-            <div class="col-md-3 col-lg-2 mb-3 mb-md-0">
+            <div class="grid-col-md-3 col-lg-2  mb-md-0">
                 {% if resource.images %}
                     {% set image_list = resource.images.split(',') %}
                     <img src="{{ url_for('static', filename='uploads/' + image_list[0]) }}" 
@@ -19,8 +19,8 @@
             </div>
 
             <!-- Booking Info -->
-            <div class="col-md-6 col-lg-7">
-                <div class="d-flex justify-content-between align-items-start mb-2">
+            <div class="grid-col-md-6 col-lg-7">
+                <div class="d-flex justify-content-between align-items-start ">
                     <h5 class="mb-1">
                         <a href="{{ url_for('resources.detail', resource_id=resource.resource_id) }}" 
                            class="text-decoration-none text-dark">
@@ -28,31 +28,31 @@
                         </a>
                     </h5>
                     {% if booking.status == 'pending' %}
-                        <span class="badge bg-warning text-dark">Pending</span>
+                        <span class="badge badge-warning text-dark">Pending</span>
                     {% elif booking.status == 'approved' %}
-                        <span class="badge bg-success">Approved</span>
+                        <span class="badge badge-success">Approved</span>
                     {% elif booking.status == 'rejected' %}
-                        <span class="badge bg-danger">Rejected</span>
+                        <span class="badge badge-danger">Rejected</span>
                     {% elif booking.status == 'cancelled' %}
-                        <span class="badge bg-secondary">Cancelled</span>
+                        <span class="badge badge-secondary">Cancelled</span>
                     {% elif booking.status == 'completed' %}
-                        <span class="badge bg-primary">Completed</span>
+                        <span class="badge badge-primary">Completed</span>
                     {% endif %}
                 </div>
 
-                <p class="text-muted mb-2">
-                    <i class="bi bi-geo-alt me-1"></i>{{ resource.location }}
+                <p class="text-muted ">
+                    <i class="bi bi-geo-alt "></i>{{ resource.location }}
                     <span class="mx-2">|</span>
-                    <i class="bi bi-tag me-1"></i>{{ resource.category }}
+                    <i class="bi bi-tag "></i>{{ resource.category }}
                 </p>
 
                 <div class="mb-2">
-                    <strong><i class="bi bi-calendar-event me-1"></i>Start:</strong>
+                    <strong><i class="bi bi-calendar-event "></i>Start:</strong>
                     {{ booking.start_datetime.strftime('%b %d, %Y at %I:%M %p') }}
                 </div>
 
                 <div class="mb-2">
-                    <strong><i class="bi bi-calendar-x me-1"></i>End:</strong>
+                    <strong><i class="bi bi-calendar-x "></i>End:</strong>
                     {{ booking.end_datetime.strftime('%b %d, %Y at %I:%M %p') }}
                 </div>
 
@@ -62,7 +62,7 @@
                 {% set minutes = ((duration % 3600) // 60)|int %}
                 <div class="text-muted">
                     <small>
-                        <i class="bi bi-clock me-1"></i>
+                        <i class="bi bi-clock "></i>
                         Duration: 
                         {% if hours > 0 %}{{ hours }}h {% endif %}
                         {% if minutes > 0 %}{{ minutes }}m{% endif %}
@@ -71,9 +71,9 @@
 
                 <!-- Rejection Reason -->
                 {% if booking.status == 'rejected' and booking.rejection_reason %}
-                <div class="alert alert-danger mt-2 mb-0 py-2">
+                <div class="alert alert-danger   py-2">
                     <small>
-                        <strong><i class="bi bi-exclamation-triangle me-1"></i>Rejected:</strong>
+                        <strong><i class="bi bi-exclamation-triangle "></i>Rejected:</strong>
                         {{ booking.rejection_reason }}
                     </small>
                 </div>
@@ -82,10 +82,10 @@
 
             <!-- Actions -->
             {% if show_actions %}
-            <div class="col-md-3 col-lg-3 d-flex flex-column justify-content-center">
+            <div class="grid-col-md-3 col-lg-3 d-flex flex-column justify-content-center">
                 <a href="{{ url_for('bookings.detail', booking_id=booking.booking_id) }}" 
-                   class="btn btn-outline-primary btn-sm mb-2 w-100">
-                    <i class="bi bi-eye me-1"></i>View Details
+                   class="btn btn-outline-primary ">
+                    <i class="bi bi-eye "></i>View Details
                 </a>
 
                 <!-- Quick Actions based on status and role -->
@@ -94,8 +94,8 @@
                         <form method="POST" action="{{ url_for('bookings.approve', booking_id=booking.booking_id) }}" 
                               class="mb-2">
                             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                            <button type="submit" class="btn btn-success btn-sm w-100">
-                                <i class="bi bi-check-circle me-1"></i>Approve
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-check-circle "></i>Approve
                             </button>
                         </form>
                     {% endif %}
@@ -103,8 +103,8 @@
                         <form method="POST" action="{{ url_for('bookings.cancel', booking_id=booking.booking_id) }}" 
                               onsubmit="return confirm('Cancel this booking?');">
                             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                            <button type="submit" class="btn btn-warning btn-sm w-100">
-                                <i class="bi bi-x-circle me-1"></i>Cancel
+                            <button type="submit" class="btn btn-warning">
+                                <i class="bi bi-x-circle "></i>Cancel
                             </button>
                         </form>
                     {% endif %}
@@ -113,8 +113,8 @@
                         <form method="POST" action="{{ url_for('bookings.cancel', booking_id=booking.booking_id) }}" 
                               onsubmit="return confirm('Cancel this booking?');">
                             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                            <button type="submit" class="btn btn-warning btn-sm w-100">
-                                <i class="bi bi-x-circle me-1"></i>Cancel
+                            <button type="submit" class="btn btn-warning">
+                                <i class="bi bi-x-circle "></i>Cancel
                             </button>
                         </form>
                     {% endif %}
@@ -122,16 +122,16 @@
                         <form method="POST" action="{{ url_for('bookings.complete', booking_id=booking.booking_id) }}" 
                               onsubmit="return confirm('Mark as completed?');" class="mb-2">
                             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                            <button type="submit" class="btn btn-primary btn-sm w-100">
-                                <i class="bi bi-check-all me-1"></i>Complete
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-all "></i>Complete
                             </button>
                         </form>
                     {% endif %}
                 {% elif booking.status == 'completed' %}
                     {% if current_user.user_id == booking.requester_id %}
                         <a href="{{ url_for('resources.detail', resource_id=resource.resource_id) }}#reviews" 
-                           class="btn btn-outline-primary btn-sm w-100">
-                            <i class="bi bi-star me-1"></i>Leave Review
+                           class="btn btn-outline-primary">
+                            <i class="bi bi-star "></i>Leave Review
                         </a>
                     {% endif %}
                 {% endif %}
@@ -143,11 +143,11 @@
     <!-- Card Footer with Timestamps -->
     <div class="card-footer bg-light text-muted">
         <small>
-            <i class="bi bi-clock-history me-1"></i>
+            <i class="bi bi-clock-history "></i>
             Booked: {{ booking.created_at.strftime('%b %d, %Y') }}
             {% if booking.updated_at and booking.updated_at != booking.created_at %}
                 <span class="mx-2">|</span>
-                <i class="bi bi-arrow-clockwise me-1"></i>
+                <i class="bi bi-arrow-clockwise "></i>
                 Updated: {{ booking.updated_at.strftime('%b %d, %Y') }}
             {% endif %}
         </small>

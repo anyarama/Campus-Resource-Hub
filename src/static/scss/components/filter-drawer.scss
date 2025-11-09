@@ -1,0 +1,693 @@
+// =============================================================================
+// FILTER DRAWER COMPONENT
+// =============================================================================
+// Side panel for filtering resources, bookings, and search results
+// Desktop: fixed side panel, Mobile: slide-in drawer
+
+@use '../tokens' as *;
+
+// -----------------------------------------------------------------------------
+// Filter Drawer Container
+// -----------------------------------------------------------------------------
+.filter-drawer {
+  position: fixed;
+  top: 64px; // Below navbar
+  right: 0;
+  width: 320px;
+  height: calc(100vh - 64px);
+  background-color: white;
+  border-left: 1px solid var(--color-gray-200);
+  z-index: var(--z-index-filter-drawer);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease;
+  overflow: hidden;
+  
+  @media (max-width: 1024px) {
+    transform: translateX(100%);
+    box-shadow: $shadow-2xl;
+    
+    &.is-open {
+      transform: translateX(0);
+    }
+  }
+}
+
+// Left-aligned drawer (for some layouts)
+.filter-drawer--left {
+  right: auto;
+  left: 280px; // After sidebar
+  border-left: none;
+  border-right: 1px solid var(--color-gray-200);
+  
+  @media (max-width: 1024px) {
+    left: 0;
+    transform: translateX(-100%);
+    
+    &.is-open {
+      transform: translateX(0);
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Filter Drawer Header
+// -----------------------------------------------------------------------------
+.filter-drawer__header {
+  padding: $spacing-5 $spacing-6;
+  border-bottom: 1px solid var(--color-gray-200);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  
+  &-title {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    color: var(--color-gray-900);
+    display: flex;
+    align-items: center;
+    gap: $spacing-2;
+    
+    svg {
+      width: 20px;
+      height: 20px;
+    }
+  }
+  
+  &-actions {
+    display: flex;
+    gap: $spacing-2;
+  }
+}
+
+// Close button (mobile)
+.filter-drawer__close {
+  width: 32px;
+  height: 32px;
+  background: none;
+  border: none;
+  border-radius: $border-radius-md;
+  cursor: pointer;
+  color: var(--color-gray-600);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  
+  &:hover {
+    background-color: var(--color-gray-100);
+    color: var(--color-gray-900);
+  }
+  
+  svg {
+    width: 18px;
+    height: 18px;
+  }
+  
+  @media (min-width: 1025px) {
+    display: none;
+  }
+}
+
+// Clear all filters button
+.filter-drawer__clear {
+  font-size: $font-size-sm;
+  color: var(--color-primary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: $spacing-1 $spacing-2;
+  border-radius: $border-radius-sm;
+  transition: all 0.2s;
+  
+  &:hover {
+    background-color: var(--color-primary-50);
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Filter Drawer Body (scrollable)
+// -----------------------------------------------------------------------------
+.filter-drawer__body {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: $spacing-4 0;
+  
+  // Custom scrollbar
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: var(--color-gray-300);
+    border-radius: $border-radius-full;
+    
+    &:hover {
+      background: var(--color-gray-400);
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Filter Drawer Footer (apply button)
+// -----------------------------------------------------------------------------
+.filter-drawer__footer {
+  padding: $spacing-4 $spacing-6;
+  border-top: 1px solid var(--color-gray-200);
+  flex-shrink: 0;
+  display: flex;
+  gap: $spacing-3;
+  
+  button {
+    flex: 1;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Filter Section (group of filters)
+// -----------------------------------------------------------------------------
+.filter-section {
+  border-bottom: 1px solid var(--color-gray-200);
+  
+  &:last-child {
+    border-bottom: none;
+  }
+  
+  &__header {
+    padding: $spacing-4 $spacing-6;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.2s;
+    
+    &:hover {
+      background-color: var(--color-gray-50);
+    }
+  }
+  
+  &__title {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+    color: var(--color-gray-900);
+    display: flex;
+    align-items: center;
+    gap: $spacing-2;
+  }
+  
+  &__count {
+    font-size: $font-size-xs;
+    color: var(--color-gray-500);
+    font-weight: $font-weight-normal;
+  }
+  
+  &__chevron {
+    width: 16px;
+    height: 16px;
+    color: var(--color-gray-500);
+    transition: transform 0.2s;
+  }
+  
+  &.is-collapsed &__chevron {
+    transform: rotate(-90deg);
+  }
+  
+  &__body {
+    padding: 0 $spacing-6 $spacing-4;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-2;
+  }
+  
+  &.is-collapsed &__body {
+    display: none;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Filter Options (checkboxes, radios)
+// -----------------------------------------------------------------------------
+.filter-option {
+  display: flex;
+  align-items: center;
+  gap: $spacing-2;
+  padding: $spacing-2 0;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  border-radius: $border-radius-sm;
+  
+  &:hover {
+    background-color: var(--color-gray-50);
+  }
+  
+  input[type="checkbox"],
+  input[type="radio"] {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+  
+  &__label {
+    flex: 1;
+    font-size: $font-size-sm;
+    color: var(--color-gray-700);
+    cursor: pointer;
+  }
+  
+  &__count {
+    font-size: $font-size-xs;
+    color: var(--color-gray-500);
+    font-weight: $font-weight-medium;
+  }
+  
+  &.is-disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    
+    &:hover {
+      background-color: transparent;
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Range Slider Filter
+// -----------------------------------------------------------------------------
+.filter-range {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-3;
+  
+  &__inputs {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: $spacing-2;
+    align-items: center;
+  }
+  
+  &__input {
+    width: 100%;
+    padding: $spacing-2 $spacing-3;
+    border: 1px solid var(--color-gray-300);
+    border-radius: $border-radius-md;
+    font-size: $font-size-sm;
+    
+    &:focus {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 2px;
+      border-color: var(--color-primary);
+    }
+  }
+  
+  &__separator {
+    color: var(--color-gray-500);
+    font-size: $font-size-sm;
+  }
+  
+  &__slider {
+    width: 100%;
+    height: 6px;
+    background: linear-gradient(
+      to right,
+      var(--color-gray-300) 0%,
+      var(--color-primary) 0%,
+      var(--color-primary) 100%,
+      var(--color-gray-300) 100%
+    );
+    border-radius: 3px;
+    position: relative;
+    cursor: pointer;
+    
+    &-thumb {
+      position: absolute;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 16px;
+      height: 16px;
+      background-color: var(--color-primary);
+      border: 2px solid white;
+      border-radius: 50%;
+      box-shadow: $shadow-sm;
+      cursor: grab;
+      
+      &:active {
+        cursor: grabbing;
+      }
+    }
+  }
+  
+  &__labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: $font-size-xs;
+    color: var(--color-gray-600);
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Search Filter Input
+// -----------------------------------------------------------------------------
+.filter-search {
+  position: relative;
+  
+  input {
+    width: 100%;
+    padding: $spacing-2 $spacing-3 $spacing-2 $spacing-10;
+    border: 1px solid var(--color-gray-300);
+    border-radius: $border-radius-md;
+    font-size: $font-size-sm;
+    transition: all 0.2s;
+    
+    &:focus {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 2px;
+      border-color: var(--color-primary);
+    }
+  }
+  
+  &__icon {
+    position: absolute;
+    left: $spacing-3;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    color: var(--color-gray-500);
+    pointer-events: none;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Active Filters Summary (chips at top)
+// -----------------------------------------------------------------------------
+.filter-active {
+  padding: $spacing-4 $spacing-6;
+  background-color: var(--color-gray-50);
+  border-bottom: 1px solid var(--color-gray-200);
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-2;
+  
+  &__title {
+    font-size: $font-size-xs;
+    font-weight: $font-weight-semibold;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-gray-600);
+  }
+  
+  &__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing-2;
+  }
+  
+  &__chip {
+    display: inline-flex;
+    align-items: center;
+    gap: $spacing-2;
+    padding: $spacing-1 $spacing-2 $spacing-1 $spacing-3;
+    background-color: var(--color-primary-50);
+    color: var(--color-primary-dark);
+    border-radius: $border-radius-full;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-medium;
+    
+    button {
+      background: none;
+      border: none;
+      padding: 0;
+      width: 14px;
+      height: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: inherit;
+      border-radius: 50%;
+      transition: background-color 0.2s;
+      
+      &:hover {
+        background-color: rgba(0, 0, 0, 0.1);
+      }
+      
+      svg {
+        width: 10px;
+        height: 10px;
+      }
+    }
+  }
+  
+  &:empty {
+    display: none;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Date Range Filter
+// -----------------------------------------------------------------------------
+.filter-date {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-2;
+  
+  &__input-group {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-1;
+  }
+  
+  &__label {
+    font-size: $font-size-xs;
+    font-weight: $font-weight-medium;
+    color: var(--color-gray-700);
+  }
+  
+  input[type="date"] {
+    width: 100%;
+    padding: $spacing-2 $spacing-3;
+    border: 1px solid var(--color-gray-300);
+    border-radius: $border-radius-md;
+    font-size: $font-size-sm;
+    
+    &:focus {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 2px;
+      border-color: var(--color-primary);
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Campus-Specific Filter Use Cases
+// -----------------------------------------------------------------------------
+
+// Resource filters (category, capacity, location, availability)
+.filter-drawer--resources {
+  .filter-section {
+    &[data-filter="category"] {
+      .filter-option {
+        &::before {
+          content: '';
+          width: 12px;
+          height: 12px;
+          border-radius: 50%;
+          background-color: currentColor;
+          margin-right: $spacing-1;
+        }
+        
+        &[data-category="study-room"]::before { color: #3b82f6; }
+        &[data-category="lab"]::before { color: #8b5cf6; }
+        &[data-category="equipment"]::before { color: #f59e0b; }
+        &[data-category="venue"]::before { color: #10b981; }
+      }
+    }
+  }
+}
+
+// Booking filters (status, date range, user)
+.filter-drawer--bookings {
+  .filter-section[data-filter="status"] {
+    .filter-option {
+      .badge {
+        margin-left: auto;
+      }
+    }
+  }
+}
+
+// Search results filters
+.filter-drawer--search {
+  .filter-results-count {
+    padding: $spacing-3 $spacing-6;
+    font-size: $font-size-sm;
+    color: var(--color-gray-600);
+    background-color: var(--color-gray-50);
+    border-bottom: 1px solid var(--color-gray-200);
+    
+    strong {
+      color: var(--color-gray-900);
+      font-weight: $font-weight-semibold;
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Mobile Backdrop
+// -----------------------------------------------------------------------------
+.filter-drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: calc(#{var(--z-index-filter-drawer)} - 1);
+  display: none;
+  
+  @media (max-width: 1024px) {
+    &.is-open {
+      display: block;
+      animation: fadeIn 0.2s;
+    }
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+}
+
+@media (min-width: 1025px) {
+  .filter-drawer-backdrop {
+    display: none;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Filter Toggle Button (mobile trigger)
+// -----------------------------------------------------------------------------
+.filter-toggle {
+  display: none;
+  
+  @media (max-width: 1024px) {
+    display: inline-flex;
+    align-items: center;
+    gap: $spacing-2;
+    padding: $spacing-2 $spacing-4;
+    border: 1px solid var(--color-gray-300);
+    border-radius: $border-radius-md;
+    background: white;
+    color: var(--color-gray-700);
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    cursor: pointer;
+    transition: all 0.2s;
+    
+    &:hover {
+      border-color: var(--color-gray-400);
+      background-color: var(--color-gray-50);
+    }
+    
+    svg {
+      width: 18px;
+      height: 18px;
+    }
+    
+    // Show active filter count
+    .badge {
+      margin-left: $spacing-1;
+      min-width: 20px;
+      height: 20px;
+      padding: 0 $spacing-1;
+      background-color: var(--color-primary);
+      color: white;
+      font-size: 11px;
+      font-weight: $font-weight-bold;
+      border-radius: $border-radius-full;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Dark Theme Adjustments
+// -----------------------------------------------------------------------------
+@media (prefers-color-scheme: dark) {
+  .filter-drawer {
+    background-color: var(--color-gray-900);
+    border-left-color: var(--color-gray-800);
+  }
+  
+  .filter-drawer__header {
+    border-bottom-color: var(--color-gray-800);
+    
+    &-title {
+      color: white;
+    }
+  }
+  
+  .filter-section {
+    border-bottom-color: var(--color-gray-800);
+    
+    &__header {
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.05);
+      }
+    }
+    
+    &__title {
+      color: white;
+    }
+  }
+  
+  .filter-option {
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+    
+    &__label {
+      color: var(--color-gray-300);
+    }
+  }
+  
+  .filter-active {
+    background-color: var(--color-gray-800);
+    border-bottom-color: var(--color-gray-700);
+  }
+  
+  .filter-drawer__footer {
+    border-top-color: var(--color-gray-800);
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Responsive: Full-screen on small mobile
+// -----------------------------------------------------------------------------
+@media (max-width: 480px) {
+  .filter-drawer {
+    width: 100%;
+    top: 0;
+    height: 100vh;
+  }
+  
+  .filter-drawer__close {
+    display: flex;
+  }
+}
