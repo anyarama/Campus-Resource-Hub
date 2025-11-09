@@ -126,7 +126,7 @@
               {% endif %}{{ user.created_at.strftime('%b %d, %Y') }}
               <div class="btn-group">
                 </div>{{ url_for('admin.user_detail', user_id=user.user_id) }}" 
-                  class="btn btn-outline-info action-btn" title="View Details">
+                  class="btn btn-ghost action-btn" title="View Details">
                   <i class="bi bi-eye"></i>
                 
                 
@@ -137,7 +137,7 @@
                   {% else %}{{ url_for('admin.activate_user', user_id=user.user_id) }}" 
                        style="display: inline;" onsubmit="return confirm('Activate this user?');">
                       {{ csrf_token() }}"/>
-                      <button class="btn btn-outline-success action-btn" title="Activate User" type="submit">
+                      <button class="btn btn-success action-btn" title="Activate User" type="submit">
                         <i class="bi bi-play-circle"></i>
                       </button>
                     

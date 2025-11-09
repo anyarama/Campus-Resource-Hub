@@ -148,22 +148,22 @@
                 {{ resource.status|upper }}<div class="layout-col text-md-end mt-md-0" data-col="12">
         <div class="btn-group-vertical gap-2" role="group">
           </div></div>{{ url_for('resources.detail', resource_id=resource.resource_id) }}" 
-            class="btn btn-outline-primary">
+            class="btn btn-outline">
             <i class="bi bi-eye"></i> View
           
           {{ url_for('resources.edit', resource_id=resource.resource_id) }}" 
-            class="btn btn-outline-secondary">
+            class="btn btn-ghost">
             <i class="bi bi-pencil"></i> Edit
           
           {% if resource.status == 'draft' %}{{ url_for('resources.publish', resource_id=resource.resource_id) }}" class="d-inline">
             {{ csrf_token() }}">
-            <button class="btn btn-outline-success" type="submit">
+            <button class="btn btn-success" type="submit">
               <i class="bi bi-check-circle"></i> Publish
             </button>
           
           {% elif resource.status == 'published' %}{{ url_for('resources.archive', resource_id=resource.resource_id) }}" class="d-inline">
             {{ csrf_token() }}">
-            <button class="btn btn-outline-warning" type="submit">
+            <button class="btn btn-secondary" type="submit">
               <i class="bi bi-archive"></i> Archive
             </button>
           
