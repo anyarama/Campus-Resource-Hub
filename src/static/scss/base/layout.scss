@@ -42,6 +42,52 @@
   gap: var(--spacing-component-gap-md);
 }
 
+// Layout grid (Bootstrap row replacement)
+.layout-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: var(--spacing-component-gap-md);
+  
+  // Layout columns with data attributes
+  .layout-col {
+    // Default: span all 12 columns
+    grid-column: span 12;
+  }
+}
+
+// Responsive column spans using data attributes
+// Usage: <div class="layout-col" data-col="6" data-col-md="4">
+@for $i from 1 through 12 {
+  .layout-col[data-col="#{$i}"] {
+    grid-column: span $i;
+  }
+}
+
+// Responsive breakpoints for columns
+@media (min-width: 768px) {
+  @for $i from 1 through 12 {
+    .layout-col[data-col-md="#{$i}"] {
+      grid-column: span $i;
+    }
+  }
+}
+
+@media (min-width: 1024px) {
+  @for $i from 1 through 12 {
+    .layout-col[data-col-lg="#{$i}"] {
+      grid-column: span $i;
+    }
+  }
+}
+
+@media (min-width: 1280px) {
+  @for $i from 1 through 12 {
+    .layout-col[data-col-xl="#{$i}"] {
+      grid-column: span $i;
+    }
+  }
+}
+
 .grid-cols-1 {
   grid-template-columns: repeat(1, minmax(0, 1fr));
 }

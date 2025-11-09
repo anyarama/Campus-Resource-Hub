@@ -1,386 +1,197 @@
-{% extends"base.html" %}
-
-{% block title %}User Detail - {{ user.name }} - Campus Resource Hub{% endblock %}
-
-{% block extra_css %}
-<style>
-  .profile-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 2rem;
-    border-radius: 0.5rem 0.5rem 0 0;
-  }
-  .profile-avatar {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    border: 4px solid white;
-    object-fit: cover;
-  }
-  .stat-box {
-    text-align: center;
-    padding: 1.5rem;
-    background: #f8f9fa;
-    border-radius: 0.5rem;
-    transition: transform 0.2s;
-  }
-  .stat-box:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  }
-  .stat-box h2 {
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-  }
-  .info-label {
-    font-weight: 600;
-    color: #6c757d;
-    margin-bottom: 0.25rem;
-  }
-  .info-value {
-    color: #212529;
-    font-size: 1.1rem;
-  }
-  .activity-list {
-    max-height: 400px;
-    overflow-y: auto;
-  }
-  .activity-item {
-    padding: 1rem;
-    border-left: 3px solid #dee2e6;
-    margin-bottom: 1rem;
-    background: white;
-  }
-  .activity-item:hover {
-    border-left-color: #0d6efd;
-    background: #f8f9fa;
-  }
-</style>
-{% endblock %}
-
-{% block content %}
-<!-- Back Button -->
-<div class="mb-3">
-  <a href="{{ url_for('admin.users') }}" class="btn btn-secondary">
+{% extends"base.html" %}{% block title %}User Detail - {{ user.name }}- Campus Resource Hub{% endblock %}{% block extra_css %}{% endblock %}{% block content %}<div class="space-b-3">
+  </div>{{ url_for('admin.users') }}" class="btn btn-secondary">
     <i class="bi bi-arrow-left"></i> Back to Users
-  </a>
-</div>
+  
 
-<!-- User Profile Card -->
+
+ User Profile Card 
 <div class="card">
   <div class="profile-header">
     <div class="layout-grid">
       <div class="col-md-auto text-md-start">
-        {% if user.profile_image %}
-          <img src="{{ url_for('static', filename='uploads/' + user.profile_image) }}" 
+        </div></div></div></div>{% if user.profile_image %}{{ url_for('static', filename='uploads/' + user.profile_image) }}" 
              alt="{{ user.name }}" class="profile-avatar">
-        {% else %}
-          <div class="profile-avatar text-dark d-inline-flex" 
-             style="font-size: 3rem; font-weight: 700;">
-            {{ user.name[0].upper() }}
-          </div>
-        {% endif %}
-      </div>
-      <div class="col-md">
-        <h1 class="h2">{{ user.name }}</h1>
-        <p class="mb-1"><i class="bi bi-envelope"></i> {{ user.email }}</p>
-        <p class="mb-2"><i class="bi bi-building"></i> {{ user.department or 'No department' }}</p>
-        <div>
-          {% if user.role == 'admin' %}
-            <span class="badge badge-danger fs-6">Admin</span>
-          {% elif user.role == 'staff' %}
-            <span class="badge badge-primary fs-6">Staff</span>
-          {% else %}
-            <span class="badge badge-secondary fs-6">Student</span>
-          {% endif %}
-          
-          {% if user.is_active %}
-            <span class="badge badge-success fs-6">Active</span>
-          {% else %}
-            <span class="badge badge-danger fs-6">Suspended</span>
-          {% endif %}
-        </div>
-      </div>
-      <div class="col-md-auto text-md-end">
-        {% if user.role != 'admin' and user.user_id != current_user.user_id %}
-          <div class="d-flex flex-column gap-2">
-            {% if user.is_active %}
-              <button type="button" class="btn btn-warning" 
-                  data-bs-toggle="modal" data-bs-target="#suspendModal">
+        {% else %}<div class="profile-avatar text-dark d-inline-flex" style="font-size: 3rem; font-weight: 700;">
+            </div>{{ user.name[0].upper() }}{% endif %}<div class="col-md">
+        <h1 class="h2"></h1></div>{{ user.name }}<p class="space-b-1"><i class="bi bi-envelope"></i> </p>{{ user.email }}<p class="space-b-2"><i class="bi bi-building"></i> </p>{{ user.department or 'No department' }}<div>
+          </div>{% if user.role == 'admin' %}<span class="badge badge-danger fs-6">Admin</span>
+          {% elif user.role == 'staff' %}<span class="badge badge-primary fs-6">Staff</span>
+          {% else %}<span class="badge badge-secondary fs-6">Student</span>
+          {% endif %}{% if user.is_active %}<span class="badge badge-success fs-6">Active</span>
+          {% else %}<span class="badge badge-danger fs-6">Suspended</span>
+          {% endif %}<div class="col-md-auto text-md-end">
+        </div>{% if user.role != 'admin' and user.user_id != current_user.user_id %}<div class="flex flex-column gap-2">
+            </div>{% if user.is_active %}<button class="btn btn-warning" data-bs-target="#suspendModal" data-bs-toggle="modal" type="button">
                 <i class="bi bi-pause-circle"></i> Suspend User
               </button>
-            {% else %}
-              <form method="POST" action="{{ url_for('admin.activate_user', user_id=user.user_id) }}">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                <button type="submit" class="btn btn-success" onclick="return confirm('Activate this user?');">
+            {% else %}{{ url_for('admin.activate_user', user_id=user.user_id) }}">
+                {{ csrf_token() }}"/>
+                <button class="btn btn-success" onclick="return confirm('Activate this user?');" type="submit">
                   <i class="bi bi-play-circle"></i> Activate User
                 </button>
-              </form>
-            {% endif %}
-            <button type="button" class="btn btn-danger" 
-                data-bs-toggle="modal" data-bs-target="#deleteModal">
+              
+            {% endif %}<button class="btn btn-danger" data-bs-target="#deleteModal" data-bs-toggle="modal" type="button">
               <i class="bi bi-trash"></i> Delete User
             </button>
-          </div>
-        {% endif %}
-      </div>
-    </div>
-  </div>
-  <div class="card-body">
+          
+        {% endif %}<div class="card-body">
     <div class="layout-grid">
       <div class="layout-col">
         <div class="info-label">User ID</div>
-        <div class="info-value">#{{ user.user_id }}</div>
-      </div>
-      <div class="layout-col">
+        <div class="info-value">#</div></div></div></div>{{ user.user_id }}<div class="layout-col">
         <div class="info-label">Joined Date</div>
-        <div class="info-value">{{ user.created_at.strftime('%B %d, %Y at %I:%M %p') }}</div>
-      </div>
-      {% if user.suspended_at %}
-      <div class="layout-col2">
+        <div class="info-value"></div></div>{{ user.created_at.strftime('%B %d, %Y at %I:%M %p') }}{% if user.suspended_at %}<div class="layout-col2">
         <div class="alert alert-warning">
           <i class="bi bi-exclamation-triangle"></i> 
-          <strong>Account Suspended:</strong> {{ user.suspended_at.strftime('%B %d, %Y at %I:%M %p') }}
-        </div>
-      </div>
-      {% endif %}
-    </div>
-  </div>
-</div>
+          <strong>Account Suspended:</strong> </div></div>{{ user.suspended_at.strftime('%B %d, %Y at %I:%M %p') }}{% endif %}<div class="layout-grid g-3">
+  <div class="layout-col">
+    <div class="stat-box">
+      <h2 class="text-primary"></h2></div></div></div>{{ activity.resources_owned }}<p class="text-dim">Resources Owned</p>
+    
+  
+  <div class="layout-col">
+    <div class="stat-box">
+      <h2 class="text-success"></h2></div></div>{{ activity.bookings_made }}<p class="text-dim">Bookings Made</p>
+    
+  
+  <div class="layout-col">
+    <div class="stat-box">
+      <h2 class="text-info"></h2></div></div>{{ activity.messages_sent }}<p class="text-dim">Messages Sent</p>
+    
+  
+  <div class="layout-col">
+    <div class="stat-box">
+      <h2 class="text-warning"></h2></div></div>{{ activity.reviews_written }}<p class="text-dim">Reviews Written</p>
+    
+  
 
-<!-- Activity Statistics -->
-<div class="layout-grid g-3">
-  <div class="layout-col">
-    <div class="stat-box">
-      <h2 class="text-primary">{{ activity.resources_owned }}</h2>
-      <p class="text-muted">Resources Owned</p>
-    </div>
-  </div>
-  <div class="layout-col">
-    <div class="stat-box">
-      <h2 class="text-success">{{ activity.bookings_made }}</h2>
-      <p class="text-muted">Bookings Made</p>
-    </div>
-  </div>
-  <div class="layout-col">
-    <div class="stat-box">
-      <h2 class="text-info">{{ activity.messages_sent }}</h2>
-      <p class="text-muted">Messages Sent</p>
-    </div>
-  </div>
-  <div class="layout-col">
-    <div class="stat-box">
-      <h2 class="text-warning">{{ activity.reviews_written }}</h2>
-      <p class="text-muted">Reviews Written</p>
-    </div>
-  </div>
-</div>
 
-<!-- Detailed Activity Sections -->
+ Detailed Activity Sections 
 <div class="layout-grid g-3">
   <!-- Resources Owned -->
   <div class="layout-col">
     <div class="card">
       <div class="card-header">
-        <h5 class="mb-0"><i class="bi bi-box-seam"></i> Resources Owned</h5>
+        <h5 class="space-b-0"><i class="bi bi-box-seam"></i> Resources Owned</h5>
       </div>
       <div class="card-body activity-list">
-        {% if activity.resources %}
-          {% for resource in activity.resources %}
-            <div class="activity-item">
-              <div class="d-flex align-items-start">
+        </div></div></div></div>{% if activity.resources %}{% for resource in activity.resources %}<div class="activity-item">
+              <div class="flex items-start">
                 <div>
-                  <a href="{{ url_for('resources.detail', resource_id=resource.resource_id) }}" 
+                  </div></div></div>{{ url_for('resources.detail', resource_id=resource.resource_id) }}" 
                     class="text-decoration-none">
-                    <strong>{{ resource.title }}</strong>
-                  </a>
-                  <div class="small">
-                    {{ resource.category or 'General' }} • {{ resource.location or 'No location' }}
-                  </div>
-                </div>
-                <span class="badge badge-{{ 'success' if resource.status == 'published' else 'secondary' }}">
-                  {{ resource.status }}
-                </span>
-              </div>
-            </div>
-          {% endfor %}
-        {% else %}
-          <div class="text-center">
+                    <strong></strong>{{ resource.title }}<div class="small">
+                    </div>{{ resource.category or 'General' }}• {{ resource.location or 'No location' }}{{ 'success' if resource.status == 'published' else 'secondary' }}">
+                  {{ resource.status }}{% endfor %}{% else %}<div class="text-center">
             <i class="bi bi-inbox fs-1"></i>
             No resources owned
           </div>
-        {% endif %}
-      </div>
-    </div>
-  </div>
-  
-  <!-- Recent Bookings -->
-  <div class="layout-col">
+        {% endif %}<div class="layout-col">
     <div class="card">
       <div class="card-header">
-        <h5 class="mb-0"><i class="bi bi-calendar-check"></i> Recent Bookings</h5>
+        <h5 class="space-b-0"><i class="bi bi-calendar-check"></i> Recent Bookings</h5>
       </div>
       <div class="card-body activity-list">
-        {% if activity.bookings %}
-          {% for booking in activity.bookings %}
-            <div class="activity-item">
-              <div class="d-flex align-items-start">
+        </div></div></div>{% if activity.bookings %}{% for booking in activity.bookings %}<div class="activity-item">
+              <div class="flex items-start">
                 <div>
-                  <a href="{{ url_for('bookings.detail', booking_id=booking.booking_id) }}" 
+                  </div></div></div>{{ url_for('bookings.detail', booking_id=booking.booking_id) }}" 
                     class="text-decoration-none">
-                    <strong>{{ booking.resource_title }}</strong>
-                  </a>
-                  <div class="small">
-                    {{ booking.start_datetime.strftime('%b %d, %Y %I:%M %p') }} - 
-                    {{ booking.end_datetime.strftime('%I:%M %p') }}
-                  </div>
-                </div>
-                <span class="badge bg-{{ 
+                    <strong></strong>{{ booking.resource_title }}<div class="small">
+                    </div>{{ booking.start_datetime.strftime('%b %d, %Y %I:%M %p') }}- 
+                    {{ booking.end_datetime.strftime('%I:%M %p') }}{{ 
                   'warning' if booking.status == 'pending' else
                   'success' if booking.status == 'approved' else
                   'info' if booking.status == 'completed' else
                   'secondary'
                 }}">
-                  {{ booking.status }}
-                </span>
-              </div>
-            </div>
-          {% endfor %}
-        {% else %}
-          <div class="text-center">
+                  {{ booking.status }}{% endfor %}{% else %}<div class="text-center">
             <i class="bi bi-inbox fs-1"></i>
             No bookings made
           </div>
-        {% endif %}
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Messages & Reviews -->
-<div class="layout-grid g-3">
+        {% endif %}<div class="layout-grid g-3">
   <!-- Recent Messages -->
   <div class="layout-col">
     <div class="card">
       <div class="card-header">
-        <h5 class="mb-0"><i class="bi bi-envelope"></i> Recent Messages</h5>
+        <h5 class="space-b-0"><i class="bi bi-envelope"></i> Recent Messages</h5>
       </div>
       <div class="card-body activity-list">
-        {% if activity.messages %}
-          {% for message in activity.messages %}
-            <div class="activity-item">
+        </div></div></div></div>{% if activity.messages %}{% for message in activity.messages %}<div class="activity-item">
               <div class="small">
-                To: <strong>{{ message.receiver_name }}</strong>
-              </div>
-              <div class="text-truncate">{{ message.content }}</div>
-              <div class="small">
-                <i class="bi bi-clock"></i> {{ message.timestamp.strftime('%b %d, %Y %I:%M %p') }}
-              </div>
-            </div>
-          {% endfor %}
-        {% else %}
-          <div class="text-center">
+                To: <strong></strong></div></div>{{ message.receiver_name }}<div class="text-truncate"></div>{{ message.content }}<div class="small">
+                <i class="bi bi-clock"></i> </div>{{ message.timestamp.strftime('%b %d, %Y %I:%M %p') }}{% endfor %}{% else %}<div class="text-center">
             <i class="bi bi-inbox fs-1"></i>
             No messages sent
           </div>
-        {% endif %}
-      </div>
-    </div>
-  </div>
-  
-  <!-- Reviews Written -->
-  <div class="layout-col">
+        {% endif %}<div class="layout-col">
     <div class="card">
       <div class="card-header">
-        <h5 class="mb-0"><i class="bi bi-star"></i> Reviews Written</h5>
+        <h5 class="space-b-0"><i class="bi bi-star"></i> Reviews Written</h5>
       </div>
       <div class="card-body activity-list">
-        {% if activity.reviews %}
-          {% for review in activity.reviews %}
-            <div class="activity-item">
-              <div class="d-flex align-items-start">
-                <a href="{{ url_for('resources.detail', resource_id=review.resource_id) }}" 
+        </div></div></div>{% if activity.reviews %}{% for review in activity.reviews %}<div class="activity-item">
+              <div class="flex items-start">
+                </div></div>{{ url_for('resources.detail', resource_id=review.resource_id) }}" 
                   class="text-decoration-none">
-                  <strong>{{ review.resource_title }}</strong>
-                </a>
-                <div>
-                  {% for i in range(review.rating) %}
-                    <i class="bi bi-star-fill"></i>
-                  {% endfor %}
-                  {% for i in range(5 - review.rating) %}
-                    <i class="bi bi-star"></i>
-                  {% endfor %}
-                </div>
-              </div>
-              <div class="small">{{ review.comment }}</div>
-              <div class="small">
-                <i class="bi bi-clock"></i> {{ review.timestamp.strftime('%b %d, %Y') }}
-              </div>
-            </div>
-          {% endfor %}
-        {% else %}
-          <div class="text-center">
+                  <strong></strong>{{ review.resource_title }}<div>
+                  </div>{% for i in range(review.rating) %}<i class="bi bi-star-fill"></i>
+                  {% endfor %}{% for i in range(5 - review.rating) %}<i class="bi bi-star"></i>
+                  {% endfor %}<div class="small"></div>{{ review.comment }}<div class="small">
+                <i class="bi bi-clock"></i> </div>{{ review.timestamp.strftime('%b %d, %Y') }}{% endfor %}{% else %}<div class="text-center">
             <i class="bi bi-inbox fs-1"></i>
             No reviews written
           </div>
-        {% endif %}
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Suspend Modal -->
-<div class="modal fade" id="suspendModal" tabindex="-1">
+        {% endif %}<div class="modal fade" id="suspendModal" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title">Suspend User</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        <button class="btn-close" data-bs-dismiss="modal" type="button"></button>
       </div>
       <div class="modal-body">
-        <p>Are you sure you want to suspend <strong>{{ user.name }}</strong>?</p>
-        <p class="text-muted small">Suspended users cannot log in or access the platform.</p>
-      </div>
+        <p>Are you sure you want to suspend <strong></strong></p></div></div></div></div>{{ user.name }}?<p></p>
+        <p class="text-dim small">Suspended users cannot log in or access the platform.</p>
+      
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <form method="POST" action="{{ url_for('admin.suspend_user', user_id=user.user_id) }}" style="display: inline;">
-          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-          <button type="submit" class="btn btn-warning">Suspend User</button>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
+        <button class="btn btn-secondary" data-bs-dismiss="modal" type="button">Cancel</button>
+        </div>{{ url_for('admin.suspend_user', user_id=user.user_id) }}" style="display: inline;">
+          {{ csrf_token() }}"/>
+          <button class="btn btn-warning" type="submit">Suspend User</button>
+        
+      
+    
+  
 
-<!-- Delete Modal -->
+
+ Delete Modal 
 <div class="modal fade" id="deleteModal" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content">
-      <div class="modal-header bg-danger text-white">
+      <div class="modal-header bg-danger text-inverse">
         <h5 class="modal-title">Delete User</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        <button class="btn-close btn-close-white" data-bs-dismiss="modal" type="button"></button>
       </div>
       <div class="modal-body">
         <p><strong>⚠️ WARNING: This action cannot be undone!</strong></p>
-        <p>Are you sure you want to permanently delete <strong>{{ user.name }}</strong>?</p>
-        <p class="text-muted small">This will permanently delete:</p>
-        <ul class="text-muted small">
-          <li>{{ activity.resources_owned }} resources</li>
-          <li>{{ activity.bookings_made }} bookings</li>
-          <li>{{ activity.messages_sent + activity.messages_received }} messages</li>
-          <li>{{ activity.reviews_written }} reviews</li>
-        </ul>
-      </div>
+        <p>Are you sure you want to permanently delete <strong></strong></p></div></div></div></div>{{ user.name }}?<p></p>
+        <p class="text-dim small">This will permanently delete:</p>
+        <ul class="text-dim small">
+          <li></li></ul>{{ activity.resources_owned }}resources
+          <li></li>{{ activity.bookings_made }}bookings
+          <li></li>{{ activity.messages_sent + activity.messages_received }}messages
+          <li></li>{{ activity.reviews_written }}reviews
+        
+      
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <form method="POST" action="{{ url_for('admin.delete_user', user_id=user.user_id) }}" style="display: inline;">
-          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-          <button type="submit" class="btn btn-danger">Delete Permanently</button>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
+        <button class="btn btn-secondary" data-bs-dismiss="modal" type="button">Cancel</button>
+        </div>{{ url_for('admin.delete_user', user_id=user.user_id) }}" style="display: inline;">
+          {{ csrf_token() }}"/>
+          <button class="btn btn-danger" type="submit">Delete Permanently</button>
+        
+      
+    
+  
+
 
 {% endblock %}

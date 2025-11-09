@@ -1,0 +1,133 @@
+// =============================================================================
+// SPACING UTILITIES - Enterprise Design System
+// =============================================================================
+// Utility classes for margin and padding (Bootstrap migration)
+// Format: space-{direction}-{size} for margins, pad-{direction}-{size} for padding
+// =============================================================================
+
+// Spacing scale from design tokens
+$spacing-values: (
+  0: 0,
+  1: var(--spacing-1),
+  2: var(--spacing-2),
+  3: var(--spacing-3),
+  4: var(--spacing-4),
+  5: var(--spacing-5),
+  6: var(--spacing-6),
+  8: var(--spacing-8),
+  10: var(--spacing-10),
+  12: var(--spacing-12),
+  16: var(--spacing-16),
+);
+
+// Direction mappings
+$directions: (
+  t: top,
+  r: right,
+  b: bottom,
+  l: left,
+  x: (left, right),
+  y: (top, bottom),
+);
+
+// -----------------------------------------------------------------------------
+// MARGIN UTILITIES (space-*)
+// -----------------------------------------------------------------------------
+
+// All sides: space-{size}
+@each $size, $value in $spacing-values {
+  .space-#{$size} {
+    margin: $value;
+  }
+}
+
+// Specific sides: space-{direction}-{size}
+@each $dir-key, $dir-value in $directions {
+  @each $size, $value in $spacing-values {
+    @if type-of($dir-value) == 'list' {
+      // Handle x/y (multiple sides)
+      .space-#{$dir-key}-#{$size} {
+        @each $side in $dir-value {
+          margin-#{$side}: $value;
+        }
+      }
+    } @else {
+      // Single side
+      .space-#{$dir-key}-#{$size} {
+        margin-#{$dir-value}: $value;
+      }
+    }
+  }
+}
+
+// Auto margins
+.space-x-auto {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.space-t-auto { margin-top: auto; }
+.space-r-auto { margin-right: auto; }
+.space-b-auto { margin-bottom: auto; }
+.space-l-auto { margin-left: auto; }
+
+// -----------------------------------------------------------------------------
+// PADDING UTILITIES (pad-*)
+// -----------------------------------------------------------------------------
+
+// All sides: pad-{size}
+@each $size, $value in $spacing-values {
+  .pad-#{$size} {
+    padding: $value;
+  }
+}
+
+// Specific sides: pad-{direction}-{size}
+@each $dir-key, $dir-value in $directions {
+  @each $size, $value in $spacing-values {
+    @if type-of($dir-value) == 'list' {
+      // Handle x/y (multiple sides)
+      .pad-#{$dir-key}-#{$size} {
+        @each $side in $dir-value {
+          padding-#{$side}: $value;
+        }
+      }
+    } @else {
+      // Single side
+      .pad-#{$dir-key}-#{$size} {
+        padding-#{$dir-value}: $value;
+      }
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// GAP UTILITIES (for flexbox/grid)
+// -----------------------------------------------------------------------------
+.gap-0 { gap: 0; }
+.gap-1 { gap: var(--spacing-1); }
+.gap-2 { gap: var(--spacing-2); }
+.gap-3 { gap: var(--spacing-3); }
+.gap-4 { gap: var(--spacing-4); }
+.gap-6 { gap: var(--spacing-6); }
+.gap-8 { gap: var(--spacing-8); }
+
+// Column/row gaps
+.gap-x-2 { column-gap: var(--spacing-2); }
+.gap-x-4 { column-gap: var(--spacing-4); }
+.gap-y-2 { row-gap: var(--spacing-2); }
+.gap-y-4 { row-gap: var(--spacing-4); }
+
+// -----------------------------------------------------------------------------
+// COMMON SPACING PATTERNS
+// -----------------------------------------------------------------------------
+
+// Stack spacing (common pattern for vertical layouts)
+.stack-sm > * + * { margin-top: var(--spacing-2); }
+.stack-md > * + * { margin-top: var(--spacing-4); }
+.stack-lg > * + * { margin-top: var(--spacing-6); }
+
+// Inline spacing (horizontal layouts)
+.inline-sm > * + * { margin-left: var(--spacing-2); }
+.inline-md > * + * { margin-left: var(--spacing-4); }
+.inline-lg > * + * { margin-left: var(--spacing-6); }

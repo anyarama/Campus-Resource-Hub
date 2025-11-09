@@ -1,0 +1,373 @@
+{% extends"base.html" %}
+
+{% block title %}Admin Dashboard - Campus Resource Hub{% endblock %}
+
+{% block extra_css %}
+<style>
+  .stat-card {
+    border-left: 4px solid;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  }
+  .stat-card.primary { border-left-color: #0d6efd; }
+  .stat-card.success { border-left-color: #198754; }
+  .stat-card.info { border-left-color: #0dcaf0; }
+  .stat-card.warning { border-left-color: #ffc107; }
+  .stat-card.danger { border-left-color: #dc3545; }
+  
+  .stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #212529;
+  }
+  
+  .stat-label {
+    font-size: 0.875rem;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .activity-item {
+    border-left: 3px solid #dee2e6;
+    padding-left: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .activity-item:hover {
+    border-left-color: #0d6efd;
+    background-color: #f8f9fa;
+  }
+  
+  .popular-resource {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem;
+    border-bottom: 1px solid #dee2e6;
+  }
+  
+  .popular-resource:last-child {
+    border-bottom: none;
+  }
+  
+  .popular-resource:hover {
+    background-color: #f8f9fa;
+  }
+  
+  .badge-role {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="layout-grid">
+  <div class="layout-col2">
+    <h1 class="h2"><i class="bi bi-speedometer2"></i> Admin Dashboard</h1>
+    <p class="text-muted">Platform overview and management tools</p>
+  </div>
+</div>
+
+<!-- Platform Statistics Cards -->
+<div class="layout-grid g-3">
+  <!-- Total Users -->
+  <div class="layout-col">
+    <div class="card stat-card primary">
+      <div class="card-body">
+        <div class="d-flex align-items-start">
+          <div>
+            <div class="stat-number">{{ stats.total_users }}</div>
+            <div class="stat-label">Total Users</div>
+          </div>
+          <i class="bi bi-people fs-1 text-primary opacity-25"></i>
+        </div>
+        <div class="mt-2">
+          <small class="text-success"><i class="bi bi-arrow-up"></i> Active platform</small>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Total Resources -->
+  <div class="layout-col">
+    <div class="card stat-card success">
+      <div class="card-body">
+        <div class="d-flex align-items-start">
+          <div>
+            <div class="stat-number">{{ stats.total_resources }}</div>
+            <div class="stat-label">Resources</div>
+          </div>
+          <i class="bi bi-box-seam fs-1 opacity-25"></i>
+        </div>
+        <div class="mt-2">
+          <small class="text-muted">{{ stats.published_resources }} published</small>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Total Bookings -->
+  <div class="layout-col">
+    <div class="card stat-card info">
+      <div class="card-body">
+        <div class="d-flex align-items-start">
+          <div>
+            <div class="stat-number">{{ stats.total_bookings }}</div>
+            <div class="stat-label">Bookings</div>
+          </div>
+          <i class="bi bi-calendar-check fs-1 text-info opacity-25"></i>
+        </div>
+        <div class="mt-2">
+          <small class="text-warning">{{ stats.pending_bookings }} pending</small>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Total Messages -->
+  <div class="layout-col">
+    <div class="card stat-card warning">
+      <div class="card-body">
+        <div class="d-flex align-items-start">
+          <div>
+            <div class="stat-number">{{ stats.total_messages }}</div>
+            <div class="stat-label">Messages</div>
+          </div>
+          <i class="bi bi-envelope fs-1 opacity-25"></i>
+        </div>
+        <div class="mt-2">
+          <small class="text-muted">Platform communication</small>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- User Role Distribution -->
+<div class="layout-grid g-3">
+  <div class="layout-col">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="mb-0"><i class="bi bi-pie-chart"></i> User Roles</h5>
+      </div>
+      <div class="card-body">
+        <div class="mb-3">
+          <div class="d-flex">
+            <span><span class="badge badge-danger badge-role">Admin</span></span>
+            <strong>{{ stats.role_distribution.admin }}</strong>
+          </div>
+          <div class="progress" style="height: 8px;">
+            <div class="progress-bar bg-danger" style="width: {{ (stats.role_distribution.admin / stats.total_users * 100) if stats.total_users > 0 else 0 }}%"></div>
+          </div>
+        </div>
+        <div class="mb-3">
+          <div class="d-flex">
+            <span><span class="badge badge-primary badge-role">Staff</span></span>
+            <strong>{{ stats.role_distribution.staff }}</strong>
+          </div>
+          <div class="progress" style="height: 8px;">
+            <div class="progress-bar bg-primary" style="width: {{ (stats.role_distribution.staff / stats.total_users * 100) if stats.total_users > 0 else 0 }}%"></div>
+          </div>
+        </div>
+        <div>
+          <div class="d-flex">
+            <span><span class="badge badge-secondary badge-role">Student</span></span>
+            <strong>{{ stats.role_distribution.student }}</strong>
+          </div>
+          <div class="progress" style="height: 8px;">
+            <div class="progress-bar bg-secondary" style="width: {{ (stats.role_distribution.student / stats.total_users * 100) if stats.total_users > 0 else 0 }}%"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Booking Status Distribution -->
+  <div class="layout-col">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="mb-0"><i class="bi bi-graph-up"></i> Booking Status</h5>
+      </div>
+      <div class="card-body">
+        <div class="mb-3">
+          <div class="d-flex">
+            <span>Pending</span>
+            <strong class="text-warning">{{ stats.booking_status.pending }}</strong>
+          </div>
+          <div class="progress" style="height: 8px;">
+            <div class="progress-bar bg-warning" style="width: {{ (stats.booking_status.pending / stats.total_bookings * 100) if stats.total_bookings > 0 else 0 }}%"></div>
+          </div>
+        </div>
+        <div class="mb-3">
+          <div class="d-flex">
+            <span>Approved</span>
+            <strong class="text-success">{{ stats.booking_status.approved }}</strong>
+          </div>
+          <div class="progress" style="height: 8px;">
+            <div class="progress-bar bg-success" style="width: {{ (stats.booking_status.approved / stats.total_bookings * 100) if stats.total_bookings > 0 else 0 }}%"></div>
+          </div>
+        </div>
+        <div>
+          <div class="d-flex">
+            <span>Completed</span>
+            <strong class="text-info">{{ stats.booking_status.completed }}</strong>
+          </div>
+          <div class="progress" style="height: 8px;">
+            <div class="progress-bar bg-info" style="width: {{ (stats.booking_status.completed / stats.total_bookings * 100) if stats.total_bookings > 0 else 0 }}%"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Quick Actions -->
+  <div class="layout-col">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="mb-0"><i class="bi bi-lightning"></i> Quick Actions</h5>
+      </div>
+      <div class="card-body flex-column gap-2">
+        <a href="{{ url_for('admin.users') }}" class="btn btn-outline-primary">
+          <i class="bi bi-people"></i> Manage Users
+        </a>
+        <a href="{{ url_for('admin.analytics') }}" class="btn btn-outline-info">
+          <i class="bi bi-bar-chart"></i> View Analytics
+        </a>
+        <a href="{{ url_for('bookings.my_bookings') }}" class="btn btn-outline-warning">
+          <i class="bi bi-calendar-check"></i> Review Bookings
+        </a>
+        <a href="{{ url_for('resources.index') }}" class="btn btn-outline-success">
+          <i class="bi bi-box-seam"></i> Browse Resources
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Popular Resources & Recent Activity -->
+<div class="layout-grid g-3">
+  <!-- Popular Resources -->
+  <div class="layout-col">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="mb-0"><i class="bi bi-star"></i> Popular Resources</h5>
+        <small class="text-muted">By bookings</small>
+      </div>
+      <div class="card-body">
+        {% if popular_resources %}
+          {% for resource in popular_resources %}
+            <div class="popular-resource">
+              <div class="flex-grow-1">
+                <a href="{{ url_for('resources.detail', resource_id=resource.resource_id) }}" class="text-decoration-none">
+                  <strong>{{ resource.title }}</strong>
+                </a>
+                <div class="small">
+                  <i class="bi bi-calendar-check"></i> {{ resource.booking_count }} bookings
+                </div>
+              </div>
+              <span class="badge badge-primary">{{ resource.category or 'General' }}</span>
+            </div>
+          {% endfor %}
+        {% else %}
+          <div class="p-3">
+            <i class="bi bi-inbox fs-1"></i>
+            No bookings yet
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  
+  <!-- Recent Activity -->
+  <div class="layout-col">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="mb-0"><i class="bi bi-activity"></i> Recent Activity</h5>
+      </div>
+      <div class="card-body" style="max-height: 400px; overflow-y: auto;">
+        {% if activity.bookings %}
+          <h6 class="text-muted small">Recent Bookings</h6>
+          {% for booking in activity.bookings[:5] %}
+            <div class="activity-item">
+              <div class="small">
+                <strong>{{ booking.requester_name }}</strong> booked 
+                <a href="{{ url_for('resources.detail', resource_id=booking.resource_id) }}">
+                  {{ booking.resource_title }}
+                </a>
+              </div>
+              <div class="small">
+                <i class="bi bi-clock"></i> {{ booking.created_at.strftime('%b %d, %Y %I:%M %p') }}
+              </div>
+            </div>
+          {% endfor %}
+        {% endif %}
+        
+        {% if activity.users %}
+          <h6 class="text-muted small">New Users</h6>
+          {% for user in activity.users[:3] %}
+            <div class="activity-item">
+              <div class="small">
+                <strong>{{ user.name }}</strong> joined as 
+                <span class="badge badge-secondary badge-role">{{ user.role }}</span>
+              </div>
+              <div class="small">
+                <i class="bi bi-clock"></i> {{ user.created_at.strftime('%b %d, %Y') }}
+              </div>
+            </div>
+          {% endfor %}
+        {% endif %}
+        
+        {% if not activity.bookings and not activity.users %}
+          <div class="text-center">
+            <i class="bi bi-inbox fs-1"></i>
+            No recent activity
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Booking Trends -->
+{% if trends %}
+<div class="layout-grid">
+  <div class="layout-col2">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="mb-0"><i class="bi bi-graph-up-arrow"></i> Booking Trends (Last 30 Days)</h5>
+      </div>
+      <div class="card-body">
+        <div class="layout-grid">
+          <div class="layout-col">
+            <h3 class="text-primary">{{ trends.total_bookings }}</h3>
+            <p class="text-muted small">Total Bookings</p>
+          </div>
+          <div class="layout-col">
+            <h3 class="text-success">{{ trends.approved_bookings }}</h3>
+            <p class="text-muted small">Approved</p>
+          </div>
+          <div class="layout-col">
+            <h3 class="text-warning">{{ trends.pending_bookings }}</h3>
+            <p class="text-muted small">Pending</p>
+          </div>
+          <div class="layout-col">
+            <h3 class="text-info">{{ trends.completed_bookings }}</h3>
+            <p class="text-muted small">Completed</p>
+          </div>
+        </div>
+        <div class="mt-3">
+          <a href="{{ url_for('admin.analytics') }}" class="btn btn-secondary">
+            <i class="bi bi-bar-chart"></i> View Detailed Analytics
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+{% endblock %}

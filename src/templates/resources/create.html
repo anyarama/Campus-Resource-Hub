@@ -1,53 +1,40 @@
-{% extends"base.html" %}
-
-{% block title %}Create New Resource - Campus Resource Hub{% endblock %}
-
-{% block content %}
-  <!-- Header -->
-  <div class="layout-grid">
-    <div class="col-lg-8 mx-auto">
+{% extends"base.html" %}{% block title %}Create New Resource - Campus Resource Hub{% endblock %}{% block content %}<div class="layout-grid">
+    <div class="layout-col mx-auto" data-col-lg="8">
       <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="{{ url_for('resources.index') }}">Resources</a></li>
-          <li class="breadcrumb-item"><a href="{{ url_for('resources.my_resources') }}">My Resources</a></li>
-          <li class="breadcrumb-item active" aria-current="page">Create New</li>
-        </ol>
-      </nav>
+          <li class="breadcrumb-item"></li></ol></nav></div></div>{{ url_for('resources.index') }}">Resources
+          <li class="breadcrumb-item"></li>{{ url_for('resources.my_resources') }}">My Resources
+          <li aria-current="page" class="breadcrumb-item active">Create New</li>
+        
+      
       <h1 class="display-5"><i class="bi bi-plus-circle"></i> Create New Resource</h1>
-      <p class="text-muted">Share your campus resource with the community</p>
-    </div>
-  </div>
+      <p class="text-dim">Share your campus resource with the community</p>
+    
+  
 
-  <!-- Form -->
+   Form 
   <div class="layout-grid">
-    <div class="col-lg-8 mx-auto">
+    <div class="layout-col mx-auto" data-col-lg="8">
       <div class="card">
         <div class="card-body">
-          <form method="POST" action="{{ url_for('resources.create') }}" enctype="multipart/form-data" id="createResourceForm">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          </div></div></div></div>{{ url_for('resources.create') }}" enctype="multipart/form-data" id="createResourceForm">
+            {{ csrf_token() }}">
 
-            <!-- Title -->
-            <div class="mb-4">
-              <label for="title" class="form-label fw-bold">
+             Title 
+            <div class="space-b-4">
+              <label class="form-label fw-bold" for="title">
                 Resource Title <span class="text-danger">*</span>
               </label>
-              <input type="text" 
-                  class="form-control form-control-lg" 
-                  id="title" 
-                  name="title" 
-                  placeholder="e.g., Conference Room A, MacBook Pro, 3D Printer"
-                  required
-                  maxlength="200"
-                  autocomplete="off">
+              <input autocomplete="off" class="form-control form-control-lg" id="title" maxlength="200" name="title" placeholder="e.g., Conference Room A, MacBook Pro, 3D Printer" required="" type="text"/>
               <div class="form-text">Give your resource a clear, descriptive name</div>
             </div>
 
-            <!-- Category -->
-            <div class="mb-4">
-              <label for="category" class="form-label fw-bold">
+             Category 
+            <div class="space-b-4">
+              <label class="form-label fw-bold" for="category">
                 Category <span class="text-danger">*</span>
               </label>
-              <select class="form-select" id="category" name="category" required>
+              <select class="form-select" id="category" name="category" required="">
                 <option value="">-- Select Category --</option>
                 <option value="Study Space">Study Space</option>
                 <option value="Equipment">Equipment</option>
@@ -61,119 +48,87 @@
               <div class="form-text">Choose the category that best describes your resource</div>
             </div>
 
-            <!-- Description -->
-            <div class="mb-4">
-              <label for="description" class="form-label fw-bold">
+             Description 
+            <div class="space-b-4">
+              <label class="form-label fw-bold" for="description">
                 Description <span class="text-danger">*</span>
               </label>
-              <textarea class="form-control" 
-                   id="description" 
-                   name="description" 
-                   rows="5"
-                   placeholder="Describe your resource: features, availability, rules, what makes it special..."
-                   required
-                   maxlength="2000"></textarea>
+              <textarea class="form-control" id="description" maxlength="2000" name="description" placeholder="Describe your resource: features, availability, rules, what makes it special..." required="" rows="5"></textarea>
               <div class="form-text">
                 <span id="charCount">0</span> / 2000 characters
               </div>
             </div>
 
-            <!-- Location and Capacity Row -->
+             Location and Capacity Row 
             <div class="layout-grid">
               <div class="layout-col">
-                <label for="location" class="form-label fw-bold">
+                <label class="form-label fw-bold" for="location">
                   Location <span class="text-danger">*</span>
                 </label>
-                <input type="text" 
-                    class="form-control" 
-                    id="location" 
-                    name="location" 
-                    placeholder="e.g., Building A, Room 210"
-                    required
-                    maxlength="200">
+                <input class="form-control" id="location" maxlength="200" name="location" placeholder="e.g., Building A, Room 210" required="" type="text"/>
                 <div class="form-text">Where is this resource located?</div>
               </div>
               <div class="layout-col">
-                <label for="capacity" class="form-label fw-bold">
+                <label class="form-label fw-bold" for="capacity">
                   Capacity (Optional)
                 </label>
-                <input type="number" 
-                    class="form-control" 
-                    id="capacity" 
-                    name="capacity" 
-                    placeholder="e.g., 10"
-                    min="1"
-                    max="999">
+                <input class="form-control" id="capacity" max="999" min="1" name="capacity" placeholder="e.g., 10" type="number"/>
                 <div class="form-text">How many people can use this?</div>
               </div>
             </div>
 
-            <!-- Image Upload -->
-            <div class="mb-4">
-              <label for="images" class="form-label fw-bold">
+             Image Upload 
+            <div class="space-b-4">
+              <label class="form-label fw-bold" for="images">
                 Images (Optional)
               </label>
-              <input type="file" 
-                  class="form-control" 
-                  id="images" 
-                  name="images" 
-                  accept="image/jpeg,image/jpg,image/png,image/gif"
-                  multiple>
+              <input accept="image/jpeg,image/jpg,image/png,image/gif" class="form-control" id="images" multiple="" name="images" type="file"/>
               <div class="form-text">
                 <i class="bi bi-info-circle"></i> Upload up to 5 images (JPEG, PNG, GIF). Max 2MB per image.
               </div>
               
               <!-- Image Preview -->
-              <div id="imagePreview" class="mt-3 row g-2"></div>
+              <div class="space-t-3 layout-grid g-2" id="imagePreview"></div>
             </div>
 
-            <!-- Status -->
-            <div class="mb-4">
+             Status 
+            <div class="space-b-4">
               <label class="form-label fw-bold">Publication Status</label>
               <div class="form-check">
-                <input class="form-check-input" 
-                    type="radio" 
-                    name="status" 
-                    id="statusDraft" 
-                    value="draft" 
-                    checked>
+                <input checked="" class="form-check-input" id="statusDraft" name="status" type="radio" value="draft"/>
                 <label class="form-check-label" for="statusDraft">
                   <strong>Save as Draft</strong>
-                  <span class="text-muted small">You can edit and publish later</span>
+                  <span class="text-dim small">You can edit and publish later</span>
                 </label>
               </div>
               <div class="form-check">
-                <input class="form-check-input" 
-                    type="radio" 
-                    name="status" 
-                    id="statusPublished" 
-                    value="published">
+                <input class="form-check-input" id="statusPublished" name="status" type="radio" value="published"/>
                 <label class="form-check-label" for="statusPublished">
                   <strong>Publish Immediately</strong>
-                  <span class="text-muted small">Make visible to all users right away</span>
+                  <span class="text-dim small">Make visible to all users right away</span>
                 </label>
               </div>
             </div>
 
-            <!-- Action Buttons -->
-            <hr class="my-4">
-            <div class="d-flex">
-              <a href="{{ url_for('resources.my_resources') }}" class="btn btn-secondary">
+             Action Buttons 
+            <hr class="space-y-4"/>
+            <div class="flex">
+              </div>{{ url_for('resources.my_resources') }}" class="btn btn-secondary">
                 <i class="bi bi-arrow-left"></i> Cancel
-              </a>
-              <button type="submit" class="btn btn-primary">
+              
+              <button class="btn btn-primary" type="submit">
                 <i class="bi bi-check-circle"></i> Create Resource
               </button>
-            </div>
-          </form>
-        </div>
-      </div>
+            
+          
+        
+      
 
-      <!-- Help Section -->
+       Help Section 
       <div class="card">
         <div class="card-body">
           <h6 class="card-title"><i class="bi bi-lightbulb"></i> Tips for Creating Great Resources</h6>
-          <ul class="mb-0 small">
+          <ul class="space-b-0 small">
             <li>Use clear, descriptive titles that help users find your resource</li>
             <li>Include high-quality photos showing the resource from multiple angles</li>
             <li>Mention any requirements (training, prerequisites, booking rules)</li>
@@ -182,9 +137,9 @@
           </ul>
         </div>
       </div>
-    </div>
-  </div>
-</div>
+    
+  
+
 
 <style>
   /* Form styling enhancements */

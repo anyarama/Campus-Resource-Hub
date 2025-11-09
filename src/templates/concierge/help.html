@@ -1,11 +1,6 @@
-{% extends"base.html" %}
-
-{% block title %}Concierge Help - Campus Resource Hub{% endblock %}
-
-{% block content %}
-  <div class="grid">
+{% extends"base.html" %}{% block title %}Concierge Help - Campus Resource Hub{% endblock %}{% block content %}<div class="grid">
     <div class="grid-col-lg-8 mx-auto">
-      <h1 class="mb-4">🤖 Resource Concierge Help</h1>
+      <h1 class="space-b-4">🤖 Resource Concierge Help</h1>
       
       <div class="card">
         <div class="card-body">
@@ -104,7 +99,7 @@
       <div class="card">
         <div class="card-body">
           <h3>Important Notes</h3>
-          <ul class="mb-0">
+          <ul class="space-b-0">
             <li><strong>Database Grounded:</strong> All results come from real, available resources in our system - I never make things up!</li>
             <li><strong>No Booking Yet:</strong> The concierge helps you find resources. To actually book, click"View Details" on a resource.</li>
             <li><strong>Public Access:</strong> You don't need to log in to search, but you'll need an account to book resources.</li>
@@ -113,13 +108,13 @@
       </div>
       
       <div class="text-center">
-        <a href="{{ url_for('concierge.index') }}" class="btn btn-primary">
+        </div></div></div>{{ url_for('concierge.index') }}" class="btn btn-primary">
           <i class="bi bi-search"></i> Try the Concierge
-        </a>
-        <a href="{{ url_for('resources.index') }}" class="btn btn-outline-secondary">
+        
+        {{ url_for('resources.index') }}" class="btn btn-outline-secondary">
           <i class="bi bi-grid"></i> Browse All Resources
-        </a>
-      </div>
-    </div>
-  </div>
+        
+      
+    
+  
 {% endblock %}

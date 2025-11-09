@@ -1,22 +1,16 @@
-{% extends"base.html" %}
-
-{% block title %}Dashboard - Campus Resource Hub{% endblock %}
-
-{% block main_content %}
-<!-- Welcome Header -->
-<div style="margin-bottom: 2rem;">
-  <h1 style="font-size: 2rem; font-weight: 600; color: #1f2937; margin: 0 0 0.5rem 0;">Welcome, {{ current_user.name }}!</h1>
+{% extends"base.html" %}{% block title %}Dashboard - Campus Resource Hub{% endblock %}{% block main_content %}<div style="margin-bottom: 2rem;">
+  <h1 style="font-size: 2rem; font-weight: 600; color: #1f2937; margin: 0 0 0.5rem 0;">Welcome, </h1></div>{{ current_user.name }}!
   <p style="font-size: 1.125rem; color: #6b7280; margin: 0;">Manage your resources, bookings, and messages all in one place.</p>
-</div>
 
-  <!-- Quick Stats Cards -->
+
+   Quick Stats Cards 
   <div class="layout-grid">
     <div class="grid-layout-col">
       <div class="card">
         <div class="card-body">
           <i class="bi bi-box-seam fs-1 text-primary"></i>
-          <h3 class="mt-2">0</h3>
-          <p class="text-muted">My Resources</p>
+          <h3 class="space-t-2">0</h3>
+          <p class="text-dim">My Resources</p>
         </div>
       </div>
     </div>
@@ -24,8 +18,8 @@
       <div class="card">
         <div class="card-body">
           <i class="bi bi-calendar-check fs-1"></i>
-          <h3 class="mt-2">0</h3>
-          <p class="text-muted">Active Bookings</p>
+          <h3 class="space-t-2">0</h3>
+          <p class="text-dim">Active Bookings</p>
         </div>
       </div>
     </div>
@@ -33,8 +27,8 @@
       <div class="card">
         <div class="card-body">
           <i class="bi bi-envelope fs-1 text-info"></i>
-          <h3 class="mt-2">0</h3>
-          <p class="text-muted">Unread Messages</p>
+          <h3 class="space-t-2">0</h3>
+          <p class="text-dim">Unread Messages</p>
         </div>
       </div>
     </div>
@@ -42,29 +36,29 @@
       <div class="card">
         <div class="card-body">
           <i class="bi bi-star fs-1"></i>
-          <h3 class="mt-2">0</h3>
-          <p class="text-muted">Reviews</p>
+          <h3 class="space-t-2">0</h3>
+          <p class="text-dim">Reviews</p>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Main Content Tabs -->
+   Main Content Tabs 
   <div class="grid">
     <div class="grid-layout-col2">
       <ul class="nav nav-tabs" id="dashboardTabs" role="tablist">
         <li class="nav-item" role="presentation">
-          <button class="nav-link active" id="resources-tab" data-bs-toggle="tab" data-bs-target="#resources" type="button" role="tab" aria-controls="resources" aria-selected="true">
+          <button aria-controls="resources" aria-selected="true" class="nav-link active" data-bs-target="#resources" data-bs-toggle="tab" id="resources-tab" role="tab" type="button">
             <i class="bi bi-box-seam"></i> My Resources
           </button>
         </li>
         <li class="nav-item" role="presentation">
-          <button class="nav-link" id="bookings-tab" data-bs-toggle="tab" data-bs-target="#bookings" type="button" role="tab" aria-controls="bookings" aria-selected="false">
+          <button aria-controls="bookings" aria-selected="false" class="nav-link" data-bs-target="#bookings" data-bs-toggle="tab" id="bookings-tab" role="tab" type="button">
             <i class="bi bi-calendar-check"></i> My Bookings
           </button>
         </li>
         <li class="nav-item" role="presentation">
-          <button class="nav-link" id="messages-tab" data-bs-toggle="tab" data-bs-target="#messages" type="button" role="tab" aria-controls="messages" aria-selected="false">
+          <button aria-controls="messages" aria-selected="false" class="nav-link" data-bs-target="#messages" data-bs-toggle="tab" id="messages-tab" role="tab" type="button">
             <i class="bi bi-envelope"></i> Messages
           </button>
         </li>
@@ -72,107 +66,103 @@
 
       <div class="tab-content" id="dashboardTabContent">
         <!-- Resources Tab -->
-        <div class="tab-pane fade show active" id="resources" role="tabpanel" aria-labelledby="resources-tab">
+        <div aria-labelledby="resources-tab" class="tab-pane fade show active" id="resources" role="tabpanel">
           <div class="card">
             <div class="card-body">
-              <div class="d-flex">
-                <h5 class="mb-0">My Resources</h5>
-                <a href="#" class="btn btn-primary">
+              <div class="flex">
+                <h5 class="space-b-0">My Resources</h5>
+                <a class="btn btn-primary" href="#">
                   <i class="bi bi-plus-circle"></i> Create Resource
                 </a>
               </div>
               <div class="text-center">
                 <i class="bi bi-inbox fs-1"></i>
-                <p class="text-muted">No resources yet. Create your first resource to get started!</p>
+                <p class="text-dim">No resources yet. Create your first resource to get started!</p>
               </div>
             </div>
           </div>
         </div>
 
         <!-- Bookings Tab -->
-        <div class="tab-pane fade" id="bookings" role="tabpanel" aria-labelledby="bookings-tab">
+        <div aria-labelledby="bookings-tab" class="tab-pane fade" id="bookings" role="tabpanel">
           <div class="card">
             <div class="card-body">
-              <div class="d-flex">
-                <h5 class="mb-0">My Bookings</h5>
-                <a href="{{ url_for('resources.index') }}" class="btn btn-primary">
+              <div class="flex">
+                <h5 class="space-b-0">My Bookings</h5>
+                </div></div></div></div></div></div></div>{{ url_for('resources.index') }}" class="btn btn-primary">
                   <i class="bi bi-search"></i> Browse Resources
-                </a>
-              </div>
+                
+              
               <div class="text-center">
                 <i class="bi bi-calendar-x fs-1"></i>
-                <p class="text-muted">No bookings yet. Browse available resources to make your first booking!</p>
+                <p class="text-dim">No bookings yet. Browse available resources to make your first booking!</p>
               </div>
-            </div>
-          </div>
-        </div>
+            
+          
+        
 
-        <!-- Messages Tab -->
-        <div class="tab-pane fade" id="messages" role="tabpanel" aria-labelledby="messages-tab">
+         Messages Tab 
+        <div aria-labelledby="messages-tab" class="tab-pane fade" id="messages" role="tabpanel">
           <div class="card">
             <div class="card-body">
-              <div class="d-flex">
-                <h5 class="mb-0">Messages</h5>
+              <div class="flex">
+                <h5 class="space-b-0">Messages</h5>
               </div>
               <div class="text-center">
                 <i class="bi bi-chat-dots fs-1"></i>
-                <p class="text-muted">No messages yet. Messages will appear here when you book resources or communicate with resource owners.</p>
+                <p class="text-dim">No messages yet. Messages will appear here when you book resources or communicate with resource owners.</p>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
-  </div>
+      
+    
+  
 
-  <!-- Admin Section (if admin role) -->
-  {% if current_user.role == 'admin' %}
-  <div class="layout-grid">
+   Admin Section (if admin role) 
+  {% if current_user.role == 'admin' %}<div class="layout-grid">
     <div class="grid-layout-col2">
       <div class="card border-danger">
-        <div class="card-header bg-danger text-white">
-          <h5 class="mb-0"><i class="bi bi-shield-lock"></i> Admin Panel</h5>
+        <div class="card-header bg-danger text-inverse">
+          <h5 class="space-b-0"><i class="bi bi-shield-lock"></i> Admin Panel</h5>
         </div>
         <div class="card-body">
-          <p class="mb-3">You have administrator privileges. Access advanced management features:</p>
-          <div class="d-flex gap-2 flex-wrap">
-            <a href="{{ url_for('resources.admin_ping') }}" class="btn btn-secondary">
+          <p class="space-b-3">You have administrator privileges. Access advanced management features:</p>
+          <div class="flex gap-2 flex-wrap">
+            </div></div></div></div></div>{{ url_for('resources.admin_ping') }}" class="btn btn-secondary">
               <i class="bi bi-terminal"></i> Admin Ping Test
-            </a>
-            <a href="#" class="btn btn-outline-danger disabled">
+            
+            <a class="btn btn-outline-danger disabled" href="#">
               <i class="bi bi-people"></i> User Management
             </a>
-            <a href="#" class="btn btn-outline-danger disabled">
+            <a class="btn btn-outline-danger disabled" href="#">
               <i class="bi bi-bar-chart"></i> Analytics
             </a>
-            <a href="#" class="btn btn-outline-danger disabled">
+            <a class="btn btn-outline-danger disabled" href="#">
               <i class="bi bi-flag"></i> Moderation
             </a>
-          </div>
-          <p class="text-muted small ">
+          
+          <p class="text-dim small">
             <em>Note: Additional admin features will be implemented in Phase 5-6</em>
           </p>
-        </div>
-      </div>
-    </div>
-  </div>
-  {% endif %}
-
-  <!-- Recent Activity (placeholder) -->
-  <div class="layout-grid">
+        
+      
+    
+  
+  {% endif %}<div class="layout-grid">
     <div class="grid-layout-col2">
       <div class="card">
         <div class="card-header">
-          <h5 class="mb-0">Recent Activity</h5>
+          <h5 class="space-b-0">Recent Activity</h5>
         </div>
         <div class="card-body">
           <div class="text-center">
             <i class="bi bi-clock-history fs-1"></i>
-            <p class="text-muted ">No recent activity to display.</p>
+            <p class="text-dim">No recent activity to display.</p>
           </div>
         </div>
       </div>
     </div>
   </div>
-</div>
+
 {% endblock %}

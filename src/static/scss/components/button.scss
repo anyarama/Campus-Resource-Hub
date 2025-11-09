@@ -50,12 +50,14 @@
 // -----------------------------------------------------------------------------
 // SIZE VARIANTS
 // -----------------------------------------------------------------------------
-.btn-sm {
+.btn-sm,
+.btn--sm {
   padding: var(--spacing-button-padding-sm);
   font-size: var(--font-size-xs);
 }
 
-.btn-lg {
+.btn-lg,
+.btn--lg {
   padding: var(--spacing-button-padding-lg);
   font-size: var(--font-size-base);
 }

@@ -20,16 +20,22 @@
 @use 'base/layout';
 
 // -----------------------------------------------------------------------------
+// UTILITIES
+// -----------------------------------------------------------------------------
+// Utility classes for spacing, sizing, etc.
+@use 'utilities/spacing';
+
+// -----------------------------------------------------------------------------
 // THEMES (TODO: Add after base testing)
 // -----------------------------------------------------------------------------
 // @use 'themes/light';
 // @use 'themes/dark';
 
 // -----------------------------------------------------------------------------
-// BOOTSTRAP COMPATIBILITY LAYER
+// BOOTSTRAP COMPATIBILITY LAYER (REMOVED)
 // -----------------------------------------------------------------------------
-// Maps Bootstrap 5 class names to Phase 12 design system
-@use 'compat/bootstrap-bridge';
+// Bootstrap bridge has been removed - all templates now use enterprise classes
+// @use 'compat/bootstrap-bridge';
 
 // -----------------------------------------------------------------------------
 // COMPONENTS - All 15 Enterprise Components
