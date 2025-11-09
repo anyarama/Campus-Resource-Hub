@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     
     <!-- Enterprise CSS (Vite build) -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='dist/assets/style-FDlKo-cV.css') }}">
+    <link rel="stylesheet" href="{{ asset_url('style') }}">
     
     <!-- Bootstrap Icons (kept for icon support) -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
@@ -190,7 +190,7 @@
     </div>
     
     <!-- Enterprise JS (Vite build) -->
-    <script type="module" src="{{ url_for('static', filename='dist/assets/enterpriseJs-CNnJ7BZk.js') }}"></script>
+    <script defer src="{{ asset_url('enterpriseJs') }}"></script>
     
     {% block extra_js %}{% endblock %}
 </body>

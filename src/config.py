@@ -58,20 +58,20 @@ class Config:
 
 
 class DevelopmentConfig(Config):
-    """Development environment configuration."""
+    """Development environment configuration"""
 
     DEBUG: bool = True
     TESTING: bool = False
 
     # Development database (SQLite)
     SQLALCHEMY_DATABASE_URI: str = f'sqlite:///{BASE_DIR / "instance" / "dev_campus_hub.db"}'
-    SQLALCHEMY_ECHO: bool = True  # Log all SQL queries in dev
+    SQLALCHEMY_ECHO: bool = False  # Reduce log noise
 
-    # Less strict security for development
-    WTF_CSRF_ENABLED: bool = True  # Keep CSRF enabled even in dev for testing
+    # Temporarily disable CSRF for debugging UI loading issues
+    WTF_CSRF_ENABLED: bool = False  # RE-ENABLE after confirming UI loads
 
     # Flask-DebugToolbar
-    DEBUG_TB_ENABLED: bool = True
+    DEBUG_TB_ENABLED: bool = False  # Disable to reduce noise
     DEBUG_TB_INTERCEPT_REDIRECTS: bool = False
 
 

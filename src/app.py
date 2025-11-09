@@ -9,6 +9,8 @@ AI Contribution: Cline generated initial app factory structure
 Reviewed and configured by developer on 2025-11-02
 """
 
+import os
+
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
@@ -17,6 +19,7 @@ from flask_migrate import Migrate
 from typing import Optional
 
 from src.config import get_config
+from src.util.assets import asset_url
 
 
 # Initialize Flask extensions (created here, initialized in create_app)
@@ -80,6 +83,16 @@ def create_app(config_name: Optional[str] = None) -> Flask:
 
     # Register CLI commands
     register_cli_commands(app)
+
+    # Register Vite asset helper for manifest-aware URLs
+    app.jinja_env.globals['asset_url'] = asset_url
+
+    @app.route('/_debug/assets')
+    def _debug_assets():
+        css = asset_url('style')
+        js = asset_url('enterpriseJs')
+        exists = os.path.exists(os.path.join(app.root_path, 'static', 'dist', 'manifest.json'))
+        return f"<pre>/static/dist/manifest.json exists: {exists}\\nCSS: {css}\\nJS:  {js}</pre>"
 
     return app
 
@@ -165,7 +178,6 @@ def register_blueprints(app: Flask) -> None:
     def health_check():
         """Health check endpoint for deployment monitoring."""
         return {"status": "healthy", "database": "connected" if db else "not initialized"}
-
 
 def register_error_handlers(app: Flask) -> None:
     """

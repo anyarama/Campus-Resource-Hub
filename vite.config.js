@@ -1,34 +1,17 @@
-import { defineConfig } from 'vite';
-import { resolve } from 'path';
+import { defineConfig } from 'vite'
+import { resolve } from 'path'
 
 export default defineConfig({
-  root: 'src/static',
-  base: '/static/',
-  
   build: {
-    outDir: 'dist',
-    emptyOutDir: true,
     manifest: true,
+    outDir: 'src/static/dist',
+    assetsDir: 'assets',
     rollupOptions: {
       input: {
-        enterprise: resolve(__dirname, 'src/static/scss/enterprise.scss'),
+        style: resolve(__dirname, 'src/static/scss/main.scss'),
         enterpriseJs: resolve(__dirname, 'src/static/js/enterprise.js'),
       },
     },
-    cssCodeSplit: false,
   },
-  
-  server: {
-    port: 5173,
-    strictPort: true,
-    origin: 'http://localhost:5173',
-  },
-  
-  css: {
-    preprocessorOptions: {
-      scss: {
-        additionalData: `@use "sass:math"; @use "sass:color";`,
-      },
-    },
-  },
-});
+  base: '/static/dist/',
+})
