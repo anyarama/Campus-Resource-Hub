@@ -8,18 +8,18 @@
 <div class="card">
   <div class="profile-header">
     <div class="layout-grid">
-      <div class="col-md-auto text-md-start">
+      <div class="layout-col text-md-start" data-col="12" data-col-md="auto">
         </div></div></div></div>{% if user.profile_image %}{{ url_for('static', filename='uploads/' + user.profile_image) }}" 
              alt="{{ user.name }}" class="profile-avatar">
         {% else %}<div class="profile-avatar text-dark d-inline-flex" style="font-size: 3rem; font-weight: 700;">
-            </div>{{ user.name[0].upper() }}{% endif %}<div class="col-md">
+            </div>{{ user.name[0].upper() }}{% endif %}<div class="layout-col" data-col="12" data-col-md="8">
         <h1 class="h2"></h1></div>{{ user.name }}<p class="space-b-1"><i class="bi bi-envelope"></i> </p>{{ user.email }}<p class="space-b-2"><i class="bi bi-building"></i> </p>{{ user.department or 'No department' }}<div>
           </div>{% if user.role == 'admin' %}<span class="badge badge-danger fs-6">Admin</span>
           {% elif user.role == 'staff' %}<span class="badge badge-primary fs-6">Staff</span>
           {% else %}<span class="badge badge-secondary fs-6">Student</span>
           {% endif %}{% if user.is_active %}<span class="badge badge-success fs-6">Active</span>
           {% else %}<span class="badge badge-danger fs-6">Suspended</span>
-          {% endif %}<div class="col-md-auto text-md-end">
+          {% endif %}<div class="layout-col text-md-end" data-col="12" data-col-md="auto">
         </div>{% if user.role != 'admin' and user.user_id != current_user.user_id %}<div class="flex flex-column gap-2">
             </div>{% if user.is_active %}<button class="btn btn-warning" data-bs-target="#suspendModal" data-bs-toggle="modal" type="button">
                 <i class="bi bi-pause-circle"></i> Suspend User

@@ -10,7 +10,7 @@
 {% if type == 'card' %}
     {# Card Skeleton - for resource/booking cards #}
     {% for i in range(count|default(3)) %}
-    <div class="col-md-6 col-lg-4 mb-4">
+    <div class="layout-col mb-4" data-col="12" data-col-md="6" data-col-lg="4">
         <div class="card">
             <div class="skeleton" style="height: 200px;"></div>
             <div class="card-body">
