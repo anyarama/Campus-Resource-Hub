@@ -1,0 +1,204 @@
+{% from "reviews/_star_rating.html" import render_star_rating %}
+
+{% macro render_review_form(resource, existing_review=None, is_edit=False) %}
+{#
+    Review Form Component
+    
+    Parameters:
+    - resource: Resource object being reviewed
+    - existing_review: Existing review object (for edit mode)
+    - is_edit: Boolean indicating edit mode
+#}
+
+<div class="card shadow-sm " id="review-form">
+    <div class="card-header bg-white">
+        <h5 class="mb-0">
+            <i class="bi bi-star "></i>
+            {% if is_edit %}Edit Your Review{% else %}Leave a Review{% endif %}
+        </h5>
+    </div>
+    <div class="card-body">
+        {% if is_edit %}
+            <form method="POST" action="{{ url_for('reviews.update', review_id=existing_review.review_id) }}" id="reviewForm">
+                <input type="hidden" name="_method" value="PUT">
+        {% else %}
+            <form method="POST" action="{{ url_for('reviews.submit', resource_id=resource.resource_id) }}" id="reviewForm">
+        {% endif %}
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                
+                <!-- Rating Selection -->
+                <div class="mb-4">
+                    <label class="form-label fw-bold">
+                        Your Rating <span class="text-danger">*</span>
+                    </label>
+                    <div class="d-flex align-items-center">
+                        {{ render_star_rating(
+                            rating=existing_review.rating if existing_review else 0, 
+                            interactive=True, 
+                            size='lg'
+                        ) }}
+                        <span class="ms-3 text-muted" id="rating-text">
+                            {% if existing_review %}
+                                {{ existing_review.rating }} out of 5
+                            {% else %}
+                                Click to rate
+                            {% endif %}
+                        </span>
+                    </div>
+                    <small class="form-text text-muted">
+                        How would you rate your experience with this resource?
+                    </small>
+                </div>
+
+                <!-- Review Comment -->
+                <div class="mb-4">
+                    <label for="comment" class="form-label fw-bold">
+                        Your Review <span class="text-danger">*</span>
+                    </label>
+                    <textarea class="form-control" id="comment" name="comment" rows="5" 
+                              required minlength="10" maxlength="1000"
+                              placeholder="Share your experience with this resource. What did you like? What could be improved? (10-1000 characters)">{% if existing_review %}{{ existing_review.comment }}{% endif %}</textarea>
+                    <div class="d-flex justify-content-between ">
+                        <small class="form-text text-muted">
+                            Minimum 10 characters
+                        </small>
+                        <small class="text-muted">
+                            <span id="char-count">{{ existing_review.comment|length if existing_review else 0 }}</span>/1000 characters
+                        </small>
+                    </div>
+                </div>
+
+                <!-- Guidelines -->
+                <div class="alert alert-info">
+                    <h6 class="alert-heading">
+                        <i class="bi bi-info-circle "></i>Review Guidelines
+                    </h6>
+                    <ul class="mb-0 small">
+                        <li>Be honest and constructive in your feedback</li>
+                        <li>Focus on your experience with the resource</li>
+                        <li>Avoid personal attacks or inappropriate language</li>
+                        <li>Reviews may be moderated by administrators</li>
+                    </ul>
+                </div>
+
+                <!-- Submit Buttons -->
+                <div class="d-flex justify-content-end gap-2">
+                    {% if is_edit %}
+                        <a href="{{ url_for('resources.detail', resource_id=resource.resource_id) }}#reviews" 
+                           class="btn btn-secondary">
+                            Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle "></i>Update Review
+                        </button>
+                    {% else %}
+                        <button type="reset" class="btn btn-secondary">
+                            Clear Form
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-send "></i>Submit Review
+                        </button>
+                    {% endif %}
+                </div>
+            </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('reviewForm');
+        const commentField = document.getElementById('comment');
+        const charCount = document.getElementById('char-count');
+        const ratingInput = document.querySelector('input[name="rating"]');
+        const ratingText = document.getElementById('rating-text');
+
+        // Character counter
+        if (commentField && charCount) {
+            commentField.addEventListener('input', function() {
+                const length = this.value.length;
+                charCount.textContent = length;
+                
+                // Visual feedback for character limit
+                if (length < 10) {
+                    charCount.classList.add('text-danger');
+                    charCount.classList.remove('text-warning', 'text-success');
+                } else if (length > 900) {
+                    charCount.classList.add('text-warning');
+                    charCount.classList.remove('text-danger', 'text-success');
+                } else {
+                    charCount.classList.add('text-success');
+                    charCount.classList.remove('text-danger', 'text-warning');
+                }
+            });
+        }
+
+        // Update rating text when rating changes
+        if (ratingInput && ratingText) {
+            // Use MutationObserver to watch for value changes
+            const observer = new MutationObserver(function(mutations) {
+                const rating = parseInt(ratingInput.value);
+                if (rating > 0) {
+                    const ratingLabels = {
+                        1: 'Poor',
+                        2: 'Fair',
+                        3: 'Good',
+                        4: 'Very Good',
+                        5: 'Excellent'
+                    };
+                    ratingText.textContent = `${rating} out of 5 - ${ratingLabels[rating]}`;
+                } else {
+                    ratingText.textContent = 'Click to rate';
+                }
+            });
+
+            observer.observe(ratingInput, {
+                attributes: true,
+                attributeFilter: ['value']
+            });
+
+            // Also listen to input change event
+            ratingInput.addEventListener('change', function() {
+                const rating = parseInt(this.value);
+                if (rating > 0) {
+                    const ratingLabels = {
+                        1: 'Poor',
+                        2: 'Fair',
+                        3: 'Good',
+                        4: 'Very Good',
+                        5: 'Excellent'
+                    };
+                    ratingText.textContent = `${rating} out of 5 - ${ratingLabels[rating]}`;
+                }
+            });
+        }
+
+        // Form validation
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                const rating = parseInt(ratingInput.value);
+                const comment = commentField.value.trim();
+
+                if (rating === 0 || !rating) {
+                    e.preventDefault();
+                    alert('Please select a star rating before submitting.');
+                    return false;
+                }
+
+                if (comment.length < 10) {
+                    e.preventDefault();
+                    alert('Your review must be at least 10 characters long.');
+                    commentField.focus();
+                    return false;
+                }
+
+                if (comment.length > 1000) {
+                    e.preventDefault();
+                    alert('Your review must not exceed 1000 characters.');
+                    commentField.focus();
+                    return false;
+                }
+            });
+        }
+    });
+</script>
+{% endmacro %}

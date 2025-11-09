@@ -1,171 +1,171 @@
 {% macro render_star_rating(rating, max_rating=5, size='md', show_number=False, interactive=False, input_name='rating') %}
 {# 
-    Star Rating Component
-    
-    Parameters:
-    - rating: Current rating value (1-5)
-    - max_rating: Maximum rating (default 5)
-    - size: 'sm', 'md', 'lg' (default 'md')
-    - show_number: Show numeric rating (e.g., "4.5") next to stars
-    - interactive: Make clickable for input
-    - input_name: Name attribute for form input (when interactive=True)
+  Star Rating Component
+  
+  Parameters:
+  - rating: Current rating value (1-5)
+  - max_rating: Maximum rating (default 5)
+  - size: 'sm', 'md', 'lg' (default 'md')
+  - show_number: Show numeric rating (e.g.,"4.5") next to stars
+  - interactive: Make clickable for input
+  - input_name: Name attribute for form input (when interactive=True)
 #}
 
 {% set size_classes = {
-    'sm': 'star-rating-sm',
-    'md': 'star-rating-md',
-    'lg': 'star-rating-lg'
+  'sm': 'star-rating-sm',
+  'md': 'star-rating-md',
+  'lg': 'star-rating-lg'
 } %}
 
 {% set size_class = size_classes.get(size, 'star-rating-md') %}
 
 <div class="star-rating {{ size_class }} {% if interactive %}star-rating-interactive{% endif %}" 
-     {% if interactive %}data-rating="{{ rating or 0 }}"{% endif %}>
-    
-    {% if interactive %}
-        {# Hidden input to store selected rating #}
-        <input type="hidden" name="{{ input_name }}" id="{{ input_name }}" value="{{ rating or 0 }}" required>
+   {% if interactive %}data-rating="{{ rating or 0 }}"{% endif %}>
+  
+  {% if interactive %}
+    {# Hidden input to store selected rating #}
+    <input type="hidden" name="{{ input_name }}" id="{{ input_name }}" value="{{ rating or 0 }}" required>
+  {% endif %}
+  
+  {# Render stars #}
+  {% for i in range(1, max_rating + 1) %}
+    {% if rating %}
+      {% if i <= rating|int %}
+        {# Full star #}
+        <i class="bi bi-star-fill star-icon" 
+          data-value="{{ i }}"
+          {% if interactive %}style="cursor: pointer;"{% endif %}></i>
+      {% elif i - 0.5 <= rating %}
+        {# Half star #}
+        <i class="bi bi-star-half star-icon" 
+          data-value="{{ i }}"
+          {% if interactive %}style="cursor: pointer;"{% endif %}></i>
+      {% else %}
+        {# Empty star #}
+        <i class="bi bi-star star-icon" 
+          data-value="{{ i }}"
+          {% if interactive %}style="cursor: pointer;"{% endif %}></i>
+      {% endif %}
+    {% else %}
+      {# No rating yet - empty stars #}
+      <i class="bi bi-star star-icon" 
+        data-value="{{ i }}"
+        {% if interactive %}style="cursor: pointer;"{% endif %}></i>
     {% endif %}
-    
-    {# Render stars #}
-    {% for i in range(1, max_rating + 1) %}
-        {% if rating %}
-            {% if i <= rating|int %}
-                {# Full star #}
-                <i class="bi bi-star-fill text-warning star-icon" 
-                   data-value="{{ i }}"
-                   {% if interactive %}style="cursor: pointer;"{% endif %}></i>
-            {% elif i - 0.5 <= rating %}
-                {# Half star #}
-                <i class="bi bi-star-half text-warning star-icon" 
-                   data-value="{{ i }}"
-                   {% if interactive %}style="cursor: pointer;"{% endif %}></i>
-            {% else %}
-                {# Empty star #}
-                <i class="bi bi-star text-warning star-icon" 
-                   data-value="{{ i }}"
-                   {% if interactive %}style="cursor: pointer;"{% endif %}></i>
-            {% endif %}
-        {% else %}
-            {# No rating yet - empty stars #}
-            <i class="bi bi-star text-warning star-icon" 
-               data-value="{{ i }}"
-               {% if interactive %}style="cursor: pointer;"{% endif %}></i>
-        {% endif %}
-    {% endfor %}
-    
-    {# Show numeric rating if requested #}
-    {% if show_number and rating %}
-        <span class="ms-2 text-muted">
-            <strong>{{ "%.1f"|format(rating) }}</strong>
-        </span>
-    {% endif %}
+  {% endfor %}
+  
+  {# Show numeric rating if requested #}
+  {% if show_number and rating %}
+    <span class="ms-2">
+      <strong>{{"%.1f"|format(rating) }}</strong>
+    </span>
+  {% endif %}
 </div>
 
 {% if interactive %}
 <script>
-    // Interactive star rating functionality
-    document.addEventListener('DOMContentLoaded', function() {
-        const ratingContainers = document.querySelectorAll('.star-rating-interactive');
-        
-        ratingContainers.forEach(container => {
-            const stars = container.querySelectorAll('.star-icon');
-            const input = container.querySelector('input[type="hidden"]');
-            
-            stars.forEach(star => {
-                // Hover effect
-                star.addEventListener('mouseenter', function() {
-                    const value = parseInt(this.getAttribute('data-value'));
-                    highlightStars(stars, value);
-                });
-                
-                // Click to select
-                star.addEventListener('click', function() {
-                    const value = parseInt(this.getAttribute('data-value'));
-                    input.value = value;
-                    container.setAttribute('data-rating', value);
-                    highlightStars(stars, value);
-                });
-            });
-            
-            // Reset on mouse leave
-            container.addEventListener('mouseleave', function() {
-                const currentRating = parseInt(container.getAttribute('data-rating') || 0);
-                highlightStars(stars, currentRating);
-            });
+  // Interactive star rating functionality
+  document.addEventListener('DOMContentLoaded', function() {
+    const ratingContainers = document.querySelectorAll('.star-rating-interactive');
+    
+    ratingContainers.forEach(container => {
+      const stars = container.querySelectorAll('.star-icon');
+      const input = container.querySelector('input[type="hidden"]');
+      
+      stars.forEach(star => {
+        // Hover effect
+        star.addEventListener('mouseenter', function() {
+          const value = parseInt(this.getAttribute('data-value'));
+          highlightStars(stars, value);
         });
         
-        function highlightStars(stars, rating) {
-            stars.forEach(star => {
-                const value = parseInt(star.getAttribute('data-value'));
-                if (value <= rating) {
-                    star.classList.remove('bi-star', 'bi-star-half');
-                    star.classList.add('bi-star-fill');
-                } else {
-                    star.classList.remove('bi-star-fill', 'bi-star-half');
-                    star.classList.add('bi-star');
-                }
-            });
-        }
+        // Click to select
+        star.addEventListener('click', function() {
+          const value = parseInt(this.getAttribute('data-value'));
+          input.value = value;
+          container.setAttribute('data-rating', value);
+          highlightStars(stars, value);
+        });
+      });
+      
+      // Reset on mouse leave
+      container.addEventListener('mouseleave', function() {
+        const currentRating = parseInt(container.getAttribute('data-rating') || 0);
+        highlightStars(stars, currentRating);
+      });
     });
+    
+    function highlightStars(stars, rating) {
+      stars.forEach(star => {
+        const value = parseInt(star.getAttribute('data-value'));
+        if (value <= rating) {
+          star.classList.remove('bi-star', 'bi-star-half');
+          star.classList.add('bi-star-fill');
+        } else {
+          star.classList.remove('bi-star-fill', 'bi-star-half');
+          star.classList.add('bi-star');
+        }
+      });
+    }
+  });
 </script>
 {% endif %}
 {% endmacro %}
 
 {% macro render_rating_summary(average_rating, review_count, size='md') %}
 {#
-    Rating Summary Component
-    Shows average rating with star display and review count
-    
-    Parameters:
-    - average_rating: Average rating (e.g., 4.3)
-    - review_count: Total number of reviews
-    - size: 'sm', 'md', 'lg'
+  Rating Summary Component
+  Shows average rating with star display and review count
+  
+  Parameters:
+  - average_rating: Average rating (e.g., 4.3)
+  - review_count: Total number of reviews
+  - size: 'sm', 'md', 'lg'
 #}
-<div class="rating-summary d-flex align-items-center">
-    {{ render_star_rating(average_rating, size=size, show_number=False) }}
-    <span class="ms-2">
-        <strong>{{ "%.1f"|format(average_rating) if average_rating else 'No ratings' }}</strong>
-        {% if review_count %}
-            <span class="text-muted">({{ review_count }} review{{ 's' if review_count != 1 else '' }})</span>
-        {% endif %}
-    </span>
+<div class="rating-summary">
+  {{ render_star_rating(average_rating, size=size, show_number=False) }}
+  <span class="ms-2">
+    <strong>{{"%.1f"|format(average_rating) if average_rating else 'No ratings' }}</strong>
+    {% if review_count %}
+      <span class="text-muted">({{ review_count }} review{{ 's' if review_count != 1 else '' }})</span>
+    {% endif %}
+  </span>
 </div>
 {% endmacro %}
 
 <style>
-    /* Star Rating Styles */
-    .star-rating {
-        display: inline-flex;
-        align-items: center;
-    }
-    
-    .star-rating-sm .star-icon {
-        font-size: 0.875rem;
-        margin-right: 2px;
-    }
-    
-    .star-rating-md .star-icon {
-        font-size: 1.125rem;
-        margin-right: 3px;
-    }
-    
-    .star-rating-lg .star-icon {
-        font-size: 1.5rem;
-        margin-right: 4px;
-    }
-    
-    .star-rating-interactive .star-icon:hover {
-        transform: scale(1.1);
-        transition: transform 0.1s ease;
-    }
-    
-    .star-icon {
-        transition: all 0.2s ease;
-    }
-    
-    .rating-summary {
-        flex-wrap: wrap;
-    }
+  /* Star Rating Styles */
+  .star-rating {
+    display: inline-flex;
+    align-items: center;
+  }
+  
+  .star-rating-sm .star-icon {
+    font-size: 0.875rem;
+    margin-right: 2px;
+  }
+  
+  .star-rating-md .star-icon {
+    font-size: 1.125rem;
+    margin-right: 3px;
+  }
+  
+  .star-rating-lg .star-icon {
+    font-size: 1.5rem;
+    margin-right: 4px;
+  }
+  
+  .star-rating-interactive .star-icon:hover {
+    transform: scale(1.1);
+    transition: transform 0.1s ease;
+  }
+  
+  .star-icon {
+    transition: all 0.2s ease;
+  }
+  
+  .rating-summary {
+    flex-wrap: wrap;
+  }
 </style>
 {% endmacro %}

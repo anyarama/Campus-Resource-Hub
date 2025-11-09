@@ -1,0 +1,450 @@
+{% extends "base.html" %}
+
+{% block title %}Edit {{ resource.title }} - Campus Resource Hub{% endblock %}
+
+{% block content %}
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-lg-8 mx-auto">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('resources.index') }}">Resources</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('resources.my_resources') }}">My Resources</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('resources.detail', resource_id=resource.resource_id) }}">{{ resource.title }}</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Edit</li>
+                </ol>
+            </nav>
+            <h1 class="display-5 mb-2"><i class="bi bi-pencil"></i> Edit Resource</h1>
+            <p class="text-muted">Update your resource information</p>
+        </div>
+    </div>
+
+    <!-- Form -->
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+                    <form method="POST" action="{{ url_for('resources.edit', resource_id=resource.resource_id) }}" enctype="multipart/form-data" id="editResourceForm">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                        <!-- Title -->
+                        <div class="mb-4">
+                            <label for="title" class="form-label fw-bold">
+                                Resource Title <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" 
+                                   class="form-control form-control-lg" 
+                                   id="title" 
+                                   name="title" 
+                                   value="{{ resource.title }}"
+                                   placeholder="e.g., Conference Room A, MacBook Pro, 3D Printer"
+                                   required
+                                   maxlength="200"
+                                   autocomplete="off">
+                            <div class="form-text">Give your resource a clear, descriptive name</div>
+                        </div>
+
+                        <!-- Category -->
+                        <div class="mb-4">
+                            <label for="category" class="form-label fw-bold">
+                                Category <span class="text-danger">*</span>
+                            </label>
+                            <select class="form-select" id="category" name="category" required>
+                                <option value="">-- Select Category --</option>
+                                <option value="Study Space" {% if resource.category == 'Study Space' %}selected{% endif %}>Study Space</option>
+                                <option value="Equipment" {% if resource.category == 'Equipment' %}selected{% endif %}>Equipment</option>
+                                <option value="Lab" {% if resource.category == 'Lab' %}selected{% endif %}>Lab / Workshop</option>
+                                <option value="Event Space" {% if resource.category == 'Event Space' %}selected{% endif %}>Event Space</option>
+                                <option value="Technology" {% if resource.category == 'Technology' %}selected{% endif %}>Technology</option>
+                                <option value="Tutoring" {% if resource.category == 'Tutoring' %}selected{% endif %}>Tutoring / Mentoring</option>
+                                <option value="Sports" {% if resource.category == 'Sports' %}selected{% endif %}>Sports Facility</option>
+                                <option value="Other" {% if resource.category == 'Other' %}selected{% endif %}>Other</option>
+                            </select>
+                            <div class="form-text">Choose the category that best describes your resource</div>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="mb-4">
+                            <label for="description" class="form-label fw-bold">
+                                Description <span class="text-danger">*</span>
+                            </label>
+                            <textarea class="form-control" 
+                                      id="description" 
+                                      name="description" 
+                                      rows="5"
+                                      placeholder="Describe your resource: features, availability, rules, what makes it special..."
+                                      required
+                                      maxlength="2000">{{ resource.description }}</textarea>
+                            <div class="form-text">
+                                <span id="charCount">{{ resource.description|length if resource.description else 0 }}</span> / 2000 characters
+                            </div>
+                        </div>
+
+                        <!-- Location and Capacity Row -->
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label for="location" class="form-label fw-bold">
+                                    Location <span class="text-danger">*</span>
+                                </label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="location" 
+                                       name="location" 
+                                       value="{{ resource.location }}"
+                                       placeholder="e.g., Building A, Room 210"
+                                       required
+                                       maxlength="200">
+                                <div class="form-text">Where is this resource located?</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="capacity" class="form-label fw-bold">
+                                    Capacity (Optional)
+                                </label>
+                                <input type="number" 
+                                       class="form-control" 
+                                       id="capacity" 
+                                       name="capacity" 
+                                       value="{{ resource.capacity if resource.capacity else '' }}"
+                                       placeholder="e.g., 10"
+                                       min="1"
+                                       max="999">
+                                <div class="form-text">How many people can use this?</div>
+                            </div>
+                        </div>
+
+                        <!-- Existing Images -->
+                        {% if images and images|length > 0 %}
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Current Images</label>
+                            <div class="row g-2">
+                                {% for img in images %}
+                                <div class="col-md-4">
+                                    <div class="existing-image-preview">
+                                        <img src="{{ url_for('static', filename='uploads/' + img) }}" 
+                                             alt="Current image {{ loop.index }}"
+                                             class="img-thumbnail">
+                                        <div class="image-filename small text-muted mt-1">{{ img }}</div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            <div class="alert alert-info mt-2 small">
+                                <i class="bi bi-info-circle"></i> To replace images, upload new ones below. Existing images will be kept if you don't upload new ones.
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <!-- Image Upload -->
+                        <div class="mb-4">
+                            <label for="images" class="form-label fw-bold">
+                                {% if images and images|length > 0 %}
+                                Replace Images (Optional)
+                                {% else %}
+                                Add Images (Optional)
+                                {% endif %}
+                            </label>
+                            <input type="file" 
+                                   class="form-control" 
+                                   id="images" 
+                                   name="images" 
+                                   accept="image/jpeg,image/jpg,image/png,image/gif"
+                                   multiple>
+                            <div class="form-text">
+                                <i class="bi bi-info-circle"></i> Upload up to 5 images (JPEG, PNG, GIF). Max 2MB per image.
+                            </div>
+                            
+                            <!-- Image Preview -->
+                            <div id="imagePreview" class="mt-3 row g-2"></div>
+                        </div>
+
+                        <!-- Status -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Publication Status</label>
+                            <div class="form-check">
+                                <input class="form-check-input" 
+                                       type="radio" 
+                                       name="status" 
+                                       id="statusDraft" 
+                                       value="draft"
+                                       {% if resource.status == 'draft' %}checked{% endif %}>
+                                <label class="form-check-label" for="statusDraft">
+                                    <strong>Draft</strong>
+                                    <span class="text-muted d-block small">Not visible to other users</span>
+                                </label>
+                            </div>
+                            <div class="form-check mt-2">
+                                <input class="form-check-input" 
+                                       type="radio" 
+                                       name="status" 
+                                       id="statusPublished" 
+                                       value="published"
+                                       {% if resource.status == 'published' %}checked{% endif %}>
+                                <label class="form-check-label" for="statusPublished">
+                                    <strong>Published</strong>
+                                    <span class="text-muted d-block small">Visible to all users</span>
+                                </label>
+                            </div>
+                            <div class="form-check mt-2">
+                                <input class="form-check-input" 
+                                       type="radio" 
+                                       name="status" 
+                                       id="statusArchived" 
+                                       value="archived"
+                                       {% if resource.status == 'archived' %}checked{% endif %}>
+                                <label class="form-check-label" for="statusArchived">
+                                    <strong>Archived</strong>
+                                    <span class="text-muted d-block small">Hidden from listing, no new bookings</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <hr class="my-4">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a href="{{ url_for('resources.detail', resource_id=resource.resource_id) }}" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-check-circle"></i> Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Resource Info Card -->
+            <div class="card mt-4 border-0 bg-light">
+                <div class="card-body">
+                    <h6 class="card-title"><i class="bi bi-info-circle"></i> Resource Information</h6>
+                    <ul class="mb-0 small">
+                        <li><strong>Created:</strong> {{ resource.created_at.strftime('%B %d, %Y at %I:%M %p') if resource.created_at else 'Unknown' }}</li>
+                        <li><strong>Resource ID:</strong> #{{ resource.resource_id }}</li>
+                        <li><strong>Current Status:</strong> 
+                            <span class="badge 
+                                {% if resource.status == 'draft' %}bg-secondary
+                                {% elif resource.status == 'published' %}bg-success
+                                {% else %}bg-warning{% endif %}">
+                                {{ resource.status|upper }}
+                            </span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Form styling enhancements */
+    .form-label.fw-bold {
+        color: #2c3e50;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        border-color: #4a90e2;
+        box-shadow: 0 0 0 0.2rem rgba(74, 144, 226, 0.25);
+    }
+
+    .form-check-input:checked {
+        background-color: #4a90e2;
+        border-color: #4a90e2;
+    }
+
+    /* Existing image preview */
+    .existing-image-preview {
+        text-align: center;
+    }
+
+    .existing-image-preview img {
+        width: 100%;
+        height: 150px;
+        object-fit: cover;
+        border-radius: 0.5rem;
+    }
+
+    .existing-image-preview .image-filename {
+        word-break: break-all;
+        padding: 0.25rem;
+    }
+
+    /* New image preview styling */
+    #imagePreview .preview-item {
+        position: relative;
+        border-radius: 0.5rem;
+        overflow: hidden;
+        border: 2px solid #dee2e6;
+    }
+
+    #imagePreview .preview-item img {
+        width: 100%;
+        height: 150px;
+        object-fit: cover;
+    }
+
+    #imagePreview .preview-item .remove-btn {
+        position: absolute;
+        top: 0.5rem;
+        right: 0.5rem;
+        background: rgba(255, 255, 255, 0.9);
+        border: none;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s;
+    }
+
+    #imagePreview .preview-item .remove-btn:hover {
+        background: #dc3545;
+        color: white;
+    }
+
+    /* Card enhancements */
+    .card.shadow-sm {
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.08) !important;
+    }
+
+    /* Character counter */
+    #charCount {
+        font-weight: bold;
+        color: #4a90e2;
+    }
+
+    /* Alert styling */
+    .alert-info {
+        background-color: #e3f2fd;
+        border-color: #90caf9;
+        color: #1565c0;
+    }
+</style>
+
+<script>
+    // Character counter for description
+    const descriptionField = document.getElementById('description');
+    const charCount = document.getElementById('charCount');
+
+    descriptionField.addEventListener('input', function() {
+        charCount.textContent = this.value.length;
+        
+        // Change color based on length
+        if (this.value.length > 1800) {
+            charCount.style.color = '#dc3545'; // Red
+        } else if (this.value.length > 1500) {
+            charCount.style.color = '#ffc107'; // Yellow
+        } else {
+            charCount.style.color = '#4a90e2'; // Blue
+        }
+    });
+
+    // Image preview functionality
+    const imageInput = document.getElementById('images');
+    const imagePreview = document.getElementById('imagePreview');
+    let selectedFiles = [];
+
+    imageInput.addEventListener('change', function(e) {
+        const files = Array.from(e.target.files);
+        
+        // Validate number of files
+        if (files.length > 5) {
+            alert('You can only upload up to 5 images.');
+            this.value = '';
+            return;
+        }
+
+        // Validate file sizes
+        for (const file of files) {
+            if (file.size > 2 * 1024 * 1024) { // 2MB
+                alert(`File "${file.name}" is too large. Maximum size is 2MB.`);
+                this.value = '';
+                imagePreview.innerHTML = '';
+                selectedFiles = [];
+                return;
+            }
+        }
+
+        selectedFiles = files;
+        displayPreviews(files);
+    });
+
+    function displayPreviews(files) {
+        imagePreview.innerHTML = '';
+        
+        if (files.length > 0) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = 'alert alert-warning col-12 mb-3';
+            alertDiv.innerHTML = '<i class="bi bi-exclamation-triangle"></i> <strong>Note:</strong> Uploading new images will replace all existing images.';
+            imagePreview.appendChild(alertDiv);
+        }
+        
+        files.forEach((file, index) => {
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                const col = document.createElement('div');
+                col.className = 'col-md-4';
+                
+                col.innerHTML = `
+                    <div class="preview-item">
+                        <img src="${e.target.result}" alt="Preview ${index + 1}">
+                        <button type="button" class="remove-btn" onclick="removeImage(${index})" title="Remove image">
+                            <i class="bi bi-x"></i>
+                        </button>
+                    </div>
+                `;
+                
+                imagePreview.appendChild(col);
+            };
+            
+            reader.readAsDataURL(file);
+        });
+    }
+
+    function removeImage(index) {
+        selectedFiles.splice(index, 1);
+        
+        // Update file input
+        const dt = new DataTransfer();
+        selectedFiles.forEach(file => dt.items.add(file));
+        imageInput.files = dt.files;
+        
+        displayPreviews(selectedFiles);
+    }
+
+    // Form validation
+    document.getElementById('editResourceForm').addEventListener('submit', function(e) {
+        const title = document.getElementById('title').value.trim();
+        const description = document.getElementById('description').value.trim();
+        const category = document.getElementById('category').value;
+        const location = document.getElementById('location').value.trim();
+
+        if (!title || !description || !category || !location) {
+            e.preventDefault();
+            alert('Please fill in all required fields.');
+            return false;
+        }
+
+        if (title.length < 3) {
+            e.preventDefault();
+            alert('Title must be at least 3 characters long.');
+            return false;
+        }
+
+        if (description.length < 10) {
+            e.preventDefault();
+            alert('Description must be at least 10 characters long.');
+            return false;
+        }
+
+        // Show loading indicator
+        const submitBtn = this.querySelector('button[type="submit"]');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Saving...';
+        
+        return true;
+    });
+</script>
+{% endblock %}
