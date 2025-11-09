@@ -1,33 +1,42 @@
 {# ============================================ #}
-{# COMPONENT MACROS - Reusable Jinja Components #}
+{# COMPONENT MACROS - Enterprise Reusable Jinja Components #}
 {# ============================================ #}
 
-{# BUTTON COMPONENT #}
-{% macro button(text, variant='primary', size='md', icon=None, href=None, type='button', full_width=False, disabled=False, attrs='') %}
+{# BUTTON COMPONENT - Enhanced with loading state and full ARIA #}
+{% macro button(text, variant='primary', size='md', icon=None, href=None, type='button', full_width=False, disabled=False, loading=False, attrs='') %}
   {% set tag = 'a' if href else 'button' %}
   {% set classes = 'btn btn-' ~ variant ~ ' btn-' ~ size %}
   {% if full_width %}{% set classes = classes ~ ' btn-block' %}{% endif %}
-  {% if disabled %}{% set classes = classes ~ ' btn-disabled' %}{% endif %}
+  {% if disabled or loading %}{% set classes = classes ~ ' btn-disabled' %}{% endif %}
   
   <{{ tag }} 
     {% if href %}href="{{ href }}"{% endif %}
     {% if not href %}type="{{ type }}"{% endif %}
     class="{{ classes }}"
-    {% if disabled %}disabled aria-disabled="true"{% endif %}
+    {% if disabled or loading %}disabled aria-disabled="true"{% endif %}
+    {% if loading %}data-loading="true"{% endif %}
     {{ attrs|safe }}
   >
-    {% if icon %}<i class="bi bi-{{ icon }}"></i>{% endif %}
-    {{ text }}
+    {% if loading %}
+      <span class="btn-spinner" aria-hidden="true"></span>
+    {% elif icon %}
+      <i class="bi bi-{{ icon }}"></i>
+    {% endif %}
+    <span class="btn-text">{{ text }}</span>
   </{{ tag }}>
 {% endmacro %}
 
-{# FORM FIELD COMPONENT #}
+{# FORM FIELD COMPONENT - Enhanced with ARIA attributes #}
 {% macro form_field(type='text', name='', label=None, value='', required=False, autofocus=False, help_text=None, placeholder='', min_length=None, max_length=None, disabled=False, readonly=False, errors=None) %}
+  {% set has_errors = errors and errors|length > 0 %}
+  {% set help_id = name ~ '-help' %}
+  {% set error_id = name ~ '-error' %}
+  
   <div class="form-group">
     {% if label %}
       <label for="{{ name }}" class="form-label">
         {{ label }}
-        {% if required %}<span class="required">*</span>{% endif %}
+        {% if required %}<span class="required" aria-label="required">*</span>{% endif %}
       </label>
     {% endif %}
     
@@ -35,8 +44,10 @@
       <textarea 
         id="{{ name }}"
         name="{{ name }}"
-        class="form-textarea {% if errors %}is-invalid{% endif %}"
-        {% if required %}required{% endif %}
+        class="form-textarea {% if has_errors %}is-invalid{% endif %}"
+        {% if required %}required aria-required="true"{% endif %}
+        {% if has_errors %}aria-invalid="true" aria-describedby="{{ error_id }}"{% endif %}
+        {% if help_text and not has_errors %}aria-describedby="{{ help_id }}"{% endif %}
         {% if autofocus %}autofocus{% endif %}
         {% if placeholder %}placeholder="{{ placeholder }}"{% endif %}
         {% if min_length %}minlength="{{ min_length }}"{% endif %}
@@ -48,8 +59,10 @@
       <select 
         id="{{ name }}"
         name="{{ name }}"
-        class="form-select {% if errors %}is-invalid{% endif %}"
-        {% if required %}required{% endif %}
+        class="form-select {% if has_errors %}is-invalid{% endif %}"
+        {% if required %}required aria-required="true"{% endif %}
+        {% if has_errors %}aria-invalid="true" aria-describedby="{{ error_id }}"{% endif %}
+        {% if help_text and not has_errors %}aria-describedby="{{ help_id }}"{% endif %}
         {% if autofocus %}autofocus{% endif %}
         {% if disabled %}disabled{% endif %}
       >
@@ -61,8 +74,10 @@
         id="{{ name }}"
         name="{{ name }}"
         value="{{ value }}"
-        class="form-input {% if errors %}is-invalid{% endif %}"
-        {% if required %}required{% endif %}
+        class="form-input {% if has_errors %}is-invalid{% endif %}"
+        {% if required %}required aria-required="true"{% endif %}
+        {% if has_errors %}aria-invalid="true" aria-describedby="{{ error_id }}"{% endif %}
+        {% if help_text and not has_errors %}aria-describedby="{{ help_id }}"{% endif %}
         {% if autofocus %}autofocus{% endif %}
         {% if placeholder %}placeholder="{{ placeholder }}"{% endif %}
         {% if min_length %}minlength="{{ min_length }}"{% endif %}
@@ -73,13 +88,15 @@
     {% endif %}
     
     {% if help_text %}
-      <span class="form-help">{{ help_text }}</span>
+      <span id="{{ help_id }}" class="form-help">{{ help_text }}</span>
     {% endif %}
     
-    {% if errors %}
-      {% for error in errors %}
-        <span class="form-error">{{ error }}</span>
-      {% endfor %}
+    {% if has_errors %}
+      <div id="{{ error_id }}" class="form-errors" role="alert">
+        {% for error in errors %}
+          <span class="form-error">{{ error }}</span>
+        {% endfor %}
+      </div>
     {% endif %}
   </div>
 {% endmacro %}
@@ -120,45 +137,62 @@
   </div>
 {% endmacro %}
 
-{# TABLE COMPONENT #}
-{% macro table(headers, rows, dense=False, sortable=False, striped=True) %}
-  <div class="table-wrapper">
-    <table class="table {% if dense %}table-dense{% endif %} {% if striped %}table-striped{% endif %}">
+{# TABLE COMPONENT - Enhanced with sticky header, responsive, sortable, empty state #}
+{% macro table(headers, rows, dense=False, sortable=False, striped=True, sticky_header=False, empty_message='No data available', responsive=True) %}
+  <div class="table-wrapper {% if responsive %}table-responsive{% endif %}">
+    <table class="table {% if dense %}table-dense{% endif %} {% if striped %}table-striped{% endif %} {% if sticky_header %}table-sticky-header{% endif %}">
       <thead>
         <tr>
           {% for header in headers %}
-            <th {% if sortable %}class="sortable"{% endif %}>
-              {{ header }}
-              {% if sortable %}<i class="bi bi-chevron-expand"></i>{% endif %}
+            <th {% if sortable %}class="sortable" tabindex="0" role="button" aria-sort="none"{% endif %}>
+              <span class="table-header-content">
+                {{ header }}
+                {% if sortable %}
+                  <span class="sort-icon" aria-hidden="true">
+                    <i class="bi bi-chevron-expand"></i>
+                  </span>
+                {% endif %}
+              </span>
             </th>
           {% endfor %}
         </tr>
       </thead>
       <tbody>
-        {% if rows %}
+        {% if rows and rows|length > 0 %}
           {% for row in rows %}
             <tr>
               {% for cell in row %}
-                <td>{{ cell|safe }}</td>
+                <td data-label="{{ headers[loop.index0] if headers and loop.index0 < headers|length else '' }}">
+                  {{ cell|safe }}
+                </td>
               {% endfor %}
             </tr>
           {% endfor %}
         {% else %}
-          <tr>
+          <tr class="table-empty-row">
             <td colspan="{{ headers|length }}" class="table-empty">
-              No data available
+              <div class="empty-state-mini">
+                <i class="bi bi-inbox" aria-hidden="true"></i>
+                <p>{{ empty_message }}</p>
+              </div>
             </td>
           </tr>
         {% endif %}
       </tbody>
     </table>
   </div>
+  
+  {% if sortable %}
+    <div class="sr-only" aria-live="polite" aria-atomic="true" id="sort-announce">
+      {# Screen reader announcement for sort changes #}
+    </div>
+  {% endif %}
 {% endmacro %}
 
 {# BADGE COMPONENT #}
 {% macro badge(status, text=None) %}
   {% set badge_text = text if text else status|title %}
-  <span class="badge badge-{{ status }}">{{ badge_text }}</span>
+  <span class="badge badge-{{ status }}" role="status">{{ badge_text }}</span>
 {% endmacro %}
 
 {# ALERT COMPONENT #}
@@ -168,8 +202,8 @@
       {{ message|safe }}
     </div>
     {% if dismissible %}
-      <button class="alert-close" aria-label="Close">
-        <i class="bi bi-x"></i>
+      <button class="alert-close" aria-label="Close alert">
+        <i class="bi bi-x" aria-hidden="true"></i>
       </button>
     {% endif %}
   </div>
@@ -177,13 +211,14 @@
 
 {# MODAL COMPONENT #}
 {% macro modal(id, title, body=None, actions=None, size='md') %}
-  <div class="modal modal-{{ size }}" id="{{ id }}" role="dialog" aria-labelledby="{{ id }}-title" aria-modal="true">
+  <div class="modal modal-{{ size }}" id="{{ id }}" role="dialog" aria-labelledby="{{ id }}-title" aria-modal="true" hidden>
+    <div class="modal-backdrop" data-modal-backdrop></div>
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
           <h2 class="modal-title" id="{{ id }}-title">{{ title }}</h2>
           <button class="modal-close" data-modal-close aria-label="Close">
-            <i class="bi bi-x"></i>
+            <i class="bi bi-x" aria-hidden="true"></i>
           </button>
         </div>
         
@@ -210,10 +245,12 @@
           class="tabs-trigger {% if loop.index0 == active %}active{% endif %}"
           data-tab-trigger="{{ item.id }}"
           role="tab"
+          tabindex="{% if loop.index0 == active %}0{% else %}-1{% endif %}"
           aria-selected="{{ 'true' if loop.index0 == active else 'false' }}"
           aria-controls="{{ item.id }}"
+          id="{{ item.id }}-tab"
         >
-          {% if item.icon %}<i class="bi bi-{{ item.icon }}"></i>{% endif %}
+          {% if item.icon %}<i class="bi bi-{{ item.icon }}" aria-hidden="true"></i>{% endif %}
           {{ item.title }}
         </button>
       {% endfor %}
@@ -225,6 +262,8 @@
           class="tabs-panel {% if loop.index0 == active %}active{% endif %}"
           id="{{ item.id }}"
           role="tabpanel"
+          tabindex="0"
+          aria-labelledby="{{ item.id }}-tab"
           {% if loop.index0 != active %}hidden{% endif %}
         >
           {{ item.content|safe }}
@@ -244,12 +283,13 @@
           {% if page > 1 %}
             {% set prev_params = params.copy() %}
             {% set _ = prev_params.update({'page': page - 1}) %}
-            <a href="{{ base_url }}?{{ prev_params|urlencode }}" class="pagination-link" aria-label="Previous page">
-              <i class="bi bi-chevron-left"></i>
+            <a href="{{ base_url }}?{{ prev_params|urlencode }}" class="pagination-link" aria-label="Go to previous page, page {{ page - 1 }}">
+              <i class="bi bi-chevron-left" aria-hidden="true"></i>
+              <span class="sr-only">Previous</span>
             </a>
           {% else %}
             <span class="pagination-link" aria-disabled="true">
-              <i class="bi bi-chevron-left"></i>
+              <i class="bi bi-chevron-left" aria-hidden="true"></i>
             </span>
           {% endif %}
         </li>
@@ -262,11 +302,11 @@
           {% set first_params = params.copy() %}
           {% set _ = first_params.update({'page': 1}) %}
           <li class="pagination-item">
-            <a href="{{ base_url }}?{{ first_params|urlencode }}" class="pagination-link">1</a>
+            <a href="{{ base_url }}?{{ first_params|urlencode }}" class="pagination-link" aria-label="Go to page 1">1</a>
           </li>
           {% if start_page > 2 %}
             <li class="pagination-item disabled">
-              <span class="pagination-ellipsis">...</span>
+              <span class="pagination-ellipsis" aria-hidden="true">...</span>
             </li>
           {% endif %}
         {% endif %}
@@ -274,11 +314,11 @@
         {% for p in range(start_page, end_page + 1) %}
           <li class="pagination-item {% if p == page %}active{% endif %}">
             {% if p == page %}
-              <span class="pagination-link" aria-current="page">{{ p }}</span>
+              <span class="pagination-link" aria-current="page" aria-label="Current page, page {{ p }}">{{ p }}</span>
             {% else %}
               {% set page_params = params.copy() %}
               {% set _ = page_params.update({'page': p}) %}
-              <a href="{{ base_url }}?{{ page_params|urlencode }}" class="pagination-link">{{ p }}</a>
+              <a href="{{ base_url }}?{{ page_params|urlencode }}" class="pagination-link" aria-label="Go to page {{ p }}">{{ p }}</a>
             {% endif %}
           </li>
         {% endfor %}
@@ -286,13 +326,13 @@
         {% if end_page < total_pages %}
           {% if end_page < total_pages - 1 %}
             <li class="pagination-item disabled">
-              <span class="pagination-ellipsis">...</span>
+              <span class="pagination-ellipsis" aria-hidden="true">...</span>
             </li>
           {% endif %}
           {% set last_params = params.copy() %}
           {% set _ = last_params.update({'page': total_pages}) %}
           <li class="pagination-item">
-            <a href="{{ base_url }}?{{ last_params|urlencode }}" class="pagination-link">{{ total_pages }}</a>
+            <a href="{{ base_url }}?{{ last_params|urlencode }}" class="pagination-link" aria-label="Go to page {{ total_pages }}">{{ total_pages }}</a>
           </li>
         {% endif %}
         
@@ -301,12 +341,13 @@
           {% if page < total_pages %}
             {% set next_params = params.copy() %}
             {% set _ = next_params.update({'page': page + 1}) %}
-            <a href="{{ base_url }}?{{ next_params|urlencode }}" class="pagination-link" aria-label="Next page">
-              <i class="bi bi-chevron-right"></i>
+            <a href="{{ base_url }}?{{ next_params|urlencode }}" class="pagination-link" aria-label="Go to next page, page {{ page + 1 }}">
+              <i class="bi bi-chevron-right" aria-hidden="true"></i>
+              <span class="sr-only">Next</span>
             </a>
           {% else %}
             <span class="pagination-link" aria-disabled="true">
-              <i class="bi bi-chevron-right"></i>
+              <i class="bi bi-chevron-right" aria-hidden="true"></i>
             </span>
           {% endif %}
         </li>
@@ -317,7 +358,7 @@
 
 {# SKELETON COMPONENT (Loading State) #}
 {% macro skeleton(lines=3, type='text') %}
-  <div class="skeleton skeleton-{{ type }}" aria-busy="true" aria-live="polite">
+  <div class="skeleton skeleton-{{ type }}" aria-busy="true" aria-live="polite" aria-label="Loading content">
     {% if type == 'text' %}
       {% for i in range(lines) %}
         <div class="skeleton-line"></div>
@@ -335,7 +376,7 @@
 {# EMPTY STATE COMPONENT #}
 {% macro empty_state(icon, title, message, action_text=None, action_href=None) %}
   <div class="empty-state">
-    <div class="empty-state-icon">
+    <div class="empty-state-icon" aria-hidden="true">
       <i class="bi bi-{{ icon }}"></i>
     </div>
     <h3 class="empty-state-title">{{ title }}</h3>
@@ -349,13 +390,17 @@
 {# BREADCRUMBS COMPONENT #}
 {% macro breadcrumbs(items) %}
   <nav class="breadcrumbs" aria-label="Breadcrumb">
-    {% for item in items %}
-      {% if not loop.last %}
-        <a href="{{ item.url }}">{{ item.title }}</a>
-        <span class="breadcrumb-separator">/</span>
-      {% else %}
-        <span class="breadcrumb-current" aria-current="page">{{ item.title }}</span>
-      {% endif %}
-    {% endfor %}
+    <ol class="breadcrumbs-list">
+      {% for item in items %}
+        <li class="breadcrumb-item">
+          {% if not loop.last %}
+            <a href="{{ item.url }}">{{ item.title }}</a>
+            <span class="breadcrumb-separator" aria-hidden="true">/</span>
+          {% else %}
+            <span class="breadcrumb-current" aria-current="page">{{ item.title }}</span>
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ol>
   </nav>
 {% endmacro %}

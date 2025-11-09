@@ -225,22 +225,35 @@
 }
 
 // -----------------------------------------------------------------------------
-// LOADING STATE
+// LOADING STATE (CSS-only spinner)
 // -----------------------------------------------------------------------------
-.btn-loading {
+.btn-loading,
+.btn[data-loading],
+.btn[data-loading="true"] {
   position: relative;
-  color: transparent !important;
   pointer-events: none;
   
-  &::after {
+  // Hide text content when loading
+  .btn-text {
+    opacity: 0;
+  }
+}
+
+// Spinner element (inline in macro)
+.btn-spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 1em;
+  height: 1em;
+  margin-top: -0.5em;
+  margin-left: -0.5em;
+  
+  &::before {
     content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 1em;
-    height: 1em;
-    margin-top: -0.5em;
-    margin-left: -0.5em;
+    display: block;
+    width: 100%;
+    height: 100%;
     border: 2px solid currentColor;
     border-right-color: transparent;
     border-radius: 50%;
@@ -250,4 +263,16 @@
 
 @keyframes btn-spin {
   to { transform: rotate(360deg); }
+}
+
+// Disabled takes precedence over loading
+.btn:disabled,
+.btn.btn-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+  
+  .btn-spinner {
+    display: none; // Don't show spinner when disabled
+  }
 }
