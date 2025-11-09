@@ -5,7 +5,7 @@
 
    Quick Stats Cards 
   <div class="layout-grid">
-    <div class="grid-layout-col">
+    <div class="layout-col" data-col="12">
       <div class="card">
         <div class="card-body">
           <i class="bi bi-box-seam fs-1 text-primary"></i>
@@ -14,7 +14,7 @@
         </div>
       </div>
     </div>
-    <div class="grid-layout-col">
+    <div class="layout-col" data-col="12">
       <div class="card">
         <div class="card-body">
           <i class="bi bi-calendar-check fs-1"></i>
@@ -23,7 +23,7 @@
         </div>
       </div>
     </div>
-    <div class="grid-layout-col">
+    <div class="layout-col" data-col="12">
       <div class="card">
         <div class="card-body">
           <i class="bi bi-envelope fs-1 text-info"></i>
@@ -32,7 +32,7 @@
         </div>
       </div>
     </div>
-    <div class="grid-layout-col">
+    <div class="layout-col" data-col="12">
       <div class="card">
         <div class="card-body">
           <i class="bi bi-star fs-1"></i>
@@ -45,7 +45,7 @@
 
    Main Content Tabs 
   <div class="grid">
-    <div class="grid-layout-col2">
+    <div class="grid-" data-col="2">
       <ul class="nav nav-tabs" id="dashboardTabs" role="tablist">
         <li class="nav-item" role="presentation">
           <button aria-controls="resources" aria-selected="true" class="nav-link active" data-bs-target="#resources" data-bs-toggle="tab" id="resources-tab" role="tab" type="button">
@@ -121,7 +121,7 @@
 
    Admin Section (if admin role) 
   {% if current_user.role == 'admin' %}<div class="layout-grid">
-    <div class="grid-layout-col2">
+    <div class="grid-" data-col="2">
       <div class="card border-danger">
         <div class="card-header bg-danger text-inverse">
           <h5 class="space-b-0"><i class="bi bi-shield-lock"></i> Admin Panel</h5>
@@ -150,7 +150,7 @@
     
   
   {% endif %}<div class="layout-grid">
-    <div class="grid-layout-col2">
+    <div class="grid-" data-col="2">
       <div class="card">
         <div class="card-header">
           <h5 class="space-b-0">Recent Activity</h5>

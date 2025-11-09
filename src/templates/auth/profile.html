@@ -1,5 +1,5 @@
 {% extends"base.html" %}{% block title %}Profile - {{ current_user.name }}{% endblock %}{% block content %}<div class="layout-grid">
-    <div class="grid-layout-col">
+    <div class="layout-col" data-col="12">
       <!-- Profile Header -->
       <div class="card">
         <div class="card-body">
@@ -19,35 +19,35 @@
         </div>
         <div class="card-body">
           <div class="layout-grid">
-            <div class="grid-col-sm-4">
+            <div class="layout-col" data-col-sm="4">
               <strong>User ID:</strong>
             </div>
-            <div class="grid-col-sm-8">
+            <div class="layout-col" data-col-sm="8">
               </div></div></div></div>{{ current_user.user_id }}<div class="layout-grid">
-            <div class="grid-col-sm-4">
+            <div class="layout-col" data-col-sm="4">
               <strong>Name:</strong>
             </div>
-            <div class="grid-col-sm-8">
+            <div class="layout-col" data-col-sm="8">
               </div></div>{{ current_user.name }}<div class="layout-grid">
-            <div class="grid-col-sm-4">
+            <div class="layout-col" data-col-sm="4">
               <strong>Email:</strong>
             </div>
-            <div class="grid-col-sm-8">
+            <div class="layout-col" data-col-sm="8">
               </div></div>{{ current_user.email }}<div class="layout-grid">
-            <div class="grid-col-sm-4">
+            <div class="layout-col" data-col-sm="4">
               <strong>Role:</strong>
             </div>
-            <div class="grid-col-sm-8">
+            <div class="layout-col" data-col-sm="8">
               <span class="text-capitalize"></span></div></div>{{ current_user.role }}{% if current_user.department %}<div class="layout-grid">
-            <div class="grid-col-sm-4">
+            <div class="layout-col" data-col-sm="4">
               <strong>Department:</strong>
             </div>
-            <div class="grid-col-sm-8">
+            <div class="layout-col" data-col-sm="8">
               </div></div>{{ current_user.department }}{% endif %}<div class="layout-grid">
-            <div class="grid-col-sm-4">
+            <div class="layout-col" data-col-sm="4">
               <strong>Member Since:</strong>
             </div>
-            <div class="grid-col-sm-8">
+            <div class="layout-col" data-col-sm="8">
               </div></div>{{ current_user.created_at.strftime('%B %d, %Y') if current_user.created_at else 'N/A' }}<div class="card-footer">
           </div>{{ url_for('resources.dashboard') }}" class="btn btn-secondary">
             <i class="bi bi-arrow-left"></i> Back to Dashboard

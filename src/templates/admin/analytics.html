@@ -1,9 +1,9 @@
 {% extends"base.html" %}{% block title %}Platform Analytics - Campus Resource Hub{% endblock %}{% block extra_css %}{% endblock %}{% block content %}<div class="layout-grid">
-  <div class="layout-col">
+  <div class="layout-col" data-col="12">
     <h1 class="h2"><i class="bi bi-bar-chart"></i> Platform Analytics</h1>
     <p class="text-dim">Insights and trends across the platform</p>
   </div>
-  <div class="layout-col">
+  <div class="layout-col" data-col="12">
     </div></div>{{ url_for('admin.dashboard') }}" class="btn btn-secondary">
       <i class="bi bi-arrow-left"></i> Back to Dashboard
     
@@ -35,7 +35,7 @@
 
  Key Metrics Overview 
 <div class="layout-grid g-3">
-  <div class="layout-col">
+  <div class="layout-col" data-col="12">
     <div class="metric-card">
       <div class="metric-value text-primary"></div></div></div></div>{{ stats.total_users }}<div class="metric-label">Total Users</div>
       <div class="small">
@@ -45,13 +45,13 @@
       
     
   
-  <div class="layout-col">
+  <div class="layout-col" data-col="12">
     <div class="metric-card">
       <div class="metric-value"></div></div></div>{{ stats.total_resources }}<div class="metric-label">Total Resources</div>
       <div class="small"></div>{{ stats.published_resources }}published
     
   
-  <div class="layout-col">
+  <div class="layout-col" data-col="12">
     <div class="metric-card">
       <div class="metric-value text-info"></div></div></div>{{ stats.total_bookings }}<div class="metric-label">Total Bookings</div>
       <div class="small">
@@ -59,7 +59,7 @@
       
     
   
-  <div class="layout-col">
+  <div class="layout-col" data-col="12">
     <div class="metric-card">
       <div class="metric-value"></div></div></div>{{ stats.total_reviews }}<div class="metric-label">Total Reviews</div>
       <div class="small">User feedback</div>
@@ -69,19 +69,19 @@
 
  Booking Trends 
 {% if trends %}<div class="layout-grid g-3">
-  <div class="layout-col2">
+  <div class="" data-col="2">
     <div class="card">
       <div class="card-header">
         <h5 class="space-b-0"><i class="bi bi-graph-up-arrow"></i> Booking Trends (Last </h5></div></div></div></div>{{ period }}Days)
       
       <div class="card-body">
         <div class="layout-grid">
-          <div class="layout-col">
+          <div class="layout-col" data-col="12">
             <div class="metric-card">
               <div class="metric-value text-primary"></div></div></div></div></div>{{ trends.total_bookings }}<div class="metric-label">Total Bookings</div>
             
           
-          <div class="layout-col">
+          <div class="layout-col" data-col="12">
             <div class="metric-card">
               <div class="metric-value"></div></div></div>{{ trends.approved_bookings }}<div class="metric-label">Approved</div>
               <small class="text-dim">
@@ -89,7 +89,7 @@
               
             
           
-          <div class="layout-col">
+          <div class="layout-col" data-col="12">
             <div class="metric-card">
               <div class="metric-value"></div></div></div>{{ trends.pending_bookings }}<div class="metric-label">Pending</div>
               <small class="text-dim">
@@ -97,7 +97,7 @@
               
             
           
-          <div class="layout-col">
+          <div class="layout-col" data-col="12">
             <div class="metric-card">
               <div class="metric-value text-info"></div></div></div>{{ trends.completed_bookings }}<div class="metric-label">Completed</div>
               <small class="text-dim">
@@ -109,7 +109,7 @@
         
          Booking Status Breakdown 
         <div class="layout-grid">
-          <div class="layout-col2">
+          <div class="" data-col="2">
             <h6 class="space-b-3">Booking Status Distribution</h6>
             <div class="space-b-3">
               <div class="flex">
@@ -154,7 +154,7 @@
   
 
 {% endif %}{% if popular_resources %}<div class="layout-grid g-3">
-  <div class="layout-col2">
+  <div class="" data-col="2">
     <div class="card">
       <div class="card-header">
         <h5 class="space-b-0"><i class="bi bi-trophy"></i> Most Popular Resources</h5>
@@ -186,7 +186,7 @@
                       <i class="bi bi-star-fill"></i> </span>{{ resource.avg_rating|round(1) }}{% else %}<span class="text-dim">No reviews</span>
                   {% endif %}{% endfor %}{% endif %}<div class="layout-grid g-3">
   <!-- User Role Distribution -->
-  <div class="layout-col">
+  <div class="layout-col" data-col="12">
     <div class="card">
       <div class="card-header">
         <h5 class="space-b-0"><i class="bi bi-people"></i> User Distribution</h5>
@@ -230,7 +230,7 @@
   
   
    Platform Health Indicators 
-  <div class="layout-col">
+  <div class="layout-col" data-col="12">
     <div class="card">
       <div class="card-header">
         <h5 class="space-b-0"><i class="bi bi-heart-pulse"></i> Platform Health</h5>
@@ -258,7 +258,7 @@
             <small class="text-dim">Total communications</small>
           </div>
           <h3 class="space-b-0 text-info"></h3></div>{{ stats.total_messages }}<div class="layout-grid">
-  <div class="layout-col2">
+  <div class="" data-col="2">
     <div class="card">
       <div class="card-body">
         <h5 class="space-b-3">Analytics Actions</h5>

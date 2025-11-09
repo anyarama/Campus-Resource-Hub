@@ -2,7 +2,7 @@
   <div class="card-body">
     <div class="grid">
       <!-- Resource Image -->
-      <div class="grid-layout-col layout-col mb-md-0" data-col-lg="2">
+      <div class="layout-col mb-md-0" data-col-lg="2">
         </div></div></div></div>{% if resource.images %}{% set image_list = resource.images.split(',') %}{{ url_for('static', filename='uploads/' + image_list[0]) }}" 
              alt="{{ resource.title }}"
              class="img-fluid rounded"
@@ -10,7 +10,7 @@
         {% else %}<div class="bg-neutral rounded" style="width: 100%; height: 120px;">
             <i class="bi bi-image" style="font-size: 2.5rem;"></i>
           </div>
-        {% endif %}<div class="grid-layout-col layout-col" data-col-lg="7">
+        {% endif %}<div class="layout-col" data-col-lg="7">
         <div class="flex items-start">
           <h5 class="space-b-1">
             </h5></div></div>{{ url_for('resources.detail', resource_id=resource.resource_id) }}" 
@@ -33,7 +33,7 @@
             </small></div>{% if hours > 0 %}{{ hours }}h {% endif %}{% if minutes > 0 %}{{ minutes }}m{% endif %}{% if booking.status == 'rejected' and booking.rejection_reason %}<div class="alert alert-danger">
           <small>
             <strong><i class="bi bi-exclamation-triangle"></i>Rejected:</strong>
-            </small></div>{{ booking.rejection_reason }}{% endif %}{% if show_actions %}<div class="grid-layout-col layout-col flex-column" data-col-lg="3">
+            </small></div>{{ booking.rejection_reason }}{% endif %}{% if show_actions %}<div class="layout-col flex-column" data-col-lg="3">
         </div>{{ url_for('bookings.detail', booking_id=booking.booking_id) }}" 
           class="btn btn-outline-primary">
           <i class="bi bi-eye"></i>View Details

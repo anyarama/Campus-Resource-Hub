@@ -1,9 +1,9 @@
 {% extends"base.html" %}{% block title %}My Resources - Campus Resource Hub{% endblock %}{% block content %}<div class="layout-grid">
-    <div class="layout-col">
+    <div class="layout-col" data-col="12">
       <h1 class="display-5"><i class="bi bi-collection"></i> My Resources</h1>
       <p class="text-dim">Manage and track all your listed resources</p>
     </div>
-    <div class="layout-col text-md-end">
+    <div class="layout-col text-md-end" data-col="12">
       </div></div>{{ url_for('resources.create') }}" class="btn btn-primary">
         <i class="bi bi-plus-circle"></i> Create New Resource
       
@@ -11,7 +11,7 @@
   
 
   {% if resources and resources|length > 0 %}<div class="layout-grid">
-    <div class="layout-col">
+    <div class="layout-col" data-col="12">
       <div class="card">
         <div class="card-body">
           <div class="stat-icon">
@@ -21,7 +21,7 @@
         
       
     
-    <div class="layout-col">
+    <div class="layout-col" data-col="12">
       <div class="card">
         <div class="card-body">
           <div class="stat-icon">
@@ -31,7 +31,7 @@
         
       
     
-    <div class="layout-col">
+    <div class="layout-col" data-col="12">
       <div class="card">
         <div class="card-body">
           <div class="stat-icon">
@@ -41,7 +41,7 @@
         
       
     
-    <div class="layout-col">
+    <div class="layout-col" data-col="12">
       <div class="card">
         <div class="card-body">
           <div class="stat-icon">
@@ -132,7 +132,7 @@
   {% endif %}{% macro resource_card(resource) %}<div class="card resource-card">
   <div class="card-body">
     <div class="layout-grid">
-      <div class="layout-col">
+      <div class="layout-col" data-col="12">
         <div class="flex items-start">
           <div class="flex-1">
             <h5 class="card-title">
@@ -145,7 +145,7 @@
                 <i class="bi bi-people"></i> </span>{{ resource.capacity }}{% endif %}{% if resource.status == 'draft' %}bg-secondary
                 {% elif resource.status == 'published' %}bg-success
                 {% else %}bg-warning{% endif %}">
-                {{ resource.status|upper }}<div class="layout-col text-md-end mt-md-0">
+                {{ resource.status|upper }}<div class="layout-col text-md-end mt-md-0" data-col="12">
         <div class="btn-group-vertical gap-2" role="group">
           </div></div>{{ url_for('resources.detail', resource_id=resource.resource_id) }}" 
             class="btn btn-outline-primary">

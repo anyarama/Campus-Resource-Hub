@@ -64,7 +64,7 @@
 
              Location and Capacity Row 
             <div class="layout-grid">
-              <div class="layout-col">
+              <div class="layout-col" data-col="12">
                 <label class="form-label fw-bold" for="location">
                   Location <span class="text-danger">*</span>
                 </label>
@@ -74,7 +74,7 @@
                     maxlength="200">
                 <div class="form-text">Where is this resource located?</div>
               
-              <div class="layout-col">
+              <div class="layout-col" data-col="12">
                 <label class="form-label fw-bold" for="capacity">
                   Capacity (Optional)
                 </label>
@@ -90,7 +90,7 @@
             {% if images and images|length > 0 %}<div class="space-b-4">
               <label class="form-label fw-bold">Current Images</label>
               <div class="layout-grid g-2">
-                </div></div>{% for img in images %}<div class="layout-col">
+                </div></div>{% for img in images %}<div class="layout-col" data-col="12">
                   <div class="existing-image-preview">
                     </div></div>{{ url_for('static', filename='uploads/' + img) }}" 
                        alt="Current image {{ loop.index }}"

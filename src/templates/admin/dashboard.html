@@ -1,5 +1,5 @@
 {% extends"base.html" %}{% block title %}Admin Dashboard - Campus Resource Hub{% endblock %}{% block extra_css %}{% endblock %}{% block content %}<div class="layout-grid">
-  <div class="layout-col2">
+  <div class="" data-col="2">
     <h1 class="h2"><i class="bi bi-speedometer2"></i> Admin Dashboard</h1>
     <p class="text-dim">Platform overview and management tools</p>
   </div>
@@ -8,7 +8,7 @@
  Platform Statistics Cards 
 <div class="layout-grid g-3">
   <!-- Total Users -->
-  <div class="layout-col">
+  <div class="layout-col" data-col="12">
     <div class="card stat-card primary">
       <div class="card-body">
         <div class="flex items-start">
@@ -25,7 +25,7 @@
   
   
    Total Resources 
-  <div class="layout-col">
+  <div class="layout-col" data-col="12">
     <div class="card stat-card success">
       <div class="card-body">
         <div class="flex items-start">
@@ -42,7 +42,7 @@
   
   
    Total Bookings 
-  <div class="layout-col">
+  <div class="layout-col" data-col="12">
     <div class="card stat-card info">
       <div class="card-body">
         <div class="flex items-start">
@@ -59,7 +59,7 @@
   
   
    Total Messages 
-  <div class="layout-col">
+  <div class="layout-col" data-col="12">
     <div class="card stat-card warning">
       <div class="card-body">
         <div class="flex items-start">
@@ -78,7 +78,7 @@
 
  User Role Distribution 
 <div class="layout-grid g-3">
-  <div class="layout-col">
+  <div class="layout-col" data-col="12">
     <div class="card">
       <div class="card-header">
         <h5 class="space-b-0"><i class="bi bi-pie-chart"></i> User Roles</h5>
@@ -110,7 +110,7 @@
   
   
    Booking Status Distribution 
-  <div class="layout-col">
+  <div class="layout-col" data-col="12">
     <div class="card">
       <div class="card-header">
         <h5 class="space-b-0"><i class="bi bi-graph-up"></i> Booking Status</h5>
@@ -142,7 +142,7 @@
   
   
    Quick Actions 
-  <div class="layout-col">
+  <div class="layout-col" data-col="12">
     <div class="card">
       <div class="card-header">
         <h5 class="space-b-0"><i class="bi bi-lightning"></i> Quick Actions</h5>
@@ -168,7 +168,7 @@
  Popular Resources & Recent Activity 
 <div class="layout-grid g-3">
   <!-- Popular Resources -->
-  <div class="layout-col">
+  <div class="layout-col" data-col="12">
     <div class="card">
       <div class="card-header">
         <h5 class="space-b-0"><i class="bi bi-star"></i> Popular Resources</h5>
@@ -186,7 +186,7 @@
             <i class="bi bi-inbox fs-1"></i>
             No bookings yet
           </div>
-        {% endif %}<div class="layout-col">
+        {% endif %}<div class="layout-col" data-col="12">
     <div class="card">
       <div class="card-header">
         <h5 class="space-b-0"><i class="bi bi-activity"></i> Recent Activity</h5>
@@ -208,23 +208,23 @@
             No recent activity
           </div>
         {% endif %}{% if trends %}<div class="layout-grid">
-  <div class="layout-col2">
+  <div class="" data-col="2">
     <div class="card">
       <div class="card-header">
         <h5 class="space-b-0"><i class="bi bi-graph-up-arrow"></i> Booking Trends (Last 30 Days)</h5>
       </div>
       <div class="card-body">
         <div class="layout-grid">
-          <div class="layout-col">
+          <div class="layout-col" data-col="12">
             <h3 class="text-primary"></h3></div></div></div></div></div></div>{{ trends.total_bookings }}<p class="text-dim small">Total Bookings</p>
           
-          <div class="layout-col">
+          <div class="layout-col" data-col="12">
             <h3 class="text-success"></h3></div>{{ trends.approved_bookings }}<p class="text-dim small">Approved</p>
           
-          <div class="layout-col">
+          <div class="layout-col" data-col="12">
             <h3 class="text-warning"></h3></div>{{ trends.pending_bookings }}<p class="text-dim small">Pending</p>
           
-          <div class="layout-col">
+          <div class="layout-col" data-col="12">
             <h3 class="text-info"></h3></div>{{ trends.completed_bookings }}<p class="text-dim small">Completed</p>
           
         

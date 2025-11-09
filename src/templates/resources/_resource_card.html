@@ -1,7 +1,7 @@
 {# Resource Card Partial - Reusable component for displaying resource in list views #}<div class="card resource-card">
   <div class="card-body">
     <div class="layout-grid">
-      <div class="grid-layout-col">
+      <div class="layout-col" data-col="12">
         <div class="flex items-start">
           <div class="flex-1">
             <h5 class="card-title">
@@ -15,7 +15,7 @@
                 <i class="bi bi-people"></i> </span>{{ resource.capacity }}{% endif %}{% if resource.status == 'draft' %}bg-secondary
                 {% elif resource.status == 'published' %}bg-success
                 {% else %}bg-warning text-dark{% endif %}">
-                {{ resource.status|upper }}<div class="grid-layout-col text-md-end mt-md-0">
+                {{ resource.status|upper }}<div class="layout-col text-md-end mt-md-0" data-col="12">
         <div class="flex flex-column gap-2">
           </div></div>{{ url_for('resources.detail', resource_id=resource.resource_id) }}" 
             class="btn btn-secondary">

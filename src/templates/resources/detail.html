@@ -42,13 +42,13 @@
           <!-- Description -->
           <h5 class="card-title">Description</h5>
           <p class="card-text"></p></div>{{ resource.description or 'No description provided.' }}<div class="layout-grid">
-            <div class="layout-col">
+            <div class="layout-col" data-col="12">
               <p class="space-b-1"><strong><i class="bi bi-geo-alt"></i> Location:</strong></p>
-              <p class="text-dim"></p></div></div>{{ resource.location or 'Not specified' }}<div class="layout-col">
+              <p class="text-dim"></p></div></div>{{ resource.location or 'Not specified' }}<div class="layout-col" data-col="12">
               <p class="space-b-1"><strong><i class="bi bi-people"></i> Capacity:</strong></p>
-              <p class="text-dim"></p></div>{{ resource.capacity or 'Not specified' }}<div class="layout-col">
+              <p class="text-dim"></p></div>{{ resource.capacity or 'Not specified' }}<div class="layout-col" data-col="12">
               <p class="space-b-1"><strong><i class="bi bi-calendar-event"></i> Created:</strong></p>
-              <p class="text-dim"></p></div>{{ resource.created_at.strftime('%B %d, %Y') if resource.created_at else 'Unknown' }}<div class="layout-col">
+              <p class="text-dim"></p></div>{{ resource.created_at.strftime('%B %d, %Y') if resource.created_at else 'Unknown' }}<div class="layout-col" data-col="12">
               <p class="space-b-1"><strong><i class="bi bi-person"></i> Owner:</strong></p>
               <p class="text-dim"></p></div>{{ resource.owner.name if resource.owner else 'Unknown' }}{% if availability %}<div class="space-t-4">
             <h5 class="card-title">Availability</h5>

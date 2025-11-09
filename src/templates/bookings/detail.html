@@ -1,6 +1,6 @@
 {% extends"base.html" %}{% block title %}Booking Details - {{ resource.title }}{% endblock %}{% block content %}<div class="grid">
     <!-- Booking Information Card -->
-    <div class="grid-col-lg-8">
+    <div class="layout-col" data-col-lg="8">
       <div class="card">
         <div class="card-header border-bottom">
           <div class="flex">
@@ -31,13 +31,13 @@
                     {{ resource.title }}<p class="text-dim">
                   <i class="bi bi-geo-alt"></i></p>{{ resource.location }}<p class="text-dim">
                   <i class="bi bi-tag"></i></p>{{ resource.category }}<div class="layout-grid">
-            <div class="grid-layout-col">
+            <div class="layout-col" data-col="12">
               <h6 class="text-dim">
                 <i class="bi bi-calendar-event"></i>Start Time
               </h6>
               <p class="space-b-0">
                 </p></div></div>{{ booking.start_datetime.strftime('%B %d, %Y') }}<br/>
-                <strong></strong>{{ booking.start_datetime.strftime('%I:%M %p') }}<div class="grid-layout-col">
+                <strong></strong>{{ booking.start_datetime.strftime('%I:%M %p') }}<div class="layout-col" data-col="12">
               <h6 class="text-dim">
                 <i class="bi bi-calendar-x"></i>End Time
               </h6>
@@ -69,7 +69,7 @@
               <i class="bi bi-clock-history"></i>
               Created: </small></div>{{ booking.created_at.strftime('%B %d, %Y at %I:%M %p') }}{% if booking.updated_at and booking.updated_at != booking.created_at %}<br/>
               <i class="bi bi-arrow-clockwise"></i>
-              Updated: {{ booking.updated_at.strftime('%B %d, %Y at %I:%M %p') }}{% endif %}<div class="grid-col-lg-4">
+              Updated: {{ booking.updated_at.strftime('%B %d, %Y at %I:%M %p') }}{% endif %}<div class="layout-col" data-col-lg="4">
       <div class="card">
         <div class="card-header">
           <h5 class="space-b-0">

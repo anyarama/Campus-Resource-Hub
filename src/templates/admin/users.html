@@ -1,9 +1,9 @@
 {% extends"base.html" %}{% block title %}User Management - Campus Resource Hub{% endblock %}{% block extra_css %}{% endblock %}{% block content %}<div class="layout-grid">
-  <div class="layout-col">
+  <div class="layout-col" data-col="12">
     <h1 class="h2"><i class="bi bi-people"></i> User Management</h1>
     <p class="text-dim">Manage platform users and permissions</p>
   </div>
-  <div class="layout-col">
+  <div class="layout-col" data-col="12">
     </div></div>{{ url_for('admin.dashboard') }}" class="btn btn-secondary">
       <i class="bi bi-arrow-left"></i> Back to Dashboard
     
@@ -15,7 +15,7 @@
   <div class="card-body">
     </div></div>{{ url_for('admin.users') }}" class="layout-grid g-3 align-items-end">
        Search 
-      <div class="layout-col">
+      <div class="layout-col" data-col="12">
         <label class="form-label" for="search">Search Users</label>
         <div class="input-group">
           </div></div>{{ request.args.get('search', '') }}">
@@ -26,7 +26,7 @@
       
       
        Role Filter 
-      <div class="layout-col">
+      <div class="layout-col" data-col="12">
         <label class="form-label" for="role">Role</label>
         <select class="form-select" id="role" name="role" onchange="this.form.submit()">
           <option value="">All Roles</option>
@@ -37,7 +37,7 @@
       
       
        Status Filter 
-      <div class="layout-col">
+      <div class="layout-col" data-col="12">
         <label class="form-label" for="status">Status</label>
         <select class="form-select" id="status" name="status" onchange="this.form.submit()">
           <option value="">All Status</option>
@@ -55,28 +55,28 @@
       
     
     {% endif %}<div class="layout-grid g-3">
-  <div class="layout-col">
+  <div class="layout-col" data-col="12">
     <div class="card">
       <div class="card-body">
         <h3 class="space-b-0"></h3></div></div></div></div>{{ users|length }}<p class="text-dim small">Total Users Shown</p>
       
     
   
-  <div class="layout-col">
+  <div class="layout-col" data-col="12">
     <div class="card">
       <div class="card-body">
         <h3 class="space-b-0"></h3></div></div></div>{{ users|selectattr('is_active')|list|length }}<p class="text-dim small">Active</p>
       
     
   
-  <div class="layout-col">
+  <div class="layout-col" data-col="12">
     <div class="card">
       <div class="card-body">
         <h3 class="space-b-0"></h3></div></div></div>{{ users|rejectattr('is_active')|list|length }}<p class="text-dim small">Suspended</p>
       
     
   
-  <div class="layout-col">
+  <div class="layout-col" data-col="12">
     <div class="card">
       <div class="card-body">
         <h3 class="space-b-0 text-primary"></h3></div></div></div>{{ page }}<p class="text-dim small">Current Page</p>
