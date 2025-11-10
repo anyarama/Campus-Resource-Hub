@@ -1,0 +1,96 @@
+# Deprecated Inventory
+- Generated: 2025-11-10T01:40:13Z
+
+## Potentially unused templates
+- _components.html
+- admin/analytics.before_migrate.html
+- admin/dashboard.before_migrate.html
+- admin/user_detail.before_migrate.html
+- admin/users.before_migrate.html
+- auth/profile.before_migrate.html
+- bookings/_booking_card.before_migrate.html
+- bookings/_booking_card.html
+- bookings/detail.before_migrate.html
+- bookings/my_bookings.before_migrate.html
+- bookings/new.before_migrate.html
+- concierge/help.before_migrate.html
+- concierge/index.before_migrate.html
+- layouts/app.html
+- messages/conversation.html
+- resources/_form_wizard.html
+- resources/_resource_card.before_migrate.html
+- resources/_resource_card.html
+- resources/create.before_migrate.html
+- resources/dashboard.before_migrate.html
+- resources/detail.before_migrate.html
+- resources/edit.before_migrate.html
+- resources/my_resources.before_migrate.html
+- reviews/_review_form.before_migrate.html
+- reviews/_review_form.html
+- reviews/_review_list.before_migrate.html
+- reviews/_review_list.html
+- reviews/_star_rating.before_migrate.html
+- reviews/_star_rating.html
+
+## Potentially unused SCSS
+- base.scss
+- base/layout.scss
+- base/reset.scss
+- base/typography.scss
+- compat/bootstrap-bridge.scss
+- components/_app-sidebar.scss
+- components/activity-feed.scss
+- components/alert.scss
+- components/badge.scss
+- components/button.scss
+- components/card.scss
+- components/carousel.scss
+- components/drawer.scss
+- components/filter-drawer.scss
+- components/form.scss
+- components/input.scss
+- components/kpi-tile.scss
+- components/modal.scss
+- components/navbar.scss
+- components/pagination.scss
+- components/sidebar.scss
+- components/skeleton.scss
+- components/table.scss
+- components/tabs.scss
+- components/toast.scss
+- components/topbar.scss
+- main.scss
+- pages/admin.scss
+- pages/auth.scss
+- pages/bookings.scss
+- pages/dashboard.scss
+- pages/messages.scss
+- pages/resources.scss
+- theme.dark.scss
+- theme.light.scss
+- tokens.scss
+- tokens/_index.scss
+- tokens/borders.scss
+- tokens/colors.scss
+- tokens/shadows.scss
+- tokens/spacing.scss
+- tokens/typography.scss
+- tokens/z-index.scss
+- utilities/spacing.scss
+
+## Potentially unused JS
+- adapters/dashboardData.js
+- admin-dashboard.js
+- booking-drawer.js
+- charts.js
+- filter-drawer.js
+- form-validation.js
+- image-carousel.js
+- messages.js
+- modal.js
+- resource-filters.js
+- tabs.js
+- theme-switcher.js
+
+## Orphaned images
+- (none)

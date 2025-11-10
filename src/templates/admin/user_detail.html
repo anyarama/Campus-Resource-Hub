@@ -1,6 +1,7 @@
-{% extends"base.html" %}{% block title %}User Detail - {{ user.name }}- Campus Resource Hub{% endblock %}{% block extra_css %}{% endblock %}{% block content %}<div class="space-b-3">
+{% extends "base.html" %}
+{% block title %}User Detail - {{ user.name }}- Campus Resource Hub{% endblock %}{% block extra_css %}{% endblock %}{% block content %}<div class="space-b-3">
   </div>{{ url_for('admin.users') }}" class="btn btn-secondary">
-    <i class="bi bi-arrow-left"></i> Back to Users
+    <i class="bi bi-arrow-left icon"></i> Back to Users
   
 
 
@@ -13,7 +14,7 @@
              alt="{{ user.name }}" class="profile-avatar">
         {% else %}<div class="profile-avatar text-dark d-inline-flex" style="font-size: 3rem; font-weight: 700;">
             </div>{{ user.name[0].upper() }}{% endif %}<div class="layout-col" data-col="12" data-col-md="8">
-        <h1 class="h2"></h1></div>{{ user.name }}<p class="space-b-1"><i class="bi bi-envelope"></i> </p>{{ user.email }}<p class="space-b-2"><i class="bi bi-building"></i> </p>{{ user.department or 'No department' }}<div>
+        <h1 class="h2"></h1></div>{{ user.name }}<p class="space-b-1"><i class="bi bi-envelope icon"></i> </p>{{ user.email }}<p class="space-b-2"><i class="bi bi-building icon"></i> </p>{{ user.department or 'No department' }}<div>
           </div>{% if user.role == 'admin' %}<span class="badge badge-danger fs-6">Admin</span>
           {% elif user.role == 'staff' %}<span class="badge badge-primary fs-6">Staff</span>
           {% else %}<span class="badge badge-secondary fs-6">Student</span>
@@ -21,17 +22,17 @@
           {% else %}<span class="badge badge-danger fs-6">Suspended</span>
           {% endif %}<div class="layout-col text-md-end" data-col="12" data-col-md="auto">
         </div>{% if user.role != 'admin' and user.user_id != current_user.user_id %}<div class="flex flex-column gap-2">
-            </div>{% if user.is_active %}<button class="btn btn-warning" data-bs-target="#suspendModal" data-bs-toggle="modal" type="button">
-                <i class="bi bi-pause-circle"></i> Suspend User
+            </div>{% if user.is_active %}<button class="btn btn-warning btn--primary" data-bs-target="#suspendModal" data-bs-toggle="modal" type="button">
+                <i class="bi bi-pause-circle icon"></i> Suspend User
               </button>
             {% else %}{{ url_for('admin.activate_user', user_id=user.user_id) }}">
                 {{ csrf_token() }}"/>
-                <button class="btn btn-success" onclick="return confirm('Activate this user?');" type="submit">
-                  <i class="bi bi-play-circle"></i> Activate User
+                <button class="btn btn-success btn--primary" onclick="return confirm('Activate this user?');" type="submit">
+                  <i class="bi bi-play-circle icon"></i> Activate User
                 </button>
               
-            {% endif %}<button class="btn btn-danger" data-bs-target="#deleteModal" data-bs-toggle="modal" type="button">
-              <i class="bi bi-trash"></i> Delete User
+            {% endif %}<button class="btn btn-danger btn--primary" data-bs-target="#deleteModal" data-bs-toggle="modal" type="button">
+              <i class="bi bi-trash icon"></i> Delete User
             </button>
           
         {% endif %}<div class="card-body">
@@ -42,7 +43,7 @@
         <div class="info-label">Joined Date</div>
         <div class="info-value"></div></div>{{ user.created_at.strftime('%B %d, %Y at %I:%M %p') }}{% if user.suspended_at %}<div class="" data-col="2">
         <div class="alert alert-warning">
-          <i class="bi bi-exclamation-triangle"></i> 
+          <i class="bi bi-exclamation-triangle icon"></i> 
           <strong>Account Suspended:</strong> </div></div>{{ user.suspended_at.strftime('%B %d, %Y at %I:%M %p') }}{% endif %}<div class="layout-grid g-3">
   <div class="layout-col" data-col="12">
     <div class="stat-box">
@@ -72,7 +73,7 @@
   <div class="layout-col" data-col="12">
     <div class="card">
       <div class="card-header">
-        <h5 class="space-b-0"><i class="bi bi-box-seam"></i> Resources Owned</h5>
+        <h5 class="space-b-0"><i class="bi bi-box-seam icon"></i> Resources Owned</h5>
       </div>
       <div class="card-body activity-list">
         </div></div></div></div>{% if activity.resources %}{% for resource in activity.resources %}<div class="activity-item">
@@ -83,13 +84,13 @@
                     <strong></strong>{{ resource.title }}<div class="small">
                     </div>{{ resource.category or 'General' }}• {{ resource.location or 'No location' }}{{ 'success' if resource.status == 'published' else 'secondary' }}">
                   {{ resource.status }}{% endfor %}{% else %}<div class="text-center">
-            <i class="bi bi-inbox fs-1"></i>
+            <i class="bi bi-inbox fs-1 icon"></i>
             No resources owned
           </div>
         {% endif %}<div class="layout-col" data-col="12">
     <div class="card">
       <div class="card-header">
-        <h5 class="space-b-0"><i class="bi bi-calendar-check"></i> Recent Bookings</h5>
+        <h5 class="space-b-0"><i class="bi bi-calendar-check icon"></i> Recent Bookings</h5>
       </div>
       <div class="card-body activity-list">
         </div></div></div>{% if activity.bookings %}{% for booking in activity.bookings %}<div class="activity-item">
@@ -106,7 +107,7 @@
                   'secondary'
                 }}">
                   {{ booking.status }}{% endfor %}{% else %}<div class="text-center">
-            <i class="bi bi-inbox fs-1"></i>
+            <i class="bi bi-inbox fs-1 icon"></i>
             No bookings made
           </div>
         {% endif %}<div class="layout-grid g-3">
@@ -114,20 +115,20 @@
   <div class="layout-col" data-col="12">
     <div class="card">
       <div class="card-header">
-        <h5 class="space-b-0"><i class="bi bi-envelope"></i> Recent Messages</h5>
+        <h5 class="space-b-0"><i class="bi bi-envelope icon"></i> Recent Messages</h5>
       </div>
       <div class="card-body activity-list">
         </div></div></div></div>{% if activity.messages %}{% for message in activity.messages %}<div class="activity-item">
               <div class="small">
                 To: <strong></strong></div></div>{{ message.receiver_name }}<div class="text-truncate"></div>{{ message.content }}<div class="small">
-                <i class="bi bi-clock"></i> </div>{{ message.timestamp.strftime('%b %d, %Y %I:%M %p') }}{% endfor %}{% else %}<div class="text-center">
-            <i class="bi bi-inbox fs-1"></i>
+                <i class="bi bi-clock icon"></i> </div>{{ message.timestamp.strftime('%b %d, %Y %I:%M %p') }}{% endfor %}{% else %}<div class="text-center">
+            <i class="bi bi-inbox fs-1 icon"></i>
             No messages sent
           </div>
         {% endif %}<div class="layout-col" data-col="12">
     <div class="card">
       <div class="card-header">
-        <h5 class="space-b-0"><i class="bi bi-star"></i> Reviews Written</h5>
+        <h5 class="space-b-0"><i class="bi bi-star icon"></i> Reviews Written</h5>
       </div>
       <div class="card-body activity-list">
         </div></div></div>{% if activity.reviews %}{% for review in activity.reviews %}<div class="activity-item">
@@ -135,11 +136,11 @@
                 </div></div>{{ url_for('resources.detail', resource_id=review.resource_id) }}" 
                   class="text-decoration-none">
                   <strong></strong>{{ review.resource_title }}<div>
-                  </div>{% for i in range(review.rating) %}<i class="bi bi-star-fill"></i>
-                  {% endfor %}{% for i in range(5 - review.rating) %}<i class="bi bi-star"></i>
+                  </div>{% for i in range(review.rating) %}<i class="bi bi-star-fill icon"></i>
+                  {% endfor %}{% for i in range(5 - review.rating) %}<i class="bi bi-star icon"></i>
                   {% endfor %}<div class="small"></div>{{ review.comment }}<div class="small">
-                <i class="bi bi-clock"></i> </div>{{ review.timestamp.strftime('%b %d, %Y') }}{% endfor %}{% else %}<div class="text-center">
-            <i class="bi bi-inbox fs-1"></i>
+                <i class="bi bi-clock icon"></i> </div>{{ review.timestamp.strftime('%b %d, %Y') }}{% endfor %}{% else %}<div class="text-center">
+            <i class="bi bi-inbox fs-1 icon"></i>
             No reviews written
           </div>
         {% endif %}<div class="modal fade" id="suspendModal" tabindex="-1">
@@ -147,17 +148,17 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title">Suspend User</h5>
-        <button class="btn-close" data-bs-dismiss="modal" type="button"></button>
+        <button class="btn-close btn btn--primary" data-bs-dismiss="modal" type="button"></button>
       </div>
       <div class="modal-body">
         <p>Are you sure you want to suspend <strong></strong></p></div></div></div></div>{{ user.name }}?<p></p>
         <p class="text-dim small">Suspended users cannot log in or access the platform.</p>
       
       <div class="modal-footer">
-        <button class="btn btn-secondary" data-bs-dismiss="modal" type="button">Cancel</button>
+        <button class="btn btn-secondary btn--primary" data-bs-dismiss="modal" type="button">Cancel</button>
         </div>{{ url_for('admin.suspend_user', user_id=user.user_id) }}" style="display: inline;">
           {{ csrf_token() }}"/>
-          <button class="btn btn-warning" type="submit">Suspend User</button>
+          <button class="btn btn-warning btn--primary" type="submit">Suspend User</button>
         
       
     
@@ -170,7 +171,7 @@
     <div class="modal-content">
       <div class="modal-header bg-danger text-inverse">
         <h5 class="modal-title">Delete User</h5>
-        <button class="btn-close btn-close-white" data-bs-dismiss="modal" type="button"></button>
+        <button class="btn-close btn-close-white btn btn--primary" data-bs-dismiss="modal" type="button"></button>
       </div>
       <div class="modal-body">
         <p><strong>⚠️ WARNING: This action cannot be undone!</strong></p>
@@ -184,10 +185,10 @@
         
       
       <div class="modal-footer">
-        <button class="btn btn-secondary" data-bs-dismiss="modal" type="button">Cancel</button>
+        <button class="btn btn-secondary btn--primary" data-bs-dismiss="modal" type="button">Cancel</button>
         </div>{{ url_for('admin.delete_user', user_id=user.user_id) }}" style="display: inline;">
           {{ csrf_token() }}"/>
-          <button class="btn btn-danger" type="submit">Delete Permanently</button>
+          <button class="btn btn-danger btn--primary" type="submit">Delete Permanently</button>
         
       
     

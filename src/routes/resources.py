@@ -30,6 +30,7 @@ resources_bp = Blueprint("resources", __name__)
 # Helper utilities
 # --------------------------------------------------------------------------- #
 
+
 def _parse_date(value: str) -> Optional[date]:
     if not value:
         return None
@@ -39,7 +40,9 @@ def _parse_date(value: str) -> Optional[date]:
         return None
 
 
-def _date_range_to_datetimes(start_date: Optional[date], end_date: Optional[date]) -> tuple[Optional[datetime], Optional[datetime]]:
+def _date_range_to_datetimes(
+    start_date: Optional[date], end_date: Optional[date]
+) -> tuple[Optional[datetime], Optional[datetime]]:
     """
     Convert inclusive start/end dates into datetime boundaries covering full days.
     """

@@ -11,7 +11,7 @@ Reviewed and configured by developer on 2025-11-05
 import json
 import os
 import uuid
-from typing import List, Optional, Tuple
+from typing import List, Optional, Tuple, Dict
 from werkzeug.datastructures import FileStorage
 from werkzeug.utils import secure_filename
 
@@ -198,20 +198,17 @@ class ResourceService:
                                 pass
                         raise ResourceServiceError(f"Image upload failed: {str(e)}")
 
-        # Create resource
-        resource = Resource(
+        return ResourceRepository.create(
             owner_id=owner_id,
             title=title.strip(),
-            description=description.strip() if description else None,
             category=category,
+            description=description.strip() if description else None,
             location=location.strip() if location else None,
             capacity=capacity,
-            images=json.dumps(image_paths) if image_paths else None,  # type: ignore[arg-type]
-            availability_rules=json.dumps(availability_rules) if availability_rules else None,  # type: ignore[arg-type]
+            images=image_paths,
+            availability_rules=availability_rules or {},
             status=status,
         )
-
-        return ResourceRepository.create(resource)  # type: ignore[call-arg]
 
     @staticmethod
     def update_resource(
@@ -248,34 +245,35 @@ class ResourceService:
         if resource.owner_id != user_id:
             raise ResourceServiceError("Only the resource owner can edit this resource")
 
-        # Update fields if provided
+        updates: Dict[str, object] = {}
+
         if title is not None:
             if len(title.strip()) < 3:
                 raise ResourceServiceError("Title must be at least 3 characters")
-            resource.title = title.strip()
+            updates["title"] = title.strip()
 
         if description is not None:
-            resource.description = description.strip() if description else None
+            updates["description"] = description.strip() if description else None
 
         if category is not None:
-            resource.category = category
+            updates["category"] = category
 
         if location is not None:
-            resource.location = location.strip() if location else None
+            updates["location"] = location.strip() if location else None
 
         if capacity is not None:
             if capacity < 0:
                 raise ResourceServiceError("Capacity cannot be negative")
-            resource.capacity = capacity
+            updates["capacity"] = capacity
 
         if availability_rules is not None:
-            resource.availability_rules = json.dumps(availability_rules)
+            updates["availability_rules"] = availability_rules
 
         if status is not None:
             # Validate status transition
             if status not in ["draft", "published", "archived"]:
                 raise ResourceServiceError("Invalid status")
-            resource.status = status
+            updates["status"] = status
 
         # Handle image uploads if provided
         if images is not None:
@@ -289,12 +287,14 @@ class ResourceService:
                         raise ResourceServiceError(f"Image upload failed: {str(e)}")
 
             if image_paths:
-                # Append to existing images
-                existing = json.loads(resource.images) if resource.images else []
+                existing = resource.get_images()
                 existing.extend(image_paths)
-                resource.images = json.dumps(existing)
+                updates["images"] = existing
 
-        return ResourceRepository.update(resource)
+        updated = ResourceRepository.update(resource, **updates)
+        if not updated:
+            raise ResourceServiceError("Resource not found")
+        return updated
 
     @staticmethod
     def delete_resource(resource_id: int, user_id: int) -> None:

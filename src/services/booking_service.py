@@ -58,6 +58,20 @@ class BookingService:
         )
 
     @staticmethod
+    def check_booking_conflicts(
+        resource_id: int,
+        start_datetime: datetime,
+        end_datetime: datetime,
+        exclude_booking_id: Optional[int] = None,
+    ) -> List[Booking]:
+        """
+        Return conflicting approved bookings for the provided window.
+        """
+        return BookingRepository.find_conflicts(
+            resource_id, start_datetime, end_datetime, exclude_booking_id
+        )
+
+    @staticmethod
     def create_booking(
         resource_id: int,
         requester_id: int,

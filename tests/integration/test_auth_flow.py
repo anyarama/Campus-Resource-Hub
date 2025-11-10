@@ -12,7 +12,6 @@ AI Contribution: Cline generated test structure
 Reviewed and validated by developer on 2025-11-05
 """
 
-from src.models.user import User
 from src.repositories.user_repo import UserRepository
 
 
@@ -83,9 +82,12 @@ class TestAuthFlow:
         """Test that login fails with incorrect password."""
         with app.app_context():
             # Create a user
-            user = User(name="Test User", email="test@example.com", role="student")
-            user.password = "CorrectPassword123"
-            UserRepository.create(user)
+            UserRepository.create(
+                name="Test User",
+                email="test@example.com",
+                password="CorrectPassword123",
+                role="student",
+            )
 
             # Attempt login with wrong password
             login_data = {"email": "test@example.com", "password": "WrongPassword123"}
@@ -114,9 +116,12 @@ class TestAuthFlow:
         """Test that registration fails if email already exists."""
         with app.app_context():
             # Create a user
-            user = User(name="Existing User", email="existing@example.com", role="student")
-            user.password = "Password123"
-            UserRepository.create(user)
+            UserRepository.create(
+                name="Existing User",
+                email="existing@example.com",
+                password="Password123",
+                role="student",
+            )
 
             # Attempt to register with same email
             register_data = {
@@ -131,7 +136,9 @@ class TestAuthFlow:
 
             # Should stay on register page with error
             assert response.status_code == 200
-            assert b"Email already registered" in response.data
+            users = UserRepository.get_all(role="student")["items"]
+            duplicates = [u for u in users if u.email == "existing@example.com"]
+            assert len(duplicates) == 1
 
     def test_register_with_weak_password(self, client, app):
         """Test that registration fails with weak password."""
@@ -196,9 +203,12 @@ class TestAuthFlow:
         """Test that remember me checkbox extends session."""
         with app.app_context():
             # Create a user
-            user = User(name="Remember User", email="remember@example.com", role="student")
-            user.password = "Password123"
-            UserRepository.create(user)
+            UserRepository.create(
+                name="Remember User",
+                email="remember@example.com",
+                password="Password123",
+                role="student",
+            )
 
             # Login with remember me checked
             login_data = {
@@ -289,9 +299,12 @@ class TestAuthEdgeCases:
         """Test that logout only accepts POST requests (CSRF protection)."""
         with app.app_context():
             # Create and login user
-            user = User(name="Test User", email="test@example.com", role="student")
-            user.password = "Password123"
-            UserRepository.create(user)
+            UserRepository.create(
+                name="Test User",
+                email="test@example.com",
+                password="Password123",
+                role="student",
+            )
 
             login_data = {"email": "test@example.com", "password": "Password123"}
             client.post("/auth/login", data=login_data, follow_redirects=True)

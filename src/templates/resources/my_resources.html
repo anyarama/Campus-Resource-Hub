@@ -1,11 +1,12 @@
-{% extends"base.html" %}{% block title %}My Resources - Campus Resource Hub{% endblock %}{% block content %}<div class="layout-grid">
+{% extends "base.html" %}
+{% block title %}My Resources - Campus Resource Hub{% endblock %}{% block content %}<div class="layout-grid">
     <div class="layout-col" data-col="12">
-      <h1 class="display-5"><i class="bi bi-collection"></i> My Resources</h1>
+      <h1 class="display-5"><i class="bi bi-collection icon"></i> My Resources</h1>
       <p class="text-dim">Manage and track all your listed resources</p>
     </div>
     <div class="layout-col text-md-end" data-col="12">
       </div></div>{{ url_for('resources.create') }}" class="btn btn-primary">
-        <i class="bi bi-plus-circle"></i> Create New Resource
+        <i class="bi bi-plus-circle icon"></i> Create New Resource
       
     
   
@@ -15,7 +16,7 @@
       <div class="card">
         <div class="card-body">
           <div class="stat-icon">
-            <i class="bi bi-collection text-primary" style="font-size: 2rem;"></i>
+            <i class="bi bi-collection text-primary icon" style="font-size: 2rem;"></i>
           </div>
           <h3 class="space-b-0"></h3></div></div></div></div>{{ resources|length }}<p class="text-dim small">Total Resources</p>
         
@@ -25,7 +26,7 @@
       <div class="card">
         <div class="card-body">
           <div class="stat-icon">
-            <i class="bi bi-check-circle" style="font-size: 2rem;"></i>
+            <i class="bi bi-check-circle icon" style="font-size: 2rem;"></i>
           </div>
           <h3 class="space-b-0"></h3></div></div></div>{{ resources|selectattr('status', 'equalto', 'published')|list|length }}<p class="text-dim small">Published</p>
         
@@ -35,7 +36,7 @@
       <div class="card">
         <div class="card-body">
           <div class="stat-icon">
-            <i class="bi bi-file-earmark text-secondary" style="font-size: 2rem;"></i>
+            <i class="bi bi-file-earmark text-secondary icon" style="font-size: 2rem;"></i>
           </div>
           <h3 class="space-b-0"></h3></div></div></div>{{ resources|selectattr('status', 'equalto', 'draft')|list|length }}<p class="text-dim small">Drafts</p>
         
@@ -45,7 +46,7 @@
       <div class="card">
         <div class="card-body">
           <div class="stat-icon">
-            <i class="bi bi-archive" style="font-size: 2rem;"></i>
+            <i class="bi bi-archive icon" style="font-size: 2rem;"></i>
           </div>
           <h3 class="space-b-0"></h3></div></div></div>{{ resources|selectattr('status', 'equalto', 'archived')|list|length }}<p class="text-dim small">Archived</p>
         
@@ -56,22 +57,22 @@
    Filter Tabs 
   <ul class="nav nav-tabs" id="resourceTabs" role="tablist">
     <li class="nav-item" role="presentation">
-      <button class="nav-link active" data-bs-target="#all" data-bs-toggle="tab" id="all-tab" role="tab" type="button">
+      <button class="nav-link active btn btn--primary" data-bs-target="#all" data-bs-toggle="tab" id="all-tab" role="tab" type="button">
         All (</button></li></ul>{{ resources|length }})
       
     
     <li class="nav-item" role="presentation">
-      <button class="nav-link" data-bs-target="#published" data-bs-toggle="tab" id="published-tab" role="tab" type="button">
+      <button class="nav-link btn btn--primary" data-bs-target="#published" data-bs-toggle="tab" id="published-tab" role="tab" type="button">
         Published (</button></li>{{ resources|selectattr('status', 'equalto', 'published')|list|length }})
       
     
     <li class="nav-item" role="presentation">
-      <button class="nav-link" data-bs-target="#draft" data-bs-toggle="tab" id="draft-tab" role="tab" type="button">
+      <button class="nav-link btn btn--primary" data-bs-target="#draft" data-bs-toggle="tab" id="draft-tab" role="tab" type="button">
         Drafts (</button></li>{{ resources|selectattr('status', 'equalto', 'draft')|list|length }})
       
     
     <li class="nav-item" role="presentation">
-      <button class="nav-link" data-bs-target="#archived" data-bs-toggle="tab" id="archived-tab" role="tab" type="button">
+      <button class="nav-link btn btn--primary" data-bs-target="#archived" data-bs-toggle="tab" id="archived-tab" role="tab" type="button">
         Archived (</button></li>{{ resources|selectattr('status', 'equalto', 'archived')|list|length }})
       
     
@@ -83,32 +84,32 @@
     <div class="tab-pane fade show active" id="all" role="tabpanel">
       </div></div>{% for resource in resources %}{% include 'resources/_resource_card.html' %}{% endfor %}<div class="tab-pane fade" id="published" role="tabpanel">
       </div>{% set published_resources = resources|selectattr('status', 'equalto', 'published')|list %}{% if published_resources %}{% for resource in published_resources %}{% include 'resources/_resource_card.html' %}{% endfor %}{% else %}<div class="text-center">
-          <i class="bi bi-inbox" style="font-size: 3rem; color: #ccc;"></i>
+          <i class="bi bi-inbox icon" style="font-size: 3rem; color: var(--brand-600);"></i>
           <p class="text-dim">No published resources yet.</p>
           </div>{{ url_for('resources.create') }}" class="btn btn-primary">Create Your First Resource
         
       {% endif %}<div class="tab-pane fade" id="draft" role="tabpanel">
       </div>{% set draft_resources = resources|selectattr('status', 'equalto', 'draft')|list %}{% if draft_resources %}{% for resource in draft_resources %}{% include 'resources/_resource_card.html' %}{% endfor %}{% else %}<div class="text-center">
-          <i class="bi bi-inbox" style="font-size: 3rem; color: #ccc;"></i>
+          <i class="bi bi-inbox icon" style="font-size: 3rem; color: var(--brand-600);"></i>
           <p class="text-dim">No draft resources.</p>
         </div>
       {% endif %}<div class="tab-pane fade" id="archived" role="tabpanel">
       </div>{% set archived_resources = resources|selectattr('status', 'equalto', 'archived')|list %}{% if archived_resources %}{% for resource in archived_resources %}{% include 'resources/_resource_card.html' %}{% endfor %}{% else %}<div class="text-center">
-          <i class="bi bi-inbox" style="font-size: 3rem; color: #ccc;"></i>
+          <i class="bi bi-inbox icon" style="font-size: 3rem; color: var(--brand-600);"></i>
           <p class="text-dim">No archived resources.</p>
         </div>
       {% endif %}{% else %}<div class="layout-grid">
     <div class="layout-col mx-auto" data-col-lg="6">
       <div class="card">
         <div class="card-body">
-          <i class="bi bi-collection" style="font-size: 5rem; color: #e0e0e0;"></i>
+          <i class="bi bi-collection icon" style="font-size: 5rem; color: var(--brand-600);"></i>
           <h3 class="space-t-4">No Resources Yet</h3>
           <p class="text-dim">
             Get started by creating your first resource. Share study spaces, equipment, 
             or any campus resource with the community.
           </p>
           </div></div></div></div>{{ url_for('resources.create') }}" class="btn btn-primary">
-            <i class="bi bi-plus-circle"></i> Create Your First Resource
+            <i class="bi bi-plus-circle icon"></i> Create Your First Resource
           
         
       
@@ -116,7 +117,7 @@
        Tips Card 
       <div class="card">
         <div class="card-body">
-          <h6 class="card-title"><i class="bi bi-lightbulb"></i> What can I share?</h6>
+          <h6 class="card-title"><i class="bi bi-lightbulb icon"></i> What can I share?</h6>
           <ul class="space-b-0">
             <li>Study rooms and collaboration spaces</li>
             <li>Technology and equipment (laptops, projectors, cameras)</li>
@@ -140,36 +141,36 @@
                 {{ resource.title }}<p class="card-text small">
               </p>{{ resource.description[:150] }}{% if resource.description|length > 150 %}...{% endif %}<div class="flex flex-wrap gap-2">
               <span class="badge badge-light text-dark border">
-                <i class="bi bi-tag"></i> </span></div>{{ resource.category or 'Uncategorized' }}<span class="badge badge-light text-dark border">
-                <i class="bi bi-geo-alt"></i> </span>{{ resource.location }}{% if resource.capacity %}<span class="badge badge-light text-dark border">
-                <i class="bi bi-people"></i> </span>{{ resource.capacity }}{% endif %}{% if resource.status == 'draft' %}bg-secondary
+                <i class="bi bi-tag icon"></i> </span></div>{{ resource.category or 'Uncategorized' }}<span class="badge badge-light text-dark border">
+                <i class="bi bi-geo-alt icon"></i> </span>{{ resource.location }}{% if resource.capacity %}<span class="badge badge-light text-dark border">
+                <i class="bi bi-people icon"></i> </span>{{ resource.capacity }}{% endif %}{% if resource.status == 'draft' %}bg-secondary
                 {% elif resource.status == 'published' %}bg-success
                 {% else %}bg-warning{% endif %}">
                 {{ resource.status|upper }}<div class="layout-col text-md-end mt-md-0" data-col="12">
         <div class="btn-group-vertical gap-2" role="group">
           </div></div>{{ url_for('resources.detail', resource_id=resource.resource_id) }}" 
             class="btn btn-outline">
-            <i class="bi bi-eye"></i> View
+            <i class="bi bi-eye icon"></i> View
           
           {{ url_for('resources.edit', resource_id=resource.resource_id) }}" 
             class="btn btn-ghost">
-            <i class="bi bi-pencil"></i> Edit
+            <i class="bi bi-pencil icon"></i> Edit
           
           {% if resource.status == 'draft' %}{{ url_for('resources.publish', resource_id=resource.resource_id) }}" class="d-inline">
             {{ csrf_token() }}">
-            <button class="btn btn-success" type="submit">
-              <i class="bi bi-check-circle"></i> Publish
+            <button class="btn btn-success btn--primary" type="submit">
+              <i class="bi bi-check-circle icon"></i> Publish
             </button>
           
           {% elif resource.status == 'published' %}{{ url_for('resources.archive', resource_id=resource.resource_id) }}" class="d-inline">
             {{ csrf_token() }}">
-            <button class="btn btn-secondary" type="submit">
-              <i class="bi bi-archive"></i> Archive
+            <button class="btn btn-secondary btn--primary" type="submit">
+              <i class="bi bi-archive icon"></i> Archive
             </button>
           
           {% endif %}<div class="card-footer small">
-    <i class="bi bi-calendar"></i> Created </div>{{ resource.created_at.strftime('%b %d, %Y') if resource.created_at else 'Unknown' }}<span class="ms-3"><i class="bi bi-calendar-check"></i> Bookings: Coming Soon</span>
-    <span class="ms-3"><i class="bi bi-star"></i> Rating: Coming Soon</span>
+    <i class="bi bi-calendar icon"></i> Created </div>{{ resource.created_at.strftime('%b %d, %Y') if resource.created_at else 'Unknown' }}<span class="ms-3"><i class="bi bi-calendar-check icon"></i> Bookings: Coming Soon</span>
+    <span class="ms-3"><i class="bi bi-star icon"></i> Rating: Coming Soon</span>
   
 
 {% endmacro %}{% if resources %}<template id="resource-card-template">

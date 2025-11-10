@@ -1,9 +1,14 @@
 import { test, expect, Page } from '@playwright/test'
 import AxeBuilder from '@axe-core/playwright'
 
-const credentials = {
+const studentCredentials = {
   email: 'student@example.com',
-  password: 'Demo123!'
+  password: 'Demo123!',
+}
+
+const adminCredentials = {
+  email: 'admin@example.com',
+  password: 'Demo123!',
 }
 
 async function expectNoSeriousA11yViolations(page: Page) {
@@ -23,10 +28,10 @@ async function expectNoSeriousA11yViolations(page: Page) {
   expect(formatted).toEqual([])
 }
 
-async function login(page: Page) {
+async function login(page: Page, creds = studentCredentials) {
   await page.goto('/auth/login')
-  await page.getByLabel('Email Address').fill(credentials.email)
-  await page.getByLabel('Password').fill(credentials.password)
+  await page.getByLabel('Email Address').fill(creds.email)
+  await page.getByLabel('Password').fill(creds.password)
   await page.getByRole('button', { name: /login/i }).click()
   await page.waitForURL('**/dashboard')
 }
@@ -68,6 +73,26 @@ test.describe('Authenticated experience', () => {
     await login(page)
     await expect(page.getByRole('heading', { name: /welcome/i })).toBeVisible()
     await expect(page.locator('#bookings-timeline-chart')).toBeVisible()
+    await expectNoSeriousA11yViolations(page)
+  })
+})
+
+test.describe('Admin experience', () => {
+  test.beforeEach(async ({ page }) => {
+    await login(page, adminCredentials)
+  })
+
+  test('dashboard shows KPI tiles and approvals table', async ({ page }) => {
+    await page.goto('/admin/dashboard')
+    await expect(page.getByRole('heading', { name: /pending bookings/i })).toBeVisible()
+    await expect(page.getByRole('heading', { name: /flagged reviews/i })).toBeVisible()
+    await expectNoSeriousA11yViolations(page)
+  })
+
+  test('users page exposes bulk actions with role chips', async ({ page }) => {
+    await page.goto('/admin/users')
+    await expect(page.getByRole('heading', { name: /user management/i })).toBeVisible()
+    await expect(page.getByRole('heading', { name: /^users$/i })).toBeVisible()
     await expectNoSeriousA11yViolations(page)
   })
 })

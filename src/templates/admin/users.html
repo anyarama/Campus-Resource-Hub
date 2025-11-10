@@ -9,7 +9,7 @@
     <p>Search, filter, and take action on platform accounts.</p>
   </div>
   <a href="{{ url_for('admin.dashboard') }}" class="btn btn--ghost">
-    <i data-lucide="arrow-left"></i>
+    <i data-lucide="arrow-left" class="icon icon-sm"></i>
     <span>Back to dashboard</span>
   </a>
 </section>
@@ -17,11 +17,11 @@
 <form method="get" class="user-filter" aria-label="Filter users">
   <label>
     <span>Search</span>
-    <input type="search" name="search" value="{{ search_term }}" placeholder="Name or email" autocomplete="off">
+    <input type="search" name="search" value="{{ search_term }}" placeholder="Name or email" autocomplete="off" class="form-control">
   </label>
   <label>
     <span>Role</span>
-    <select name="role">
+    <select name="role" class="form-control">
       <option value="">All roles</option>
       <option value="admin" {% if role_filter == 'admin' %}selected{% endif %}>Admin</option>
       <option value="staff" {% if role_filter == 'staff' %}selected{% endif %}>Staff</option>
@@ -30,14 +30,14 @@
   </label>
   <label>
     <span>Status</span>
-    <select name="status">
+    <select name="status" class="form-control">
       <option value="">All statuses</option>
       <option value="active" {% if status_filter == 'active' %}selected{% endif %}>Active</option>
       <option value="suspended" {% if status_filter == 'suspended' %}selected{% endif %}>Suspended</option>
     </select>
   </label>
   <button type="submit" class="btn btn--primary">
-    <i data-lucide="search"></i>
+    <i data-lucide="search" class="icon icon-sm"></i>
     <span>Apply</span>
   </button>
 </form>
@@ -71,18 +71,18 @@
     <div class="bulk-toolbar">
       <span data-bulk-count>0 selected</span>
       <div class="bulk-toolbar__actions">
-        <button type="submit" class="btn btn--ghost" data-bulk-action value="activate" disabled>
-          <i data-lucide="play"></i>
+        <button type="submit" class="btn btn--ghost btn--primary" data-bulk-action value="activate" disabled>
+          <i data-lucide="play" class="icon icon-sm"></i>
           <span>Activate</span>
         </button>
-        <button type="submit" class="btn btn--warning" data-bulk-action value="suspend" disabled>
-          <i data-lucide="pause"></i>
+        <button type="submit" class="btn btn--warning btn--primary" data-bulk-action value="suspend" disabled>
+          <i data-lucide="pause" class="icon icon-sm"></i>
           <span>Suspend</span>
         </button>
       </div>
     </div>
     <div class="table-scroll table-scroll--sticky" role="region">
-      <table class="table table--sticky" role="table">
+      <table class="table table--sticky table--interactive" role="table">
         <thead>
           <tr>
             <th scope="col">
@@ -133,21 +133,21 @@
             <td class="text-end">
               <div class="btn-group">
                 <a href="{{ url_for('admin.user_detail', user_id=user.user_id) }}" class="btn btn--ghost btn--sm" title="View details">
-                  <i data-lucide="eye"></i>
+                  <i data-lucide="eye" class="icon icon-sm"></i>
                 </a>
                 {% if user.role != 'admin' and user.user_id != current_user.user_id %}
                   {% if user.is_active %}
                     <form method="POST" action="{{ url_for('admin.suspend_user', user_id=user.user_id) }}" class="inline-form">
                       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                      <button class="btn btn--warning btn--sm" title="Suspend user" onclick="return confirm('Suspend {{ user.name }}?');">
-                        <i data-lucide="pause"></i>
+                      <button class="btn btn--warning btn--sm btn--primary" title="Suspend user" onclick="return confirm('Suspend {{ user.name }}?');">
+                        <i data-lucide="pause" class="icon icon-sm"></i>
                       </button>
                     </form>
                   {% else %}
                     <form method="POST" action="{{ url_for('admin.activate_user', user_id=user.user_id) }}" class="inline-form">
                       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                      <button class="btn btn--success btn--sm" title="Activate user">
-                        <i data-lucide="play"></i>
+                      <button class="btn btn--success btn--sm btn--primary" title="Activate user">
+                        <i data-lucide="play" class="icon icon-sm"></i>
                       </button>
                     </form>
                   {% endif %}
@@ -162,7 +162,7 @@
   </form>
   {% else %}
     <div class="empty-state empty-state--inline">
-      <i data-lucide="users"></i>
+      <i data-lucide="users" class="icon icon-sm"></i>
       <h3>No users match the filters</h3>
       <p>Try adjusting the search or filters above.</p>
     </div>

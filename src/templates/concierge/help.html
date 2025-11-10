@@ -1,4 +1,5 @@
-{% extends"base.html" %}{% block title %}Concierge Help - Campus Resource Hub{% endblock %}{% block content %}<div class="grid">
+{% extends "base.html" %}
+{% block title %}Concierge Help - Campus Resource Hub{% endblock %}{% block content %}<div class="grid">
     <div class="layout-col mx-auto" data-col-lg="8">
       <h1 class="space-b-4">🤖 Resource Concierge Help</h1>
       
@@ -66,17 +67,17 @@
           <h3>What I Understand</h3>
           <div class="grid">
             <div class="layout-col" data-col="12">
-              <h5><i class="bi bi-people text-primary"></i> Capacity</h5>
+              <h5><i class="bi bi-people text-primary icon"></i> Capacity</h5>
               <p class="small">"for 4 people","seats 10","room for my team of 6"</p>
               
-              <h5><i class="bi bi-calendar text-primary"></i> Dates</h5>
+              <h5><i class="bi bi-calendar text-primary icon"></i> Dates</h5>
               <p class="small">"tomorrow","next Tuesday","this weekend","Friday"</p>
             </div>
             <div class="layout-col" data-col="12">
-              <h5><i class="bi bi-clock text-primary"></i> Times</h5>
+              <h5><i class="bi bi-clock text-primary icon"></i> Times</h5>
               <p class="small">"morning","afternoon","evening","at 2pm"</p>
               
-              <h5><i class="bi bi-geo-alt text-primary"></i> Locations</h5>
+              <h5><i class="bi bi-geo-alt text-primary icon"></i> Locations</h5>
               <p class="small">"in Hodge Hall","near the library","Business School"</p>
             </div>
           </div>
@@ -109,10 +110,10 @@
       
       <div class="text-center">
         </div></div></div>{{ url_for('concierge.index') }}" class="btn btn-primary">
-          <i class="bi bi-search"></i> Try the Concierge
+          <i class="bi bi-search icon"></i> Try the Concierge
         
         {{ url_for('resources.index') }}" class="btn btn-ghost">
-          <i class="bi bi-grid"></i> Browse All Resources
+          <i class="bi bi-grid icon"></i> Browse All Resources
         
       
     

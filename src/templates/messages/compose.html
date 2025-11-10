@@ -10,7 +10,7 @@
             <div class="card">
                 <div class="card-header">
                     <h2 class="card-title">
-                        <i class="bi bi-pencil-square"></i>Compose Message
+                        <i class="bi bi-pencil-square icon"></i>Compose Message
                     </h2>
                 </div>
                 <div class="card-body">
@@ -31,7 +31,7 @@
                             <div class="recipient-details">
                                 <div class="recipient-name">To: {{ recipient.name }}</div>
                                 <div class="recipient-email">
-                                    <i class="bi bi-envelope"></i>{{ recipient.email }}
+                                    <i class="bi bi-envelope icon"></i>{{ recipient.email }}
                                 </div>
                                 <span class="badge badge-{{ 'error' if recipient.role == 'admin' else 'primary' if recipient.role == 'staff' else 'success' }}">
                                     {{ recipient.role|capitalize }}
@@ -46,9 +46,9 @@
                         
                         <div class="form-group">
                             <label for="content" class="form-label">
-                                <i class="bi bi-chat-left-text"></i>Message
+                                <i class="bi bi-chat-left-text icon"></i>Message
                             </label>
-                            <textarea class="input" 
+                            <textarea class="input form-control" 
                                       id="content" 
                                       name="content" 
                                       rows="8" 
@@ -61,7 +61,7 @@
                         <!-- Guidelines -->
                         <div class="alert alert-neutral">
                             <h6 class="alert-heading">
-                                <i class="bi bi-info-circle"></i>Messaging Guidelines
+                                <i class="bi bi-info-circle icon"></i>Messaging Guidelines
                             </h6>
                             <ul class="guideline-list">
                                 <li>Be professional and respectful</li>
@@ -74,10 +74,10 @@
                         <!-- Action Buttons -->
                         <div class="form-actions">
                             <a href="{{ url_for('messages.inbox') }}" class="btn btn-secondary">
-                                <i class="bi bi-x-circle"></i>Cancel
+                                <i class="bi bi-x-circle icon"></i>Cancel
                             </a>
-                            <button type="submit" class="btn btn-primary">
-                                <i class="bi bi-send"></i>Send Message
+                            <button type="submit" class="btn btn-primary btn--primary">
+                                <i class="bi bi-send icon"></i>Send Message
                             </button>
                         </div>
                     </form>
@@ -88,7 +88,7 @@
             <div class="card card-muted">
                 <div class="card-body">
                     <h6 class="help-heading">
-                        <i class="bi bi-question-circle"></i>Need Help?
+                        <i class="bi bi-question-circle icon"></i>Need Help?
                     </h6>
                     <p class="help-text">
                         Use messaging to ask questions about resources, coordinate bookings, 

@@ -10,11 +10,11 @@
   </div>
   <div class="admin-page__actions">
     <a href="{{ url_for('admin.analytics') }}" class="btn btn--ghost">
-      <i data-lucide="bar-chart-3"></i>
+      <i data-lucide="bar-chart-3" class="icon icon-sm"></i>
       <span>View Analytics</span>
     </a>
     <a href="{{ url_for('admin.users') }}" class="btn btn--primary">
-      <i data-lucide="users"></i>
+      <i data-lucide="users" class="icon icon-sm"></i>
       <span>Manage Users</span>
     </a>
   </div>
@@ -23,7 +23,7 @@
 <section class="admin-dashboard__kpi-grid">
   <article class="kpi-tile">
     <div class="kpi-tile__icon kpi-tile__icon--primary">
-      <i data-lucide="users"></i>
+      <i data-lucide="users" class="icon icon-sm"></i>
     </div>
     <div class="kpi-tile__content">
       <p class="kpi-tile__label">Total Users</p>
@@ -33,7 +33,7 @@
   </article>
   <article class="kpi-tile">
     <div class="kpi-tile__icon kpi-tile__icon--success">
-      <i data-lucide="box"></i>
+      <i data-lucide="box" class="icon icon-sm"></i>
     </div>
     <div class="kpi-tile__content">
       <p class="kpi-tile__label">Resources</p>
@@ -43,7 +43,7 @@
   </article>
   <article class="kpi-tile">
     <div class="kpi-tile__icon kpi-tile__icon--info">
-      <i data-lucide="calendar-check"></i>
+      <i data-lucide="calendar-check" class="icon icon-sm"></i>
     </div>
     <div class="kpi-tile__content">
       <p class="kpi-tile__label">Bookings</p>
@@ -53,7 +53,7 @@
   </article>
   <article class="kpi-tile">
     <div class="kpi-tile__icon kpi-tile__icon--warning">
-      <i data-lucide="message-square"></i>
+      <i data-lucide="message-square" class="icon icon-sm"></i>
     </div>
     <div class="kpi-tile__content">
       <p class="kpi-tile__label">Messages</p>
@@ -79,12 +79,12 @@
       <div class="bulk-toolbar">
         <span data-bulk-count>0 selected</span>
         <div class="bulk-toolbar__actions">
-          <button type="submit" class="btn btn--ghost" data-bulk-action value="reject" disabled>
-            <i data-lucide="x"></i>
+          <button type="submit" class="btn btn--ghost btn--primary" data-bulk-action value="reject" disabled>
+            <i data-lucide="x" class="icon icon-sm"></i>
             <span>Reject</span>
           </button>
           <button type="submit" class="btn btn--primary" data-bulk-action value="approve" disabled>
-            <i data-lucide="check"></i>
+            <i data-lucide="check" class="icon icon-sm"></i>
             <span>Approve</span>
           </button>
         </div>
@@ -136,7 +136,7 @@
     </form>
     {% else %}
       <div class="empty-state empty-state--inline">
-        <i data-lucide="inbox"></i>
+        <i data-lucide="inbox" class="icon icon-sm"></i>
         <h3>No pending approvals</h3>
         <p>You're all caught up. New booking requests will appear here.</p>
       </div>
@@ -164,13 +164,13 @@
           <div class="flagged-list__actions">
             <form method="POST" action="{{ url_for('reviews.unhide', review_id=review.review_id) }}">
               <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-              <button type="submit" class="btn btn--ghost btn--sm">
-                <i data-lucide="eye"></i>
+              <button type="submit" class="btn btn--ghost btn--sm btn--primary">
+                <i data-lucide="eye" class="icon icon-sm"></i>
                 <span>Unhide</span>
               </button>
             </form>
             <a class="btn btn--ghost btn--sm" href="{{ url_for('resources.detail', resource_id=review.resource_id) }}" target="_blank" rel="noopener">
-              <i data-lucide="external-link"></i>
+              <i data-lucide="external-link" class="icon icon-sm"></i>
               <span>View</span>
             </a>
           </div>
@@ -179,7 +179,7 @@
       </ul>
     {% else %}
       <div class="empty-state empty-state--inline">
-        <i data-lucide="shield"></i>
+        <i data-lucide="shield" class="icon icon-sm"></i>
         <h3>No flagged content</h3>
         <p>Reviews will appear here when hidden for moderation.</p>
       </div>
@@ -190,7 +190,7 @@
 <section class="admin-dashboard__content-grid">
   <article class="card">
     <header class="card__header">
-      <h2><i data-lucide="star"></i> Popular resources</h2>
+      <h2><i data-lucide="star" class="icon icon-sm"></i> Popular resources</h2>
       <small class="text-muted">By booking volume</small>
     </header>
     {% if popular_resources %}
@@ -212,7 +212,7 @@
 
   <article class="card">
     <header class="card__header">
-      <h2><i data-lucide="activity"></i> Recent activity</h2>
+      <h2><i data-lucide="activity" class="icon icon-sm"></i> Recent activity</h2>
     </header>
     <div class="activity-feed">
       {% if activity.bookings %}
@@ -220,7 +220,8 @@
           <div class="activity-feed__item">
             <div>
               <p><strong>{{ booking.requester_name }}</strong> booked {{ booking.resource_title }}</p>
-              <p class="text-muted">{{ booking.timestamp.strftime('%b %d, %I:%M %p') }}</p>
+              {% set event_time = booking.timestamp if booking.timestamp is defined else booking.created_at %}
+            <p class="text-muted">{% if event_time %}{{ event_time.strftime('%b %d, %I:%M %p') }}{% else %}—{% endif %}</p>
             </div>
             <span class="badge badge--primary">{{ booking.status|title }}</span>
           </div>

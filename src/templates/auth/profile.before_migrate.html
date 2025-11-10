@@ -1,10 +1,11 @@
-{% extends"base.html" %}
+{% extends "base.html" %}
+
 
 {% block title %}Profile - {{ current_user.name }}{% endblock %}
 
 {% block content %}
   <div class="layout-grid">
-    <div class="grid-layout-col">
+    <div class="grid-layout-col" data-col="12">
       <!-- Profile Header -->
       <div class="card">
         <div class="card-body">
@@ -101,7 +102,7 @@
 
         <div class="card-footer">
           <a href="{{ url_for('resources.dashboard') }}" class="btn btn-secondary">
-            <i class="bi bi-arrow-left"></i> Back to Dashboard
+            <i class="bi bi-arrow-left icon"></i> Back to Dashboard
           </a>
           {# Future: Edit Profile button #}
           {# <a href="{{ url_for('auth.edit_profile') }}" class="btn btn-primary">Edit Profile</a> #}
@@ -112,7 +113,7 @@
       {% if current_user.role == 'admin' %}
       <div class="mt-3">
         <a href="{{ url_for('resources.admin_ping') }}" class="btn btn-danger">
-          <i class="bi bi-shield-lock"></i> Admin Panel
+          <i class="bi bi-shield-lock icon"></i> Admin Panel
         </a>
       </div>
       {% endif %}

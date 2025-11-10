@@ -4,7 +4,7 @@
 # Per .clinerules: Commands for fmt (format), lint (type check), test, and run
 # All commands should pass before committing code
 
-.PHONY: help install fmt lint test test-cov run clean init-db seed-db shell check all web-assets
+.PHONY: help install fmt lint test test-cov ui-smoke build run clean init-db seed-db shell check all web-assets
 
 # Default target - show help
 help:
@@ -18,9 +18,11 @@ help:
 	@echo "  make fmt          Format code with black and ruff"
 	@echo "  make lint         Run type checking with mypy"
 	@echo "  make test         Run tests with pytest"
+	@echo "  make ui-smoke     Run Playwright + axe-core smoke suite"
 	@echo "  make test-cov     Run tests with coverage report"
-	@echo "  make check        Run fmt + lint + test (full quality check)"
-	@echo "  make all          Same as 'make check'"
+	@echo "  make check        Run fmt + lint + pytest"
+	@echo "  make build        Build Vite production assets"
+	@echo "  make all          fmt + lint + pytest + ui-smoke + build"
 	@echo ""
 	@echo "Frontend Assets:"
 	@echo "  make web-assets   Build Vite assets and verify manifest (Task B)"
@@ -59,9 +61,19 @@ lint:
 
 # Run tests with pytest
 test:
-	@echo "🧪 Running tests with pytest..."
+	@echo "🧪 Running backend tests with pytest..."
 	PYTHONPATH=. pytest tests/ -v
 	@echo "✅ Tests complete"
+
+ui-smoke:
+	@echo "🎭 Running Playwright smoke + axe suite..."
+	npm run test:playwright
+	@echo "✅ UI smoke tests complete"
+
+build:
+	@echo "🏗️  Building production assets with Vite..."
+	npm run build
+	@echo "✅ Frontend build complete"
 
 # Run tests with coverage
 test-cov:
@@ -73,8 +85,8 @@ test-cov:
 check: fmt lint test
 	@echo "✅ All quality checks passed!"
 
-# Alias for check
-all: check
+# Alias for full pipeline (fmt + lint + backend + UI tests + build)
+all: fmt lint test ui-smoke build
 
 # Build and verify Vite assets (Task B: MAKE IT WORK IN RUNTIME)
 web-assets:

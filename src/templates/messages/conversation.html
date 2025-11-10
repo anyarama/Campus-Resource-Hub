@@ -27,7 +27,7 @@
                     <div class="conversation-meta">
                         <h2 class="conversation-name">{{ other_user.name }}</h2>
                         <p class="conversation-email">
-                            <i class="bi bi-envelope"></i>{{ other_user.email }}
+                            <i class="bi bi-envelope icon"></i>{{ other_user.email }}
                         </p>
                         <span class="badge badge-{{ 'error' if other_user.role == 'admin' else 'primary' if other_user.role == 'staff' else 'success' }}">
                             {{ other_user.role|capitalize }}
@@ -58,10 +58,10 @@
 
                                     <!-- Timestamp -->
                                     <div class="message-timestamp">
-                                        <i class="bi bi-clock"></i>
+                                        <i class="bi bi-clock icon"></i>
                                         {{ message.timestamp.strftime('%b %d, %Y at %I:%M %p') }}
                                         {% if message.sender_id == current_user.user_id %}
-                                            <i class="bi bi-check2-all" title="Sent"></i>
+                                            <i class="bi bi-check2-all icon" title="Sent"></i>
                                         {% endif %}
                                     </div>
                                 </div>
@@ -72,8 +72,8 @@
                                           class="message-delete" 
                                           onsubmit="return confirm('Delete this message?');">
                                         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                                        <button type="submit" class="btn-icon btn-danger" title="Delete message">
-                                            <i class="bi bi-trash"></i>
+                                        <button type="submit" class="btn-icon btn-danger btn btn--primary" title="Delete message">
+                                            <i class="bi bi-trash icon"></i>
                                         </button>
                                     </form>
                                 {% endif %}
@@ -83,7 +83,7 @@
                 {% else %}
                     <!-- No Messages Yet -->
                     <div class="empty-state">
-                        <i class="bi bi-chat-dots empty-state-icon"></i>
+                        <i class="bi bi-chat-dots empty-state-icon icon"></i>
                         <p class="empty-state-text">No messages yet. Start the conversation below!</p>
                     </div>
                 {% endif %}
@@ -99,9 +99,9 @@
                     
                     <div class="form-group">
                         <label for="content" class="form-label">
-                            <i class="bi bi-pencil"></i>Your Message
+                            <i class="bi bi-pencil icon"></i>Your Message
                         </label>
-                        <textarea class="input" 
+                        <textarea class="input form-control" 
                                   id="content" 
                                   name="content" 
                                   rows="4" 
@@ -113,10 +113,10 @@
 
                     <div class="form-actions">
                         <small class="form-note">
-                            <i class="bi bi-info-circle"></i>Messages cannot contain HTML
+                            <i class="bi bi-info-circle icon"></i>Messages cannot contain HTML
                         </small>
-                        <button type="submit" class="btn btn-primary">
-                            <i class="bi bi-send"></i>Send Message
+                        <button type="submit" class="btn btn-primary btn--primary">
+                            <i class="bi bi-send icon"></i>Send Message
                         </button>
                     </div>
                 </form>
@@ -127,7 +127,7 @@
         <div class="card card-muted">
             <div class="card-body">
                 <small class="tip-text">
-                    <i class="bi bi-lightbulb"></i>
+                    <i class="bi bi-lightbulb icon"></i>
                     <strong>Tip:</strong> Keep conversations professional and respectful. 
                     Messages are plain text only for security.
                 </small>

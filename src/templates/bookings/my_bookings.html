@@ -1,7 +1,8 @@
-{% extends"base.html" %}{% from"bookings/_booking_card.html" import render_booking_card %}{% block title %}My Bookings{% endblock %}{% block content %}<div class="layout-grid">
+{% extends "base.html" %}
+{% from"bookings/_booking_card.html" import render_booking_card %}{% block title %}My Bookings{% endblock %}{% block content %}<div class="layout-grid">
     <div class="col">
       <h2>
-        <i class="bi bi-calendar-check"></i>My Bookings
+        <i class="bi bi-calendar-check icon"></i>My Bookings
       </h2>
       <p class="text-dim">Manage all your resource bookings in one place</p>
     </div>
@@ -10,59 +11,59 @@
    Tab Navigation 
   <ul class="nav nav-tabs" id="bookingTabs" role="tablist">
     <li class="nav-item" role="presentation">
-      <button aria-controls="upcoming" aria-selected="true" class="nav-link active" data-bs-target="#upcoming" data-bs-toggle="tab" id="upcoming-tab" role="tab" type="button">
-        <i class="bi bi-calendar-event"></i>
+      <button aria-controls="upcoming" aria-selected="true" class="nav-link active btn btn--primary" data-bs-target="#upcoming" data-bs-toggle="tab" id="upcoming-tab" role="tab" type="button">
+        <i class="bi bi-calendar-event icon"></i>
         Upcoming <span class="badge badge-primary"></span></button></li></ul>{{ upcoming_count }}<li class="nav-item" role="presentation">
-      <button aria-controls="pending" aria-selected="false" class="nav-link" data-bs-target="#pending" data-bs-toggle="tab" id="pending-tab" role="tab" type="button">
-        <i class="bi bi-clock-history"></i>
+      <button aria-controls="pending" aria-selected="false" class="nav-link btn btn--primary" data-bs-target="#pending" data-bs-toggle="tab" id="pending-tab" role="tab" type="button">
+        <i class="bi bi-clock-history icon"></i>
         Pending <span class="badge badge-warning text-dark"></span></button></li>{{ pending_count }}<li class="nav-item" role="presentation">
-      <button aria-controls="past" aria-selected="false" class="nav-link" data-bs-target="#past" data-bs-toggle="tab" id="past-tab" role="tab" type="button">
-        <i class="bi bi-check-circle"></i>
+      <button aria-controls="past" aria-selected="false" class="nav-link btn btn--primary" data-bs-target="#past" data-bs-toggle="tab" id="past-tab" role="tab" type="button">
+        <i class="bi bi-check-circle icon"></i>
         Past <span class="badge badge-success"></span></button></li>{{ past_count }}<li class="nav-item" role="presentation">
-      <button aria-controls="cancelled" aria-selected="false" class="nav-link" data-bs-target="#cancelled" data-bs-toggle="tab" id="cancelled-tab" role="tab" type="button">
-        <i class="bi bi-x-circle"></i>
+      <button aria-controls="cancelled" aria-selected="false" class="nav-link btn btn--primary" data-bs-target="#cancelled" data-bs-toggle="tab" id="cancelled-tab" role="tab" type="button">
+        <i class="bi bi-x-circle icon"></i>
         Cancelled/Rejected <span class="badge badge-secondary"></span></button></li>{{ cancelled_count }}<div class="tab-content" id="bookingTabsContent">
     <!-- Upcoming Bookings Tab -->
     <div aria-labelledby="upcoming-tab" class="tab-pane fade show active" id="upcoming" role="tabpanel">
       </div></div>{% if upcoming_bookings %}<div class="alert alert-info">
-          <i class="bi bi-info-circle"></i>
+          <i class="bi bi-info-circle icon"></i>
           You have <strong></strong></div>{{ upcoming_count }}upcoming booking{{ 's' if upcoming_count != 1 else '' }}.
         
         {% for booking, resource in upcoming_bookings %}{{ render_booking_card(booking, resource, show_actions=True) }}{% endfor %}{% else %}<div class="text-center">
-          <i class="bi bi-calendar-x" style="font-size: 4rem;"></i>
+          <i class="bi bi-calendar-x icon" style="font-size: 4rem;"></i>
           <h4 class="space-t-3">No Upcoming Bookings</h4>
           <p class="text-dim">You don't have any approved bookings scheduled.</p>
           </div>{{ url_for('resources.index') }}" class="btn btn-primary">
-            <i class="bi bi-search"></i>Browse Resources
+            <i class="bi bi-search icon"></i>Browse Resources
           
         
       {% endif %}<div aria-labelledby="pending-tab" class="tab-pane fade" id="pending" role="tabpanel">
       </div>{% if pending_bookings %}<div class="alert alert-warning">
-          <i class="bi bi-hourglass-split"></i>
+          <i class="bi bi-hourglass-split icon"></i>
           You have <strong></strong></div>{{ pending_count }}booking{{ 's' if pending_count != 1 else '' }}awaiting approval.
         
         {% for booking, resource in pending_bookings %}{{ render_booking_card(booking, resource, show_actions=True) }}{% endfor %}{% else %}<div class="text-center">
-          <i class="bi bi-hourglass" style="font-size: 4rem;"></i>
+          <i class="bi bi-hourglass icon" style="font-size: 4rem;"></i>
           <h4 class="space-t-3">No Pending Bookings</h4>
           <p class="text-dim">You don't have any bookings waiting for approval.</p>
         </div>
       {% endif %}<div aria-labelledby="past-tab" class="tab-pane fade" id="past" role="tabpanel">
       </div>{% if past_bookings %}<div class="alert alert-success">
-          <i class="bi bi-check-circle"></i>
+          <i class="bi bi-check-circle icon"></i>
           You have <strong></strong></div>{{ past_count }}completed booking{{ 's' if past_count != 1 else '' }}.
         
         {% for booking, resource in past_bookings %}{{ render_booking_card(booking, resource, show_actions=True) }}{% endfor %}{% else %}<div class="text-center">
-          <i class="bi bi-clock-history" style="font-size: 4rem;"></i>
+          <i class="bi bi-clock-history icon" style="font-size: 4rem;"></i>
           <h4 class="space-t-3">No Past Bookings</h4>
           <p class="text-dim">You haven't completed any bookings yet.</p>
         </div>
       {% endif %}<div aria-labelledby="cancelled-tab" class="tab-pane fade" id="cancelled" role="tabpanel">
       </div>{% if cancelled_bookings %}<div class="alert alert-secondary">
-          <i class="bi bi-x-circle"></i>
+          <i class="bi bi-x-circle icon"></i>
           You have <strong></strong></div>{{ cancelled_count }}cancelled or rejected booking{{ 's' if cancelled_count != 1 else '' }}.
         
         {% for booking, resource in cancelled_bookings %}{{ render_booking_card(booking, resource, show_actions=True) }}{% endfor %}{% else %}<div class="text-center">
-          <i class="bi bi-check-circle" style="font-size: 4rem;"></i>
+          <i class="bi bi-check-circle icon" style="font-size: 4rem;"></i>
           <h4 class="space-t-3">No Cancelled Bookings</h4>
           <p class="text-dim">Great! All your bookings are active or completed.</p>
         </div>
@@ -71,7 +72,7 @@
       <div class="layout-grid">
         <div class="layout-col" data-col="12">
           <h5 class="space-b-2">
-            <i class="bi bi-lightning-charge"></i>Quick Actions
+            <i class="bi bi-lightning-charge icon"></i>Quick Actions
           </h5>
           <p class="text-dim">
             Looking for more resources to book or want to share your own?
@@ -79,10 +80,10 @@
         </div>
         <div class="layout-col text-md-end mt-md-0" data-col="12">
           </div></div></div></div>{{ url_for('resources.index') }}" class="btn btn-primary">
-            <i class="bi bi-search"></i>Browse
+            <i class="bi bi-search icon"></i>Browse
           
           {{ url_for('resources.create') }}" class="btn btn-secondary">
-            <i class="bi bi-plus-circle"></i>List Resource
+            <i class="bi bi-plus-circle icon"></i>List Resource
           
         
       
@@ -93,7 +94,7 @@
   <div class="card">
     <div class="card-body">
       <h6 class="space-b-3">
-        <i class="bi bi-question-circle"></i>Understanding Booking Status
+        <i class="bi bi-question-circle icon"></i>Understanding Booking Status
       </h6>
       <div class="grid">
         <div class="layout-col" data-col="12">

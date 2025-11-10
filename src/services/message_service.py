@@ -7,10 +7,8 @@ Reviewed by developer on 2025-11-06
 """
 
 from typing import List, Dict, Optional, Tuple
-from collections import defaultdict
-from datetime import datetime
 
-from src.models import Message, User
+from src.models import Message
 from src.repositories.message_repo import MessageRepository
 from src.repositories.user_repo import UserRepository
 
@@ -24,7 +22,7 @@ class MessageServiceError(Exception):
 class MessageService:
     """
     Service layer for messaging operations.
-    
+
     Handles:
     - Thread-based conversation management
     - Message sending with validation
@@ -41,7 +39,7 @@ class MessageService:
 
         Args:
             sender_id: ID of sender
-            receiver_id: ID of receiver  
+            receiver_id: ID of receiver
             content: Message content (plain text)
             thread_id: Optional thread_id for replies
 

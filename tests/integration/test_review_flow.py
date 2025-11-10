@@ -12,94 +12,76 @@ Tests the complete review workflow including:
 
 import pytest
 from datetime import datetime, timedelta
-from src.models.booking import Booking
-from src.models.resource import Resource
-from src.models.review import Review
-from src.models.user import User
 from src.repositories.booking_repo import BookingRepository
 from src.repositories.resource_repo import ResourceRepository
 from src.repositories.review_repo import ReviewRepository
 from src.repositories.user_repo import UserRepository
 
 
+def _require_user(email: str):
+    user = UserRepository.get_by_email(email)
+    if not user:  # pragma: no cover
+        raise AssertionError(f"Seeded user {email} missing")
+    return user
+
+
+def _login(client, email: str, password: str):
+    client.post("/auth/login", data={"email": email, "password": password}, follow_redirects=True)
+
+
 class TestReviewFlow:
     """Integration tests for review workflow"""
 
     @pytest.fixture(autouse=True)
-    def setup(self, app, db):
-        """Set up test data before each test"""
+    def setup(self, app, demo_seed):
+        """Attach seeded users/resources and create completed booking."""
         with app.app_context():
-            # Create test users
-            self.student = UserRepository.create(
-                name="Test Student",
-                email="student@test.com",
-                password="password123",
-                role="student"
-            )
-            
-            self.staff = UserRepository.create(
-                name="Test Staff",
-                email="staff@test.com",
-                password="password123",
-                role="staff"
-            )
-            
-            self.admin = UserRepository.create(
-                name="Test Admin",
-                email="admin@test.com",
-                password="password123",
-                role="admin"
-            )
-            
-            # Create test resource
-            self.resource = ResourceRepository.create(
-                owner_id=self.staff.user_id,
-                title="Test Projector",
-                description="Test projector for reviews",
-                category="Equipment",
-                location="AV Department",
-                status="published"
-            )
-            
-            # Create completed booking (required for review)
-            past_start = datetime.now() - timedelta(days=2)
+            self.student_creds = demo_seed["student"]
+            self.staff_creds = demo_seed["staff"]
+            self.admin_creds = demo_seed["admin"]
+            self.student = _require_user(self.student_creds["email"])
+            self.staff = _require_user(self.staff_creds["email"])
+            self.admin = _require_user(self.admin_creds["email"])
+            resource = ResourceRepository.get_by_id(demo_seed["resource_ids"][0])
+            if not resource:  # pragma: no cover
+                raise AssertionError("Seeded resource missing")
+            self.resource = resource
+
+            past_start = datetime.utcnow() - timedelta(days=2)
             past_end = past_start + timedelta(hours=2)
-            
             self.completed_booking = BookingRepository.create(
                 resource_id=self.resource.resource_id,
                 requester_id=self.student.user_id,
                 start_datetime=past_start,
                 end_datetime=past_end,
-                status='completed'
+                status="completed",
             )
-            
-            db.session.commit()
             yield
-            db.session.rollback()
 
     def test_submit_review_success(self, client, app):
         """Test successful review submission after completed booking"""
         with app.app_context():
             # Login as student
-            client.post('/auth/login', data={
-                'email': 'student@test.com',
-                'password': 'password123'
-            }, follow_redirects=True)
-            
+            _login(client, self.student_creds["email"], self.student_creds["password"])
+
             # Submit review
-            response = client.post(f'/resources/{self.resource.resource_id}/reviews', data={
-                'rating': '5',
-                'comment': 'Excellent projector! Very clear image and easy to use.'
-            }, follow_redirects=True)
-            
+            response = client.post(
+                f"/resources/{self.resource.resource_id}/reviews",
+                data={
+                    "rating": "5",
+                    "comment": "Excellent projector! Very clear image and easy to use.",
+                },
+                follow_redirects=True,
+            )
+
             assert response.status_code == 200
-            
+
             # Verify review was created
             reviews = ReviewRepository.get_by_resource(self.resource.resource_id)
             assert len(reviews) == 1
             assert reviews[0].rating == 5
             assert reviews[0].reviewer_id == self.student.user_id
-            assert 'Excellent projector' in reviews[0].comment
+            assert "Excellent projector" in reviews[0].comment
 
     def test_cannot_review_without_completed_booking(self, client, app):
         """Test that users cannot review without a completed booking"""
@@ -109,24 +91,22 @@ class TestReviewFlow:
                 name="Student Two",
                 email="student2@test.com",
                 password="password123",
-                role="student"
+                role="student",
             )
-            
+
             # Login as student2
-            client.post('/auth/login', data={
-                'email': 'student2@test.com',
-                'password': 'password123'
-            }, follow_redirects=True)
-            
+            _login(client, student2.email, "password123")
+
             # Try to submit review
-            response = client.post(f'/resources/{self.resource.resource_id}/reviews', data={
-                'rating': '5',
-                'comment': 'Great resource!'
-            }, follow_redirects=True)
-            
+            response = client.post(
+                f"/resources/{self.resource.resource_id}/reviews",
+                data={"rating": "5", "comment": "Great resource!"},
+                follow_redirects=True,
+            )
+
             # Should be denied
-            assert b'completed' in response.data.lower() or b'booking' in response.data.lower()
-            
+            assert b"completed" in response.data.lower() or b"booking" in response.data.lower()
+
             # Verify review was not created
             reviews = ReviewRepository.get_by_resource(self.resource.resource_id)
             student2_reviews = [r for r in reviews if r.reviewer_id == student2.user_id]
@@ -136,26 +116,25 @@ class TestReviewFlow:
         """Test that a user can only submit one review per resource"""
         with app.app_context():
             # Login as student
-            client.post('/auth/login', data={
-                'email': 'student@test.com',
-                'password': 'password123'
-            }, follow_redirects=True)
-            
+            _login(client, self.student_creds["email"], self.student_creds["password"])
+
             # Submit first review
-            client.post(f'/resources/{self.resource.resource_id}/reviews', data={
-                'rating': '5',
-                'comment': 'Great projector!'
-            }, follow_redirects=True)
-            
+            client.post(
+                f"/resources/{self.resource.resource_id}/reviews",
+                data={"rating": "5", "comment": "Great projector!"},
+                follow_redirects=True,
+            )
+
             # Try to submit second review
-            response = client.post(f'/resources/{self.resource.resource_id}/reviews', data={
-                'rating': '4',
-                'comment': 'Good but not perfect'
-            }, follow_redirects=True)
-            
+            response = client.post(
+                f"/resources/{self.resource.resource_id}/reviews",
+                data={"rating": "4", "comment": "Good but not perfect"},
+                follow_redirects=True,
+            )
+
             # Should be denied
-            assert b'already' in response.data.lower() or b'existing' in response.data.lower()
-            
+            assert b"already" in response.data.lower() or b"existing" in response.data.lower()
+
             # Verify only one review exists
             reviews = ReviewRepository.get_by_resource(self.resource.resource_id)
             student_reviews = [r for r in reviews if r.reviewer_id == self.student.user_id]
@@ -169,28 +148,25 @@ class TestReviewFlow:
                 resource_id=self.resource.resource_id,
                 reviewer_id=self.student.user_id,
                 rating=4,
-                comment='Good projector'
+                comment="Good projector",
             )
-            
+
             # Login as student
-            client.post('/auth/login', data={
-                'email': 'student@test.com',
-                'password': 'password123'
-            }, follow_redirects=True)
-            
+            _login(client, self.student_creds["email"], self.student_creds["password"])
+
             # Edit review
-            response = client.post(f'/reviews/{review.review_id}', data={
-                '_method': 'PUT',
-                'rating': '5',
-                'comment': 'Excellent projector! Updated my review.'
-            }, follow_redirects=True)
-            
+            response = client.put(
+                f"/reviews/{review.review_id}",
+                data={"rating": "5", "comment": "Excellent projector! Updated my review."},
+                follow_redirects=True,
+            )
+
             assert response.status_code == 200
-            
+
             # Verify review was updated
             updated_review = ReviewRepository.get_by_id(review.review_id)
             assert updated_review.rating == 5
-            assert 'Updated my review' in updated_review.comment
+            assert "Updated my review" in updated_review.comment
 
     def test_delete_own_review(self, client, app):
         """Test user can delete their own review"""
@@ -200,20 +176,17 @@ class TestReviewFlow:
                 resource_id=self.resource.resource_id,
                 reviewer_id=self.student.user_id,
                 rating=4,
-                comment='Test review'
+                comment="Test review",
             )
-            
+
             # Login as student
-            client.post('/auth/login', data={
-                'email': 'student@test.com',
-                'password': 'password123'
-            }, follow_redirects=True)
-            
+            _login(client, self.student_creds["email"], self.student_creds["password"])
+
             # Delete review
-            response = client.post(f'/reviews/{review.review_id}/delete', follow_redirects=True)
-            
+            response = client.post(f"/reviews/{review.review_id}/delete", follow_redirects=True)
+
             assert response.status_code == 200
-            
+
             # Verify review was deleted
             deleted_review = ReviewRepository.get_by_id(review.review_id)
             assert deleted_review is None
@@ -226,37 +199,34 @@ class TestReviewFlow:
                 resource_id=self.resource.resource_id,
                 reviewer_id=self.student.user_id,
                 rating=4,
-                comment='Student review'
+                comment="Student review",
             )
-            
+
             # Create another student
             student2 = UserRepository.create(
                 name="Student Two",
                 email="student2@test.com",
                 password="password123",
-                role="student"
+                role="student",
             )
-            
+
             # Login as student2
-            client.post('/auth/login', data={
-                'email': 'student2@test.com',
-                'password': 'password123'
-            }, follow_redirects=True)
-            
+            _login(client, student2.email, "password123")
+
             # Try to edit student's review
-            response = client.post(f'/reviews/{review.review_id}', data={
-                '_method': 'PUT',
-                'rating': '1',
-                'comment': 'Hacked!'
-            }, follow_redirects=True)
-            
+            response = client.put(
+                f"/reviews/{review.review_id}",
+                data={"rating": "1", "comment": "Hacked!"},
+                follow_redirects=True,
+            )
+
             # Should be denied (403 or redirect with error)
             assert response.status_code in [200, 403]
-            
+
             # Verify review was not changed
             unchanged_review = ReviewRepository.get_by_id(review.review_id)
             assert unchanged_review.rating == 4
-            assert unchanged_review.comment == 'Student review'
+            assert unchanged_review.comment == "Student review"
 
     def test_admin_hide_review(self, client, app):
         """Test admin can hide inappropriate reviews"""
@@ -266,20 +236,17 @@ class TestReviewFlow:
                 resource_id=self.resource.resource_id,
                 reviewer_id=self.student.user_id,
                 rating=1,
-                comment='Inappropriate content here'
+                comment="Inappropriate content here",
             )
-            
+
             # Login as admin
-            client.post('/auth/login', data={
-                'email': 'admin@test.com',
-                'password': 'password123'
-            }, follow_redirects=True)
-            
+            _login(client, self.admin_creds["email"], self.admin_creds["password"])
+
             # Hide review
-            response = client.post(f'/reviews/{review.review_id}/hide', follow_redirects=True)
-            
+            response = client.post(f"/reviews/{review.review_id}/hide", follow_redirects=True)
+
             assert response.status_code == 200
-            
+
             # Verify review was hidden
             hidden_review = ReviewRepository.get_by_id(review.review_id)
             assert hidden_review.is_hidden is True
@@ -292,22 +259,18 @@ class TestReviewFlow:
                 resource_id=self.resource.resource_id,
                 reviewer_id=self.student.user_id,
                 rating=4,
-                comment='Good review'
+                comment="Good review",
             )
-            review.is_hidden = True
-            ReviewRepository.update(review)
-            
+            ReviewRepository.hide(review.review_id, self.admin.user_id, "Initial moderation")
+
             # Login as admin
-            client.post('/auth/login', data={
-                'email': 'admin@test.com',
-                'password': 'password123'
-            }, follow_redirects=True)
-            
+            _login(client, self.admin_creds["email"], self.admin_creds["password"])
+
             # Unhide review
-            response = client.post(f'/reviews/{review.review_id}/unhide', follow_redirects=True)
-            
+            response = client.post(f"/reviews/{review.review_id}/unhide", follow_redirects=True)
+
             assert response.status_code == 200
-            
+
             # Verify review was unhidden
             unhidden_review = ReviewRepository.get_by_id(review.review_id)
             assert unhidden_review.is_hidden is False
@@ -320,21 +283,18 @@ class TestReviewFlow:
                 resource_id=self.resource.resource_id,
                 reviewer_id=self.student.user_id,
                 rating=4,
-                comment='Test review'
+                comment="Test review",
             )
-            
+
             # Login as staff (not admin)
-            client.post('/auth/login', data={
-                'email': 'staff@test.com',
-                'password': 'password123'
-            }, follow_redirects=True)
-            
+            _login(client, self.staff_creds["email"], self.staff_creds["password"])
+
             # Try to hide review
-            response = client.post(f'/reviews/{review.review_id}/hide', follow_redirects=True)
-            
+            response = client.post(f"/reviews/{review.review_id}/hide", follow_redirects=True)
+
             # Should be denied (403 or redirect with error)
             assert response.status_code in [200, 403]
-            
+
             # Verify review was not hidden
             unchanged_review = ReviewRepository.get_by_id(review.review_id)
             assert unchanged_review.is_hidden is False
@@ -349,20 +309,20 @@ class TestReviewFlow:
                     name=f"User {i}",
                     email=f"user{i}@test.com",
                     password="password123",
-                    role="student"
+                    role="student",
                 )
-                
+
                 # Create completed booking
-                past_start = datetime.now() - timedelta(days=i+1)
+                past_start = datetime.now() - timedelta(days=i + 1)
                 BookingRepository.create(
                     resource_id=self.resource.resource_id,
                     requester_id=user.user_id,
                     start_datetime=past_start,
                     end_datetime=past_start + timedelta(hours=1),
-                    status='completed'
+                    status="completed",
                 )
                 users.append(user)
-            
+
             # Create reviews with ratings: 5, 4, 3 (average = 4.0)
             ratings = [5, 4, 3]
             for user, rating in zip(users, ratings):
@@ -370,13 +330,12 @@ class TestReviewFlow:
                     resource_id=self.resource.resource_id,
                     reviewer_id=user.user_id,
                     rating=rating,
-                    comment=f'Rating {rating} review'
+                    comment=f"Rating {rating} review",
                 )
-            
+
             # Get resource and check average rating
-            resource = ResourceRepository.get_by_id(self.resource.resource_id)
             reviews = ReviewRepository.get_by_resource(self.resource.resource_id)
-            
+
             # Calculate average
             if reviews:
                 avg_rating = sum(r.rating for r in reviews) / len(reviews)
@@ -386,37 +345,34 @@ class TestReviewFlow:
         """Test review comment minimum length validation"""
         with app.app_context():
             # Login as student
-            client.post('/auth/login', data={
-                'email': 'student@test.com',
-                'password': 'password123'
-            }, follow_redirects=True)
-            
+            _login(client, self.student_creds["email"], self.student_creds["password"])
+
             # Try to submit review with short comment
-            response = client.post(f'/resources/{self.resource.resource_id}/reviews', data={
-                'rating': '5',
-                'comment': 'Too short'  # Less than 10 characters
-            }, follow_redirects=True)
-            
+            response = client.post(
+                f"/resources/{self.resource.resource_id}/reviews",
+                data={"rating": "5", "comment": "Too short"},  # Less than 10 characters
+                follow_redirects=True,
+            )
+
             # Should show validation error
-            assert b'10' in response.data or b'characters' in response.data.lower()
+            assert b"10" in response.data or b"characters" in response.data.lower()
 
     def test_review_requires_rating(self, client, app):
         """Test that reviews require a rating"""
         with app.app_context():
             # Login as student
-            client.post('/auth/login', data={
-                'email': 'student@test.com',
-                'password': 'password123'
-            }, follow_redirects=True)
-            
+            _login(client, self.student_creds["email"], self.student_creds["password"])
+
             # Try to submit review without rating
-            response = client.post(f'/resources/{self.resource.resource_id}/reviews', data={
-                'comment': 'This is a comment without a rating'
-            }, follow_redirects=True)
-            
+            response = client.post(
+                f"/resources/{self.resource.resource_id}/reviews",
+                data={"comment": "This is a comment without a rating"},
+                follow_redirects=True,
+            )
+
             # Should show validation error
             assert response.status_code in [200, 400]
-            
+
             # Verify review was not created
             reviews = ReviewRepository.get_by_resource(self.resource.resource_id)
             assert len(reviews) == 0
@@ -429,16 +385,15 @@ class TestReviewFlow:
                 resource_id=self.resource.resource_id,
                 reviewer_id=self.student.user_id,
                 rating=5,
-                comment='Excellent equipment!'
+                comment="Excellent equipment!",
             )
-            
+
             # View resource detail page
-            response = client.get(f'/resources/{self.resource.resource_id}')
-            
+            response = client.get(f"/resources/{self.resource.resource_id}")
+
             assert response.status_code == 200
-            assert b'Review' in response.data
-            assert b'Excellent equipment' in response.data
-            assert b'Test Student' in response.data
+            assert b"Review" in response.data
+            assert b"Excellent equipment" in response.data
 
     def test_hidden_reviews_not_visible_to_users(self, client, app):
         """Test that hidden reviews are not shown to regular users"""
@@ -448,26 +403,22 @@ class TestReviewFlow:
                 resource_id=self.resource.resource_id,
                 reviewer_id=self.student.user_id,
                 rating=1,
-                comment='Hidden inappropriate content'
+                comment="Hidden inappropriate content",
             )
-            review.is_hidden = True
-            ReviewRepository.update(review)
-            
+            ReviewRepository.hide(review.review_id, self.admin.user_id, "manual hide")
+
             # Login as different student
             student2 = UserRepository.create(
                 name="Student Two",
                 email="student2@test.com",
                 password="password123",
-                role="student"
+                role="student",
             )
-            
-            client.post('/auth/login', data={
-                'email': 'student2@test.com',
-                'password': 'password123'
-            }, follow_redirects=True)
-            
+
+            _login(client, student2.email, "password123")
+
             # View resource detail page
-            response = client.get(f'/resources/{self.resource.resource_id}')
-            
+            response = client.get(f"/resources/{self.resource.resource_id}")
+
             # Hidden content should not be visible
-            assert b'Hidden inappropriate content' not in response.data
+            assert b"Hidden inappropriate content" not in response.data

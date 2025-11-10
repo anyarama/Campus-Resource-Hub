@@ -3,7 +3,8 @@ import { defineConfig, devices } from '@playwright/test'
 const port = Number(process.env.FLASK_RUN_PORT || 5001)
 
 export default defineConfig({
-  testDir: './tests/playwright',
+  testDir: './tests',
+  testMatch: ['playwright/**/*.spec.ts', 'ui/**/*.spec.ts'],
   timeout: 30 * 1000,
   expect: {
     timeout: 5000,

@@ -9,7 +9,7 @@
     <p>Track bookings, category demand, and resource utilization.</p>
   </div>
   <form method="get" class="analytics-period" aria-label="Select reporting window">
-    <select name="period" onchange="this.form.submit()">
+    <select name="period" onchange="this.form.submit()" class="form-control">
       {% for option in [7, 30, 90] %}
         <option value="{{ option }}" {% if period == option %}selected{% endif %}>Last {{ option }} days</option>
       {% endfor %}
@@ -20,7 +20,7 @@
 <section class="admin-analytics__grid">
   <article class="card admin-analytics__card admin-analytics__card--wide">
     <header class="card__header">
-      <h2><i data-lucide="trending-up"></i> Bookings per day</h2>
+      <h2><i data-lucide="trending-up" class="icon icon-sm"></i> Bookings per day</h2>
       <small class="text-muted">Rolling window of {{ period }} days</small>
     </header>
     <canvas id="bookingsLineChart" role="img" aria-label="Bookings per day line chart"></canvas>
@@ -28,7 +28,7 @@
 
   <article class="card admin-analytics__card">
     <header class="card__header">
-      <h2><i data-lucide="bar-chart-3"></i> Popular categories</h2>
+      <h2><i data-lucide="bar-chart-3" class="icon icon-sm"></i> Popular categories</h2>
       <small class="text-muted">Bookings by resource type</small>
     </header>
     <canvas id="categoriesBarChart" role="img" aria-label="Popular categories bar chart"></canvas>
@@ -36,7 +36,7 @@
 
   <article class="card admin-analytics__card">
     <header class="card__header">
-      <h2><i data-lucide="pie-chart"></i> Utilization rate</h2>
+      <h2><i data-lucide="pie-chart" class="icon icon-sm"></i> Utilization rate</h2>
       <small class="text-muted">Resources booked vs. available</small>
     </header>
     <canvas id="utilizationDoughnutChart" role="img" aria-label="Resource utilization chart"></canvas>

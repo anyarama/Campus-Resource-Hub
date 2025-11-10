@@ -86,15 +86,16 @@ def create_app(config_name: Optional[str] = None) -> Flask:
     register_cli_commands(app)
 
     # Register Vite asset helper for manifest-aware URLs
-    app.jinja_env.globals['asset_url'] = asset_url
-    app.jinja_env.globals['vite_asset'] = vite_asset
+    app.jinja_env.globals["asset_url"] = asset_url
+    app.jinja_env.globals["vite_asset"] = vite_asset
 
     # Add Cache-Control headers for development (per Task A requirement)
     @app.before_request
     def add_cache_headers():
         """Prevent caching of assets during development to avoid stale manifest issues."""
         from flask import request
-        if app.debug and request.path.startswith('/static/dist/'):
+
+        if app.debug and request.path.startswith("/static/dist/"):
             # Will be applied in after_request
             pass
 
@@ -102,43 +103,44 @@ def create_app(config_name: Optional[str] = None) -> Flask:
     def apply_cache_headers(response):
         """Apply Cache-Control headers to static assets in development mode."""
         from flask import request
-        if app.debug and request.path.startswith('/static/dist/'):
-            response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
-            response.headers['Pragma'] = 'no-cache'
-            response.headers['Expires'] = '0'
+
+        if app.debug and request.path.startswith("/static/dist/"):
+            response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+            response.headers["Pragma"] = "no-cache"
+            response.headers["Expires"] = "0"
         return response
 
-    @app.route('/_debug/assets')
+    @app.route("/_debug/assets")
     def _debug_assets():
         """
         Debug endpoint to diagnose asset resolution issues.
         Shows manifest location, resolved URLs, and file existence.
         """
         from src.util.assets import _manifest_path
-        
+
         # Get resolved asset URLs
-        css_url = asset_url('style')
-        js_url = asset_url('enterpriseJs')
-        
+        css_url = asset_url("style")
+        js_url = asset_url("enterpriseJs")
+
         # Check manifest existence
         manifest_path = _manifest_path()
-        manifest_vite = os.path.join(app.root_path, 'static', 'dist', '.vite', 'manifest.json')
-        manifest_root = os.path.join(app.root_path, 'static', 'dist', 'manifest.json')
-        
+        manifest_vite = os.path.join(app.root_path, "static", "dist", ".vite", "manifest.json")
+        manifest_root = os.path.join(app.root_path, "static", "dist", "manifest.json")
+
         manifest_vite_exists = os.path.exists(manifest_vite)
         manifest_root_exists = os.path.exists(manifest_root)
-        
+
         # Check if resolved files exist
         # Extract filename from URL (remove /static/ prefix)
-        css_file = css_url.replace('/static/', '') if css_url.startswith('/static/') else css_url
-        js_file = js_url.replace('/static/', '') if js_url.startswith('/static/') else js_url
-        
-        css_path = os.path.join(app.root_path, 'static', css_file)
-        js_path = os.path.join(app.root_path, 'static', js_file)
-        
+        css_file = css_url.replace("/static/", "") if css_url.startswith("/static/") else css_url
+        js_file = js_url.replace("/static/", "") if js_url.startswith("/static/") else js_url
+
+        css_path = os.path.join(app.root_path, "static", css_file)
+        js_path = os.path.join(app.root_path, "static", js_file)
+
         css_exists = os.path.exists(css_path)
         js_exists = os.path.exists(js_path)
-        
+
         return f"""<pre>
 === Asset Resolution Debug ===
 
@@ -160,7 +162,6 @@ Status:
 </pre>"""
 
     return app
-
 
 
 def initialize_extensions(app: Flask) -> None:
@@ -222,28 +223,29 @@ def register_blueprints(app: Flask) -> None:
     app.register_blueprint(auth_bp, url_prefix="/auth")
     app.register_blueprint(resources_bp)
     app.register_blueprint(bookings_bp)  # Phase 6: Bookings
-    app.register_blueprint(reviews_bp)   # Phase 6: Reviews
+    app.register_blueprint(reviews_bp)  # Phase 6: Reviews
     app.register_blueprint(messages_bp)  # Phase 7: Messages
-    app.register_blueprint(admin_bp)     # Phase 8: Admin Dashboard
-    app.register_blueprint(concierge_bp) # Phase 9: AI Concierge
+    app.register_blueprint(admin_bp)  # Phase 8: Admin Dashboard
+    app.register_blueprint(concierge_bp)  # Phase 9: AI Concierge
 
     # Homepage route - redirect to appropriate page based on auth status
     @app.route("/")
     def index():
         from flask import redirect, url_for
         from flask_login import current_user
-        
+
         if current_user.is_authenticated:
             # Redirect authenticated users to resources dashboard
-            return redirect(url_for('resources.dashboard'))
+            return redirect(url_for("resources.dashboard"))
         else:
             # Redirect unauthenticated users to login page
-            return redirect(url_for('auth.login'))
+            return redirect(url_for("auth.login"))
 
     @app.route("/health")
     def health_check():
         """Health check endpoint for deployment monitoring."""
         return {"status": "healthy", "database": "connected" if db else "not initialized"}
+
 
 def register_error_handlers(app: Flask) -> None:
     """
@@ -255,22 +257,22 @@ def register_error_handlers(app: Flask) -> None:
 
     @app.errorhandler(404)
     def not_found_error(error):
-        return render_template('errors/404.html'), 404
+        return render_template("errors/404.html"), 404
 
     @app.errorhandler(403)
     def forbidden_error(error):
         app.logger.error(f"403 Forbidden error: {error}")
-        return render_template('errors/403.html'), 403
+        return render_template("errors/403.html"), 403
 
     @app.errorhandler(500)
     def internal_error(error):
         db.session.rollback()  # Rollback any failed transactions
         app.logger.error(f"Internal error: {error}")
-        return render_template('errors/500.html'), 500
+        return render_template("errors/500.html"), 500
 
     @app.errorhandler(401)
     def unauthorized_error(error):
-        return render_template('errors/401.html'), 401
+        return render_template("errors/401.html"), 401
 
 
 def register_shell_context(app: Flask) -> None:

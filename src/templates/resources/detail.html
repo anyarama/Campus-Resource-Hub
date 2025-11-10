@@ -33,26 +33,26 @@
               {% endfor %}
             </div>
             <div class="carousel__nav carousel__nav--prev">
-              <button type="button" data-carousel-prev aria-label="Previous image">
-                <i data-lucide="chevron-left"></i>
+              <button type="button" data-carousel-prev aria-label="Previous image" class="btn btn--primary">
+                <i data-lucide="chevron-left" class="icon icon-sm"></i>
               </button>
             </div>
             <div class="carousel__nav carousel__nav--next">
-              <button type="button" data-carousel-next aria-label="Next image">
-                <i data-lucide="chevron-right"></i>
+              <button type="button" data-carousel-next aria-label="Next image" class="btn btn--primary">
+                <i data-lucide="chevron-right" class="icon icon-sm"></i>
               </button>
             </div>
             <div class="carousel__controls">
               <span class="carousel__counter" data-carousel-counter>1 / {{ images|length }}</span>
-              <button type="button" class="carousel__fullscreen" data-carousel-fullscreen aria-label="Toggle fullscreen">
-                <i data-lucide="maximize-2"></i>
+              <button type="button" class="carousel__fullscreen btn btn--primary" data-carousel-fullscreen aria-label="Toggle fullscreen">
+                <i data-lucide="maximize-2" class="icon icon-sm"></i>
               </button>
             </div>
           </div>
           {% if images|length > 1 %}
           <div class="carousel__thumbnails">
             {% for image in images %}
-            <button type="button" class="carousel__thumb{% if loop.first %} is-active{% endif %}" aria-label="Go to image {{ loop.index }}">
+            <button type="button" class="carousel__thumb{% if loop.first %} is-active{% endif %} btn btn--primary" aria-label="Go to image {{ loop.index }}">
               <img src="{{ url_for('static', filename='uploads/' + image) }}" alt="Thumbnail {{ loop.index }}">
             </button>
             {% endfor %}
@@ -62,7 +62,7 @@
       {% else %}
         <div class="resource-carousel resource-carousel--empty">
           <div class="resource-carousel__placeholder">
-            <i data-lucide="image"></i>
+            <i data-lucide="image" class="icon icon-sm"></i>
             <p>No images uploaded yet</p>
           </div>
         </div>
@@ -79,25 +79,25 @@
         <div class="resource-meta">
           {% if average_rating %}
           <div class="resource-meta__item">
-            <i data-lucide="star" class="icon-filled"></i>
+            <i data-lucide="star" class="icon-filled icon icon-sm"></i>
             <strong>{{ average_rating }}</strong>
             <span class="text-muted">({{ review_count }} reviews)</span>
           </div>
           {% else %}
           <div class="resource-meta__item text-muted">
-            <i data-lucide="star"></i>
+            <i data-lucide="star" class="icon icon-sm"></i>
             No reviews yet
           </div>
           {% endif %}
           {% if resource.capacity %}
           <div class="resource-meta__item">
-            <i data-lucide="users"></i>
+            <i data-lucide="users" class="icon icon-sm"></i>
             {{ resource.capacity }} person{{ 's' if resource.capacity != 1 else '' }} max
           </div>
           {% endif %}
           {% if resource.location %}
           <div class="resource-meta__item">
-            <i data-lucide="map-pin"></i>
+            <i data-lucide="map-pin" class="icon icon-sm"></i>
             {{ resource.location }}
           </div>
           {% endif %}
@@ -163,12 +163,12 @@
           data-booking-url="{{ url_for('bookings.new', resource_id=resource.resource_id) }}"
           data-availability-url="{{ url_for('resources.availability', resource_id=resource.resource_id) }}"
         >
-          <i data-lucide="calendar-check"></i>
+          <i data-lucide="calendar-check" class="icon icon-sm"></i>
           Book this resource
         </button>
         {% else %}
         <a href="{{ url_for('bookings.new', resource_id=resource.resource_id) }}" class="btn btn--primary btn--full">
-          <i data-lucide="calendar-check"></i>
+          <i data-lucide="calendar-check" class="icon icon-sm"></i>
           View booking options
         </a>
         {% endif %}
@@ -181,7 +181,7 @@
         </div>
         <div class="resource-owner">
           <div class="resource-owner__avatar">
-            <i data-lucide="shield"></i>
+            <i data-lucide="shield" class="icon icon-sm"></i>
           </div>
           <div>
             <p class="resource-owner__name">{{ resource.owner.name if resource.owner else 'Campus Staff' }}</p>
@@ -192,11 +192,11 @@
         </div>
         <ul class="resource-list">
           <li>
-            <i data-lucide="mail"></i>
+            <i data-lucide="mail" class="icon icon-sm"></i>
             <span>{{ resource.owner.email if resource.owner else 'Contact via messaging' }}</span>
           </li>
           <li>
-            <i data-lucide="clock-3"></i>
+            <i data-lucide="clock-3" class="icon icon-sm"></i>
             <span>Replies within 1 business day</span>
           </li>
         </ul>
@@ -246,13 +246,13 @@
           <h2>{{ review_count }} review{{ 's' if review_count != 1 else '' }}</h2>
         </div>
         {% if can_review %}
-          <button type="button" class="btn btn--outline" data-drawer-open="reviewSheet">
-            <i data-lucide="star"></i>
+          <button type="button" class="btn btn--outline btn--primary" data-drawer-open="reviewSheet">
+            <i data-lucide="star" class="icon icon-sm"></i>
             Write a review
           </button>
         {% elif not current_user.is_authenticated %}
           <a href="{{ url_for('auth.login') }}" class="btn btn--outline">
-            <i data-lucide="log-in"></i>
+            <i data-lucide="log-in" class="icon icon-sm"></i>
             Sign in to review
           </a>
         {% endif %}
@@ -266,20 +266,20 @@
               <div>
                 <p class="review-card__name">{{ review.reviewer.name }}</p>
                 <p class="review-card__meta">
-                  <i data-lucide="clock-3"></i>
+                  <i data-lucide="clock-3" class="icon icon-sm"></i>
                   {{ review.timestamp.strftime('%b %d, %Y') }}
                 </p>
               </div>
               <div class="review-card__badges">
                 {% if review.booking_id %}
                   <span class="chip chip--success">
-                    <i data-lucide="badge-check"></i>
+                    <i data-lucide="badge-check" class="icon icon-sm"></i>
                     Verified booking
                   </span>
                 {% endif %}
                 {% if show_moderation %}
                   <span class="chip chip--info">
-                    <i data-lucide="shield"></i>
+                    <i data-lucide="shield" class="icon icon-sm"></i>
                     {{ 'Hidden' if review.is_hidden else 'Visible' }}
                   </span>
                 {% endif %}
@@ -287,7 +287,7 @@
             </div>
             <div class="review-card__rating">
               {% for star in range(1, 6) %}
-                <i data-lucide="star" class="{% if star <= review.rating %}icon-filled{% endif %}"></i>
+                <i data-lucide="star" class="{% if star <= review.rating %}icon-filled{% endif %} icon icon-sm"></i>
               {% endfor %}
             </div>
             <p class="review-card__body">
@@ -299,7 +299,7 @@
       {% else %}
       <div class="empty-state empty-state--inline">
         <div class="empty-state__icon">
-          <i data-lucide="chat-bubble-oval-ellipsis"></i>
+          <i data-lucide="chat-bubble-oval-ellipsis" class="icon icon-sm"></i>
         </div>
         <h3>No reviews yet</h3>
         <p>Be the first to share feedback after booking.</p>
@@ -314,8 +314,8 @@
 <div id="reviewSheet" class="drawer" role="dialog" aria-modal="true" aria-labelledby="review-sheet-title">
   <div class="drawer-header">
     <h2 id="review-sheet-title">Share your experience</h2>
-    <button type="button" class="drawer-close" data-drawer-close aria-label="Close review drawer">
-      <i data-lucide="x"></i>
+    <button type="button" class="drawer-close btn btn--primary" data-drawer-close aria-label="Close review drawer">
+      <i data-lucide="x" class="icon icon-sm"></i>
     </button>
   </div>
   <div class="drawer-body">
@@ -323,7 +323,7 @@
       {{ csrf_token() }}
       <div class="form-group">
         <label for="review-rating">Rating</label>
-        <select id="review-rating" name="rating" required>
+        <select id="review-rating" name="rating" required class="form-control">
           <option value="">Select...</option>
           {% for value in range(5, 0, -1) %}
             <option value="{{ value }}">{{ value }} - {{ ['Poor','Fair','Good','Very good','Excellent'][value-1] }}</option>
@@ -332,7 +332,7 @@
       </div>
       <div class="form-group">
         <label for="review-comment">Comments</label>
-        <textarea id="review-comment" name="comment" rows="4" placeholder="What should other students know?" required></textarea>
+        <textarea id="review-comment" name="comment" rows="4" placeholder="What should other students know?" required class="form-control"></textarea>
       </div>
       <button type="submit" class="btn btn--primary btn--full">
         Submit review

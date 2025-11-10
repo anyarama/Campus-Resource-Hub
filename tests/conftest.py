@@ -5,9 +5,13 @@ Provides shared fixtures for all test files.
 Per .clinerules: Test fixtures for database and app context.
 """
 
-import pytest
 import os
 import tempfile
+import importlib.util
+from pathlib import Path
+
+import pytest
+
 from src.app import create_app, db as _db
 
 
@@ -73,3 +77,21 @@ def runner(app):
     Useful for testing CLI commands.
     """
     return app.test_cli_runner()
+
+
+@pytest.fixture(scope="function")
+def demo_seed(app):
+    """
+    Seed canonical demo data shared with smoke/Playwright suites.
+
+    Returns credential + resource metadata for convenience.
+    """
+    with app.app_context():
+        return smoke_utils.seed_demo_data()
+
+
+SMOKE_UTILS_PATH = Path(__file__).resolve().parents[1] / "scripts" / "dev" / "smoke_utils.py"
+_spec = importlib.util.spec_from_file_location("smoke_utils", SMOKE_UTILS_PATH)
+smoke_utils = importlib.util.module_from_spec(_spec)
+assert _spec and _spec.loader  # pragma: no cover
+_spec.loader.exec_module(smoke_utils)  # type: ignore[arg-type]

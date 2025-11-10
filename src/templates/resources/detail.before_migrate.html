@@ -1,4 +1,5 @@
-{% extends"base.html" %}
+{% extends "base.html" %}
+
 {% from"reviews/_star_rating.html" import render_rating_summary %}
 {% from"reviews/_review_form.html" import render_review_form %}
 {% from"reviews/_review_list.html" import render_review_list %}
@@ -23,7 +24,7 @@
         <div class="carousel-indicators">
           {% for img in images %}
           <button type="button" data-bs-target="#resourceCarousel" data-bs-slide-to="{{ loop.index0 }}" 
-              {% if loop.first %}class="active" aria-current="true"{% endif %} 
+              {% if loop.first %}class="active btn btn--primary" aria-current="true"{% endif %} 
               aria-label="Slide {{ loop.index }}"></button>
           {% endfor %}
         </div>
@@ -38,11 +39,11 @@
           {% endfor %}
         </div>
         {% if images|length > 1 %}
-        <button class="carousel-control-prev" type="button" data-bs-target="#resourceCarousel" data-bs-slide="prev">
+        <button class="carousel-control-prev btn btn--primary" type="button" data-bs-target="#resourceCarousel" data-bs-slide="prev">
           <span class="carousel-control-prev-icon" aria-hidden="true"></span>
           <span class="visually-hidden">Previous</span>
         </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#resourceCarousel" data-bs-slide="next">
+        <button class="carousel-control-next btn btn--primary" type="button" data-bs-target="#resourceCarousel" data-bs-slide="next">
           <span class="carousel-control-next-icon" aria-hidden="true"></span>
           <span class="visually-hidden">Next</span>
         </button>
@@ -53,7 +54,7 @@
       <div class="card">
         <div class="card-body" style="min-height: 300px; display: flex; align-items: center; justify-content: center;">
           <div>
-            <i class="bi bi-image" style="font-size: 4rem; color: #ccc;"></i>
+            <i class="bi bi-image icon" style="font-size: 4rem; color: var(--brand-600);"></i>
             <p class="text-muted">No images available</p>
           </div>
         </div>
@@ -82,20 +83,20 @@
 
           <!-- Details Grid -->
           <div class="layout-grid">
-            <div class="layout-col">
-              <p class="mb-1"><strong><i class="bi bi-geo-alt"></i> Location:</strong></p>
+            <div class="layout-col" data-col="12">
+              <p class="mb-1"><strong><i class="bi bi-geo-alt icon"></i> Location:</strong></p>
               <p class="text-muted">{{ resource.location or 'Not specified' }}</p>
             </div>
-            <div class="layout-col">
-              <p class="mb-1"><strong><i class="bi bi-people"></i> Capacity:</strong></p>
+            <div class="layout-col" data-col="12">
+              <p class="mb-1"><strong><i class="bi bi-people icon"></i> Capacity:</strong></p>
               <p class="text-muted">{{ resource.capacity or 'Not specified' }}</p>
             </div>
-            <div class="layout-col">
-              <p class="mb-1"><strong><i class="bi bi-calendar-event"></i> Created:</strong></p>
+            <div class="layout-col" data-col="12">
+              <p class="mb-1"><strong><i class="bi bi-calendar-event icon"></i> Created:</strong></p>
               <p class="text-muted">{{ resource.created_at.strftime('%B %d, %Y') if resource.created_at else 'Unknown' }}</p>
             </div>
-            <div class="layout-col">
-              <p class="mb-1"><strong><i class="bi bi-person"></i> Owner:</strong></p>
+            <div class="layout-col" data-col="12">
+              <p class="mb-1"><strong><i class="bi bi-person icon"></i> Owner:</strong></p>
               <p class="text-muted">{{ resource.owner.name if resource.owner else 'Unknown' }}</p>
             </div>
           </div>
@@ -105,7 +106,7 @@
           <div class="mt-4">
             <h5 class="card-title">Availability</h5>
             <div class="alert alert-info">
-              <i class="bi bi-clock"></i> {{ availability.get('description', 'Check with owner for availability') }}
+              <i class="bi bi-clock icon"></i> {{ availability.get('description', 'Check with owner for availability') }}
             </div>
           </div>
           {% endif %}
@@ -123,16 +124,16 @@
         <div class="card" id="reviews">
           <div class="card-header">
             <h5 class="mb-0">
-              <i class="bi bi-chat-left-quote"></i>Reviews
+              <i class="bi bi-chat-left-quote icon"></i>Reviews
             </h5>
           </div>
           <div class="card-body">
-            <i class="bi bi-chat-left-quote" style="font-size: 4rem;"></i>
+            <i class="bi bi-chat-left-quote icon" style="font-size: 4rem;"></i>
             <h5 class="mt-3">No Reviews Yet</h5>
             <p class="text-muted">Be the first to review this resource!</p>
             {% if current_user.is_authenticated and can_review %}
               <a href="#review-form" class="btn btn-primary">
-                <i class="bi bi-star"></i>Write a Review
+                <i class="bi bi-star icon"></i>Write a Review
               </a>
             {% endif %}
           </div>
@@ -152,21 +153,21 @@
             
             <a href="{{ url_for('resources.edit', resource_id=resource.resource_id) }}" 
               class="btn btn-primary">
-              <i class="bi bi-pencil"></i> Edit Resource
+              <i class="bi bi-pencil icon"></i> Edit Resource
             </a>
 
             {% if resource.status == 'draft' %}
             <form method="POST" action="{{ url_for('resources.publish', resource_id=resource.resource_id) }}" class="mb-2">
               <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-              <button type="submit" class="btn btn-success">
-                <i class="bi bi-check-circle"></i> Publish Resource
+              <button type="submit" class="btn btn-success btn--primary">
+                <i class="bi bi-check-circle icon"></i> Publish Resource
               </button>
             </form>
             {% elif resource.status == 'published' %}
             <form method="POST" action="{{ url_for('resources.archive', resource_id=resource.resource_id) }}" class="mb-2">
               <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-              <button type="submit" class="btn btn-warning">
-                <i class="bi bi-archive"></i> Archive Resource
+              <button type="submit" class="btn btn-warning btn--primary">
+                <i class="bi bi-archive icon"></i> Archive Resource
               </button>
             </form>
             {% endif %}
@@ -177,8 +178,8 @@
                onsubmit="return confirm('Are you sure you want to delete this resource? This action cannot be undone.');"
                class="mb-0">
               <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-              <button type="submit" class="btn btn-danger">
-                <i class="bi bi-trash"></i> Delete Resource
+              <button type="submit" class="btn btn-danger btn--primary">
+                <i class="bi bi-trash icon"></i> Delete Resource
               </button>
             </form>
 
@@ -189,14 +190,14 @@
             {% if resource.status == 'published' %}
             <a href="{{ url_for('bookings.new', resource_id=resource.resource_id) }}" 
               class="btn btn-success">
-              <i class="bi bi-calendar-check"></i> Request Booking
+              <i class="bi bi-calendar-check icon"></i> Request Booking
             </a>
             <p class="text-muted small">
-              <i class="bi bi-clock"></i> Choose your preferred date and time
+              <i class="bi bi-clock icon"></i> Choose your preferred date and time
             </p>
             {% else %}
             <div class="alert alert-warning">
-              <i class="bi bi-exclamation-triangle"></i> This resource is not available for booking.
+              <i class="bi bi-exclamation-triangle icon"></i> This resource is not available for booking.
             </div>
             {% endif %}
 
@@ -204,17 +205,17 @@
 
             <a href="{{ url_for('messages.about_resource', resource_id=resource.resource_id) }}" 
               class="btn btn-outline-primary">
-              <i class="bi bi-chat-dots"></i> Message Owner
+              <i class="bi bi-chat-dots icon"></i> Message Owner
             </a>
             <p class="text-muted small">
-              <i class="bi bi-info-circle"></i> Ask questions about this resource
+              <i class="bi bi-info-circle icon"></i> Ask questions about this resource
             </p>
             {% endif %}
           {% else %}
           <!-- Not Authenticated -->
           <h5 class="card-title">Book This Resource</h5>
           <div class="alert alert-info">
-            <i class="bi bi-info-circle"></i> Please <a href="{{ url_for('auth.login') }}">log in</a> to book this resource.
+            <i class="bi bi-info-circle icon"></i> Please <a href="{{ url_for('auth.login') }}">log in</a> to book this resource.
           </div>
           {% endif %}
         </div>
@@ -227,11 +228,11 @@
         </div>
         <div class="card-body">
           <div class="d-flex">
-            <span><i class="bi bi-calendar-check"></i> Bookings:</span>
+            <span><i class="bi bi-calendar-check icon"></i> Bookings:</span>
             <span class="badge badge-info">{{ booking_count }} total</span>
           </div>
           <div class="d-flex">
-            <span><i class="bi bi-star"></i> Reviews:</span>
+            <span><i class="bi bi-star icon"></i> Reviews:</span>
             {% if resource.average_rating %}
               <div>
                 {{ render_rating_summary(resource.average_rating, reviews|length, size='sm') }}
@@ -248,11 +249,11 @@
         <div class="card-body">
           <h6 class="card-title">Share This Resource</h6>
           <div class="d-grid gap-2">
-            <button class="btn btn-outline-primary" disabled>
-              <i class="bi bi-link-45deg"></i> Copy Link
+            <button class="btn btn-outline-primary btn--primary" disabled>
+              <i class="bi bi-link-45deg icon"></i> Copy Link
             </button>
-            <button class="btn btn-outline-info" disabled>
-              <i class="bi bi-envelope"></i> Email
+            <button class="btn btn-outline-info btn--primary" disabled>
+              <i class="bi bi-envelope icon"></i> Email
             </button>
           </div>
         </div>

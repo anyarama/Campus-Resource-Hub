@@ -137,6 +137,17 @@ class BookingRepository:
         return booking
 
     @staticmethod
+    def update_status(booking_id: int, status: str) -> Optional[Booking]:
+        """Update only the booking status."""
+        booking = Booking.query.get(booking_id)
+        if not booking:
+            return None
+        booking.status = status
+        booking.updated_at = datetime.utcnow()
+        db.session.commit()
+        return booking
+
+    @staticmethod
     def delete(booking_id: int) -> bool:
         """Delete booking by ID."""
         booking = Booking.query.get(booking_id)

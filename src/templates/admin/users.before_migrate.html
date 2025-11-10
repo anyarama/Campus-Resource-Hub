@@ -1,4 +1,5 @@
-{% extends"base.html" %}
+{% extends "base.html" %}
+
 
 {% block title %}User Management - Campus Resource Hub{% endblock %}
 
@@ -38,13 +39,13 @@
 
 {% block content %}
 <div class="layout-grid">
-  <div class="layout-col">
-    <h1 class="h2"><i class="bi bi-people"></i> User Management</h1>
+  <div class="layout-col" data-col="12">
+    <h1 class="h2"><i class="bi bi-people icon"></i> User Management</h1>
     <p class="text-muted">Manage platform users and permissions</p>
   </div>
-  <div class="layout-col">
+  <div class="layout-col" data-col="12">
     <a href="{{ url_for('admin.dashboard') }}" class="btn btn-secondary">
-      <i class="bi bi-arrow-left"></i> Back to Dashboard
+      <i class="bi bi-arrow-left icon"></i> Back to Dashboard
     </a>
   </div>
 </div>
@@ -54,21 +55,21 @@
   <div class="card-body">
     <form method="GET" action="{{ url_for('admin.users') }}" class="layout-grid g-3 align-items-end">
       <!-- Search -->
-      <div class="layout-col">
+      <div class="layout-col" data-col="12">
         <label for="search" class="form-label">Search Users</label>
         <div class="input-group">
           <input type="text" class="form-control" id="search" name="search" 
               placeholder="Search by name or email..." value="{{ request.args.get('search', '') }}">
-          <button class="btn btn-primary" type="submit">
-            <i class="bi bi-search"></i> Search
+          <button class="btn btn-primary btn--primary" type="submit">
+            <i class="bi bi-search icon"></i> Search
           </button>
         </div>
       </div>
       
       <!-- Role Filter -->
-      <div class="layout-col">
+      <div class="layout-col" data-col="12">
         <label for="role" class="form-label">Role</label>
-        <select class="form-select" id="role" name="role" onchange="this.form.submit()">
+        <select class="form-select form-control" id="role" name="role" onchange="this.form.submit()">
           <option value="">All Roles</option>
           <option value="admin" {{ 'selected' if request.args.get('role') == 'admin' else '' }}>Admin</option>
           <option value="staff" {{ 'selected' if request.args.get('role') == 'staff' else '' }}>Staff</option>
@@ -77,9 +78,9 @@
       </div>
       
       <!-- Status Filter -->
-      <div class="layout-col">
+      <div class="layout-col" data-col="12">
         <label for="status" class="form-label">Status</label>
-        <select class="form-select" id="status" name="status" onchange="this.form.submit()">
+        <select class="form-select form-control" id="status" name="status" onchange="this.form.submit()">
           <option value="">All Status</option>
           <option value="active" {{ 'selected' if request.args.get('status') == 'active' else '' }}>Active</option>
           <option value="suspended" {{ 'selected' if request.args.get('status') == 'suspended' else '' }}>Suspended</option>
@@ -101,7 +102,7 @@
         <span class="badge badge-secondary">Status: {{ request.args.get('status') }}</span>
       {% endif %}
       <a href="{{ url_for('admin.users') }}" class="badge badge-danger">
-        <i class="bi bi-x"></i> Clear All
+        <i class="bi bi-x icon"></i> Clear All
       </a>
     </div>
     {% endif %}
@@ -110,7 +111,7 @@
 
 <!-- User Statistics -->
 <div class="layout-grid g-3">
-  <div class="layout-col">
+  <div class="layout-col" data-col="12">
     <div class="card">
       <div class="card-body">
         <h3 class="mb-0">{{ users|length }}</h3>
@@ -118,7 +119,7 @@
       </div>
     </div>
   </div>
-  <div class="layout-col">
+  <div class="layout-col" data-col="12">
     <div class="card">
       <div class="card-body">
         <h3 class="mb-0">{{ users|selectattr('is_active')|list|length }}</h3>
@@ -126,7 +127,7 @@
       </div>
     </div>
   </div>
-  <div class="layout-col">
+  <div class="layout-col" data-col="12">
     <div class="card">
       <div class="card-body">
         <h3 class="mb-0">{{ users|rejectattr('is_active')|list|length }}</h3>
@@ -134,7 +135,7 @@
       </div>
     </div>
   </div>
-  <div class="layout-col">
+  <div class="layout-col" data-col="12">
     <div class="card">
       <div class="card-body">
         <h3 class="mb-0 text-primary">{{ page }}</h3>
@@ -152,7 +153,7 @@
   <div class="card-body">
     {% if users %}
     <div class="table-responsive">
-      <table class="table table-hover user-table">
+      <table class="table table-hover user-table table--interactive">
         <thead class="table-light">
           <tr>
             <th>User</th>
@@ -196,11 +197,11 @@
             <td>
               {% if user.is_active %}
                 <span class="badge badge-success user-status-badge">
-                  <i class="bi bi-check-circle"></i> Active
+                  <i class="bi bi-check-circle icon"></i> Active
                 </span>
               {% else %}
                 <span class="badge badge-danger user-status-badge">
-                  <i class="bi bi-x-circle"></i> Suspended
+                  <i class="bi bi-x-circle icon"></i> Suspended
                 </span>
               {% endif %}
             </td>
@@ -209,30 +210,30 @@
               <div class="btn-group">
                 <a href="{{ url_for('admin.user_detail', user_id=user.user_id) }}" 
                   class="btn btn-outline-info action-btn" title="View Details">
-                  <i class="bi bi-eye"></i>
+                  <i class="bi bi-eye icon"></i>
                 </a>
                 
                 {% if user.role != 'admin' and user.user_id != current_user.user_id %}
                   {% if user.is_active %}
-                    <button type="button" class="btn btn-outline-warning action-btn" 
+                    <button type="button" class="btn btn-outline-warning action-btn btn--primary" 
                         data-bs-toggle="modal" data-bs-target="#suspendModal{{ user.user_id }}"
                         title="Suspend User">
-                      <i class="bi bi-pause-circle"></i>
+                      <i class="bi bi-pause-circle icon"></i>
                     </button>
                   {% else %}
                     <form method="POST" action="{{ url_for('admin.activate_user', user_id=user.user_id) }}" 
                        style="display: inline;" onsubmit="return confirm('Activate this user?');">
                       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                      <button type="submit" class="btn btn-outline-success action-btn" title="Activate User">
-                        <i class="bi bi-play-circle"></i>
+                      <button type="submit" class="btn btn-outline-success action-btn btn--primary" title="Activate User">
+                        <i class="bi bi-play-circle icon"></i>
                       </button>
                     </form>
                   {% endif %}
                   
-                  <button type="button" class="btn btn-outline-danger action-btn" 
+                  <button type="button" class="btn btn-outline-danger action-btn btn--primary" 
                       data-bs-toggle="modal" data-bs-target="#deleteModal{{ user.user_id }}"
                       title="Delete User">
-                    <i class="bi bi-trash"></i>
+                    <i class="bi bi-trash icon"></i>
                   </button>
                 {% endif %}
               </div>
@@ -245,17 +246,17 @@
               <div class="modal-content">
                 <div class="modal-header">
                   <h5 class="modal-title">Suspend User</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                  <button type="button" class="btn-close btn btn--primary" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                   <p>Are you sure you want to suspend <strong>{{ user.name }}</strong>?</p>
                   <p class="text-muted small">Suspended users cannot log in or access the platform.</p>
                 </div>
                 <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                  <button type="button" class="btn btn-secondary btn--primary" data-bs-dismiss="modal">Cancel</button>
                   <form method="POST" action="{{ url_for('admin.suspend_user', user_id=user.user_id) }}" style="display: inline;">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                    <button type="submit" class="btn btn-warning">Suspend User</button>
+                    <button type="submit" class="btn btn-warning btn--primary">Suspend User</button>
                   </form>
                 </div>
               </div>
@@ -268,7 +269,7 @@
               <div class="modal-content">
                 <div class="modal-header bg-danger text-white">
                   <h5 class="modal-title">Delete User</h5>
-                  <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                  <button type="button" class="btn-close btn-close-white btn btn--primary" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                   <p><strong>⚠️ WARNING: This action cannot be undone!</strong></p>
@@ -283,10 +284,10 @@
                   </ul>
                 </div>
                 <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                  <button type="button" class="btn btn-secondary btn--primary" data-bs-dismiss="modal">Cancel</button>
                   <form method="POST" action="{{ url_for('admin.delete_user', user_id=user.user_id) }}" style="display: inline;">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                    <button type="submit" class="btn btn-danger">Delete Permanently</button>
+                    <button type="submit" class="btn btn-danger btn--primary">Delete Permanently</button>
                   </form>
                 </div>
               </div>
@@ -298,7 +299,7 @@
     </div>
     {% else %}
     <div class="text-center">
-      <i class="bi bi-inbox fs-1"></i>
+      <i class="bi bi-inbox fs-1 icon"></i>
       <p class="text-muted">No users found matching your criteria.</p>
       <a href="{{ url_for('admin.users') }}" class="btn btn-secondary">Clear Filters</a>
     </div>

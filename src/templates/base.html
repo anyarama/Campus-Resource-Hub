@@ -12,19 +12,11 @@
     <meta name="robots" content="index,follow">
     <link rel="canonical" href="{{ canonical_href }}">
     
-    <!-- Preconnect for performance -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-    
     <!-- Enterprise CSS (Vite build) -->
-    <link rel="stylesheet" href="{{ vite_asset('src/static/scss/enterprise.scss') }}">
-    
-    <!-- Bootstrap Icons (kept for backward compatibility) -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    
+    <link rel="stylesheet" href="{{ vite_asset('enterprise.css') }}">
+
     {% block meta_tags %}{% endblock %}
-    
+
     {% block extra_css %}{% endblock %}
 </head>
 <body data-theme="light">
@@ -248,15 +240,8 @@
     </div>
     
     <!-- Enterprise JS (Vite build) -->
-    <script type="module" src="{{ vite_asset('src/static/js/enterprise.js') }}"></script>
-    <script type="module" src="{{ vite_asset('src/static/js/booking-drawer.js') }}"></script>
-    
-    <!-- Lucide Icons (Optional - uncomment if preferred over Bootstrap Icons) -->
-    <!-- <script type="module">
-      import { createIcons, Home, Grid, Package, Calendar, Mail, Bot, Gauge, Users, TrendingUp, Moon, Sun, User, LogOut } from 'https://cdn.jsdelivr.net/npm/lucide@latest/dist/esm/lucide.js';
-      createIcons();
-    </script> -->
-    
+    <script defer src="{{ vite_asset('app.js') }}"></script>
+
     {% block extra_js %}{% endblock %}
 </body>
 </html>

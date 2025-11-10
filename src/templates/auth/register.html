@@ -46,7 +46,7 @@
                 
                 <div class="form-group">
                     <label for="role" class="form-label">Role</label>
-                    <select class="form-select" id="role" name="role">
+                    <select class="form-select form-control" id="role" name="role">
                         <option value="student" {% if role == 'student' or not role %}selected{% endif %}>Student</option>
                         <option value="staff" {% if role == 'staff' %}selected{% endif %}>Staff</option>
                         <option value="admin" {% if role == 'admin' %}selected{% endif %}>Admin</option>

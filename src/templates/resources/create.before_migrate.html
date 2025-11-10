@@ -1,4 +1,5 @@
-{% extends"base.html" %}
+{% extends "base.html" %}
+
 
 {% block title %}Create New Resource - Campus Resource Hub{% endblock %}
 
@@ -13,7 +14,7 @@
           <li class="breadcrumb-item active" aria-current="page">Create New</li>
         </ol>
       </nav>
-      <h1 class="display-5"><i class="bi bi-plus-circle"></i> Create New Resource</h1>
+      <h1 class="display-5"><i class="bi bi-plus-circle icon"></i> Create New Resource</h1>
       <p class="text-muted">Share your campus resource with the community</p>
     </div>
   </div>
@@ -47,7 +48,7 @@
               <label for="category" class="form-label fw-bold">
                 Category <span class="text-danger">*</span>
               </label>
-              <select class="form-select" id="category" name="category" required>
+              <select class="form-select form-control" id="category" name="category" required>
                 <option value="">-- Select Category --</option>
                 <option value="Study Space">Study Space</option>
                 <option value="Equipment">Equipment</option>
@@ -80,7 +81,7 @@
 
             <!-- Location and Capacity Row -->
             <div class="layout-grid">
-              <div class="layout-col">
+              <div class="layout-col" data-col="12">
                 <label for="location" class="form-label fw-bold">
                   Location <span class="text-danger">*</span>
                 </label>
@@ -93,7 +94,7 @@
                     maxlength="200">
                 <div class="form-text">Where is this resource located?</div>
               </div>
-              <div class="layout-col">
+              <div class="layout-col" data-col="12">
                 <label for="capacity" class="form-label fw-bold">
                   Capacity (Optional)
                 </label>
@@ -113,14 +114,13 @@
               <label for="images" class="form-label fw-bold">
                 Images (Optional)
               </label>
-              <input type="file" 
-                  class="form-control" 
+              <input type="file"  
                   id="images" 
                   name="images" 
                   accept="image/jpeg,image/jpg,image/png,image/gif"
                   multiple>
               <div class="form-text">
-                <i class="bi bi-info-circle"></i> Upload up to 5 images (JPEG, PNG, GIF). Max 2MB per image.
+                <i class="bi bi-info-circle icon"></i> Upload up to 5 images (JPEG, PNG, GIF). Max 2MB per image.
               </div>
               
               <!-- Image Preview -->
@@ -159,10 +159,10 @@
             <hr class="my-4">
             <div class="d-flex">
               <a href="{{ url_for('resources.my_resources') }}" class="btn btn-secondary">
-                <i class="bi bi-arrow-left"></i> Cancel
+                <i class="bi bi-arrow-left icon"></i> Cancel
               </a>
-              <button type="submit" class="btn btn-primary">
-                <i class="bi bi-check-circle"></i> Create Resource
+              <button type="submit" class="btn btn-primary btn--primary">
+                <i class="bi bi-check-circle icon"></i> Create Resource
               </button>
             </div>
           </form>
@@ -172,7 +172,7 @@
       <!-- Help Section -->
       <div class="card">
         <div class="card-body">
-          <h6 class="card-title"><i class="bi bi-lightbulb"></i> Tips for Creating Great Resources</h6>
+          <h6 class="card-title"><i class="bi bi-lightbulb icon"></i> Tips for Creating Great Resources</h6>
           <ul class="mb-0 small">
             <li>Use clear, descriptive titles that help users find your resource</li>
             <li>Include high-quality photos showing the resource from multiple angles</li>
@@ -189,18 +189,18 @@
 <style>
   /* Form styling enhancements */
   .form-label.fw-bold {
-    color: #2c3e50;
+    color: var(--brand-600);
   }
 
   .form-control:focus,
   .form-select:focus {
-    border-color: #4a90e2;
+    border-color: var(--brand-600);
     box-shadow: 0 0 0 0.2rem rgba(74, 144, 226, 0.25);
   }
 
   .form-check-input:checked {
-    background-color: #4a90e2;
-    border-color: #4a90e2;
+    background-color: var(--brand-600);
+    border-color: var(--brand-600);
   }
 
   /* Image preview styling */
@@ -208,7 +208,7 @@
     position: relative;
     border-radius: 0.5rem;
     overflow: hidden;
-    border: 2px solid #dee2e6;
+    border: 2px solid var(--brand-600);
   }
 
   #imagePreview .preview-item img {
@@ -234,7 +234,7 @@
   }
 
   #imagePreview .preview-item .remove-btn:hover {
-    background: #dc3545;
+    background: var(--brand-600);
     color: white;
   }
 
@@ -246,7 +246,7 @@
   /* Character counter */
   #charCount {
     font-weight: bold;
-    color: #4a90e2;
+    color: var(--brand-600);
   }
 </style>
 
@@ -260,11 +260,11 @@
     
     // Change color based on length
     if (this.value.length > 1800) {
-      charCount.style.color = '#dc3545'; // Red
+      charCount.style.color = 'var(--brand-600)'; // Red
     } else if (this.value.length > 1500) {
-      charCount.style.color = '#ffc107'; // Yellow
+      charCount.style.color = 'var(--brand-600)'; // Yellow
     } else {
-      charCount.style.color = '#4a90e2'; // Blue
+      charCount.style.color = 'var(--brand-600)'; // Blue
     }
   });
 
@@ -311,8 +311,8 @@
         col.innerHTML = `
           <div class="preview-item">
             <img src="${e.target.result}" alt="Preview ${index + 1}">
-            <button type="button" class="remove-btn" onclick="removeImage(${index})" title="Remove image">
-              <i class="bi bi-x"></i>
+            <button type="button" class="remove-btn btn btn--primary" onclick="removeImage(${index})" title="Remove image">
+              <i class="bi bi-x icon"></i>
             </button>
           </div>
         `;

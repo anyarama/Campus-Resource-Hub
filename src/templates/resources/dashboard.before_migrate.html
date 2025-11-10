@@ -1,47 +1,48 @@
-{% extends"base.html" %}
+{% extends "base.html" %}
+
 
 {% block title %}Dashboard - Campus Resource Hub{% endblock %}
 
 {% block main_content %}
 <!-- Welcome Header -->
 <div style="margin-bottom: 2rem;">
-  <h1 style="font-size: 2rem; font-weight: 600; color: #1f2937; margin: 0 0 0.5rem 0;">Welcome, {{ current_user.name }}!</h1>
-  <p style="font-size: 1.125rem; color: #6b7280; margin: 0;">Manage your resources, bookings, and messages all in one place.</p>
+  <h1 style="font-size: 2rem; font-weight: 600; color: var(--brand-600); margin: 0 0 0.5rem 0;">Welcome, {{ current_user.name }}!</h1>
+  <p style="font-size: 1.125rem; color: var(--brand-600); margin: 0;">Manage your resources, bookings, and messages all in one place.</p>
 </div>
 
   <!-- Quick Stats Cards -->
   <div class="layout-grid">
-    <div class="grid-layout-col">
+    <div class="grid-layout-col" data-col="12">
       <div class="card">
         <div class="card-body">
-          <i class="bi bi-box-seam fs-1 text-primary"></i>
+          <i class="bi bi-box-seam fs-1 text-primary icon"></i>
           <h3 class="mt-2">0</h3>
           <p class="text-muted">My Resources</p>
         </div>
       </div>
     </div>
-    <div class="grid-layout-col">
+    <div class="grid-layout-col" data-col="12">
       <div class="card">
         <div class="card-body">
-          <i class="bi bi-calendar-check fs-1"></i>
+          <i class="bi bi-calendar-check fs-1 icon"></i>
           <h3 class="mt-2">0</h3>
           <p class="text-muted">Active Bookings</p>
         </div>
       </div>
     </div>
-    <div class="grid-layout-col">
+    <div class="grid-layout-col" data-col="12">
       <div class="card">
         <div class="card-body">
-          <i class="bi bi-envelope fs-1 text-info"></i>
+          <i class="bi bi-envelope fs-1 text-info icon"></i>
           <h3 class="mt-2">0</h3>
           <p class="text-muted">Unread Messages</p>
         </div>
       </div>
     </div>
-    <div class="grid-layout-col">
+    <div class="grid-layout-col" data-col="12">
       <div class="card">
         <div class="card-body">
-          <i class="bi bi-star fs-1"></i>
+          <i class="bi bi-star fs-1 icon"></i>
           <h3 class="mt-2">0</h3>
           <p class="text-muted">Reviews</p>
         </div>
@@ -51,21 +52,21 @@
 
   <!-- Main Content Tabs -->
   <div class="grid">
-    <div class="grid-layout-col2">
+    <div class="grid-layout-col2" data-col="12">
       <ul class="nav nav-tabs" id="dashboardTabs" role="tablist">
         <li class="nav-item" role="presentation">
-          <button class="nav-link active" id="resources-tab" data-bs-toggle="tab" data-bs-target="#resources" type="button" role="tab" aria-controls="resources" aria-selected="true">
-            <i class="bi bi-box-seam"></i> My Resources
+          <button class="nav-link active btn btn--primary" id="resources-tab" data-bs-toggle="tab" data-bs-target="#resources" type="button" role="tab" aria-controls="resources" aria-selected="true">
+            <i class="bi bi-box-seam icon"></i> My Resources
           </button>
         </li>
         <li class="nav-item" role="presentation">
-          <button class="nav-link" id="bookings-tab" data-bs-toggle="tab" data-bs-target="#bookings" type="button" role="tab" aria-controls="bookings" aria-selected="false">
-            <i class="bi bi-calendar-check"></i> My Bookings
+          <button class="nav-link btn btn--primary" id="bookings-tab" data-bs-toggle="tab" data-bs-target="#bookings" type="button" role="tab" aria-controls="bookings" aria-selected="false">
+            <i class="bi bi-calendar-check icon"></i> My Bookings
           </button>
         </li>
         <li class="nav-item" role="presentation">
-          <button class="nav-link" id="messages-tab" data-bs-toggle="tab" data-bs-target="#messages" type="button" role="tab" aria-controls="messages" aria-selected="false">
-            <i class="bi bi-envelope"></i> Messages
+          <button class="nav-link btn btn--primary" id="messages-tab" data-bs-toggle="tab" data-bs-target="#messages" type="button" role="tab" aria-controls="messages" aria-selected="false">
+            <i class="bi bi-envelope icon"></i> Messages
           </button>
         </li>
       </ul>
@@ -78,11 +79,11 @@
               <div class="d-flex">
                 <h5 class="mb-0">My Resources</h5>
                 <a href="#" class="btn btn-primary">
-                  <i class="bi bi-plus-circle"></i> Create Resource
+                  <i class="bi bi-plus-circle icon"></i> Create Resource
                 </a>
               </div>
               <div class="text-center">
-                <i class="bi bi-inbox fs-1"></i>
+                <i class="bi bi-inbox fs-1 icon"></i>
                 <p class="text-muted">No resources yet. Create your first resource to get started!</p>
               </div>
             </div>
@@ -96,11 +97,11 @@
               <div class="d-flex">
                 <h5 class="mb-0">My Bookings</h5>
                 <a href="{{ url_for('resources.index') }}" class="btn btn-primary">
-                  <i class="bi bi-search"></i> Browse Resources
+                  <i class="bi bi-search icon"></i> Browse Resources
                 </a>
               </div>
               <div class="text-center">
-                <i class="bi bi-calendar-x fs-1"></i>
+                <i class="bi bi-calendar-x fs-1 icon"></i>
                 <p class="text-muted">No bookings yet. Browse available resources to make your first booking!</p>
               </div>
             </div>
@@ -115,7 +116,7 @@
                 <h5 class="mb-0">Messages</h5>
               </div>
               <div class="text-center">
-                <i class="bi bi-chat-dots fs-1"></i>
+                <i class="bi bi-chat-dots fs-1 icon"></i>
                 <p class="text-muted">No messages yet. Messages will appear here when you book resources or communicate with resource owners.</p>
               </div>
             </div>
@@ -128,25 +129,25 @@
   <!-- Admin Section (if admin role) -->
   {% if current_user.role == 'admin' %}
   <div class="layout-grid">
-    <div class="grid-layout-col2">
+    <div class="grid-layout-col2" data-col="12">
       <div class="card border-danger">
         <div class="card-header bg-danger text-white">
-          <h5 class="mb-0"><i class="bi bi-shield-lock"></i> Admin Panel</h5>
+          <h5 class="mb-0"><i class="bi bi-shield-lock icon"></i> Admin Panel</h5>
         </div>
         <div class="card-body">
           <p class="mb-3">You have administrator privileges. Access advanced management features:</p>
           <div class="d-flex gap-2 flex-wrap">
             <a href="{{ url_for('resources.admin_ping') }}" class="btn btn-secondary">
-              <i class="bi bi-terminal"></i> Admin Ping Test
+              <i class="bi bi-terminal icon"></i> Admin Ping Test
             </a>
             <a href="#" class="btn btn-outline-danger disabled">
-              <i class="bi bi-people"></i> User Management
+              <i class="bi bi-people icon"></i> User Management
             </a>
             <a href="#" class="btn btn-outline-danger disabled">
-              <i class="bi bi-bar-chart"></i> Analytics
+              <i class="bi bi-bar-chart icon"></i> Analytics
             </a>
             <a href="#" class="btn btn-outline-danger disabled">
-              <i class="bi bi-flag"></i> Moderation
+              <i class="bi bi-flag icon"></i> Moderation
             </a>
           </div>
           <p class="text-muted small ">
@@ -160,14 +161,14 @@
 
   <!-- Recent Activity (placeholder) -->
   <div class="layout-grid">
-    <div class="grid-layout-col2">
+    <div class="grid-layout-col2" data-col="12">
       <div class="card">
         <div class="card-header">
           <h5 class="mb-0">Recent Activity</h5>
         </div>
         <div class="card-body">
           <div class="text-center">
-            <i class="bi bi-clock-history fs-1"></i>
+            <i class="bi bi-clock-history fs-1 icon"></i>
             <p class="text-muted ">No recent activity to display.</p>
           </div>
         </div>

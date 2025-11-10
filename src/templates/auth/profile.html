@@ -1,4 +1,5 @@
-{% extends"base.html" %}{% block title %}Profile - {{ current_user.name }}{% endblock %}{% block content %}<div class="layout-grid">
+{% extends "base.html" %}
+{% block title %}Profile - {{ current_user.name }}{% endblock %}{% block content %}<div class="layout-grid">
     <div class="layout-col" data-col="12">
       <!-- Profile Header -->
       <div class="card">
@@ -50,7 +51,7 @@
             <div class="layout-col" data-col-sm="8">
               </div></div>{{ current_user.created_at.strftime('%B %d, %Y') if current_user.created_at else 'N/A' }}<div class="card-footer">
           </div>{{ url_for('resources.dashboard') }}" class="btn btn-secondary">
-            <i class="bi bi-arrow-left"></i> Back to Dashboard
+            <i class="bi bi-arrow-left icon"></i> Back to Dashboard
           
           {# Future: Edit Profile button #}{# <a href="{{ url_for('auth.edit_profile') }}" class="btn btn-primary">Edit Profile #}
         
@@ -59,7 +60,7 @@
        Admin Panel Link (if admin) 
       {% if current_user.role == 'admin' %}<div class="space-t-3">
         </div>{{ url_for('resources.admin_ping') }}" class="btn btn-danger">
-          <i class="bi bi-shield-lock"></i> Admin Panel
+          <i class="bi bi-shield-lock icon"></i> Admin Panel
         
       
       {% endif %}{% endblock %}

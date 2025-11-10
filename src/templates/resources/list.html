@@ -55,7 +55,7 @@
     <div class="page-header__content">
       <div class="page-header__text">
         <h1 class="page-title">
-          <i data-lucide="package"></i>
+          <i data-lucide="package" class="icon icon-sm"></i>
           Browse Resources
         </h1>
         <p class="page-subtitle">Find and book campus resources</p>
@@ -64,11 +64,11 @@
       <div class="page-header__actions">
         {% if current_user.is_authenticated %}
           <a href="{{ url_for('resources.my_resources') }}" class="btn btn--outline">
-            <i data-lucide="folder"></i>
+            <i data-lucide="folder" class="icon icon-sm"></i>
             <span>My Resources</span>
           </a>
           <a href="{{ url_for('resources.create') }}" class="btn btn--primary">
-            <i data-lucide="plus-circle"></i>
+            <i data-lucide="plus-circle" class="icon icon-sm"></i>
             <span>Create Resource</span>
           </a>
         {% endif %}
@@ -82,8 +82,8 @@
   <div class="resources-toolbar">
     <div class="resources-toolbar__left">
       {# Mobile Filter Toggle #}
-      <button type="button" class="filter-toggle" data-filter-toggle aria-label="Open filters">
-        <i data-lucide="sliders-horizontal"></i>
+      <button type="button" class="filter-toggle btn btn--primary" data-filter-toggle aria-label="Open filters">
+        <i data-lucide="sliders-horizontal" class="icon icon-sm"></i>
         <span>Filters</span>
         <span class="badge" data-filter-count style="display: none;">0</span>
       </button>
@@ -91,11 +91,11 @@
       {# Search Bar #}
       <form method="GET" action="{{ url_for('resources.index') }}" class="resources-search">
         <div class="input-group">
-          <i data-lucide="search" class="input-icon"></i>
+          <i data-lucide="search" class="input-icon icon icon-sm"></i>
           <input 
             type="text" 
             name="q" 
-            class="form-input" 
+            class="form-input form-control" 
             placeholder="Search resources..."
             value="{{ request.args.get('q', '') }}"
             autocomplete="off"
@@ -126,8 +126,8 @@
             <input type="hidden" name="sort" value="{{ selected_sort }}">
           {% endif %}
           {% if request.args.get('q') %}
-            <button type="button" class="input-clear" aria-label="Clear search">
-              <i data-lucide="x"></i>
+            <button type="button" class="input-clear btn btn--primary" aria-label="Clear search">
+              <i data-lucide="x" class="icon icon-sm"></i>
             </button>
           {% endif %}
         </div>
@@ -137,36 +137,36 @@
     <div class="resources-toolbar__right">
       {# Sort Dropdown #}
       <div class="dropdown" data-dropdown>
-        <button type="button" class="btn btn--ghost dropdown-trigger" aria-haspopup="true" aria-expanded="false">
-          <i data-lucide="arrow-up-down"></i>
+        <button type="button" class="btn btn--ghost dropdown-trigger btn--primary" aria-haspopup="true" aria-expanded="false">
+          <i data-lucide="arrow-up-down" class="icon icon-sm"></i>
           <span>Sort</span>
         </button>
         <div class="dropdown-menu" role="menu">
           <a href="{{ sort_url('created_desc') }}" class="dropdown-item{% if selected_sort == 'created_desc' %} is-active{% endif %}" role="menuitem">
-            <i data-lucide="calendar"></i> Newest First
+            <i data-lucide="calendar" class="icon icon-sm"></i> Newest First
           </a>
           <a href="{{ sort_url('created_asc') }}" class="dropdown-item{% if selected_sort == 'created_asc' %} is-active{% endif %}" role="menuitem">
-            <i data-lucide="calendar"></i> Oldest First
+            <i data-lucide="calendar" class="icon icon-sm"></i> Oldest First
           </a>
           <a href="{{ sort_url('title_asc') }}" class="dropdown-item{% if selected_sort == 'title_asc' %} is-active{% endif %}" role="menuitem">
-            <i data-lucide="type"></i> Title A-Z
+            <i data-lucide="type" class="icon icon-sm"></i> Title A-Z
           </a>
           <a href="{{ sort_url('rating_desc') }}" class="dropdown-item{% if selected_sort == 'rating_desc' %} is-active{% endif %}" role="menuitem">
-            <i data-lucide="star"></i> Highest Rated
+            <i data-lucide="star" class="icon icon-sm"></i> Highest Rated
           </a>
           <a href="{{ sort_url('popular') }}" class="dropdown-item{% if selected_sort == 'popular' %} is-active{% endif %}" role="menuitem">
-            <i data-lucide="trending-up"></i> Most Popular
+            <i data-lucide="trending-up" class="icon icon-sm"></i> Most Popular
           </a>
         </div>
       </div>
 
       {# View Toggle: Grid / List #}
       <div class="view-toggle" role="group" aria-label="View mode">
-        <button type="button" class="view-toggle__btn is-active" data-view="grid" aria-label="Grid view">
-          <i data-lucide="layout-grid"></i>
+        <button type="button" class="view-toggle__btn is-active btn btn--primary" data-view="grid" aria-label="Grid view">
+          <i data-lucide="layout-grid" class="icon icon-sm"></i>
         </button>
-        <button type="button" class="view-toggle__btn" data-view="list" aria-label="List view">
-          <i data-lucide="list"></i>
+        <button type="button" class="view-toggle__btn btn btn--primary" data-view="list" aria-label="List view">
+          <i data-lucide="list" class="icon icon-sm"></i>
         </button>
       </div>
     </div>
@@ -183,15 +183,15 @@
       {# Header #}
       <div class="filter-drawer__header">
         <h2 class="filter-drawer__header-title" id="filter-drawer-title">
-          <i data-lucide="sliders-horizontal"></i>
+          <i data-lucide="sliders-horizontal" class="icon icon-sm"></i>
           Filters
         </h2>
         <div class="filter-drawer__header-actions">
-          <button type="button" class="filter-drawer__clear" data-filter-clear disabled>
+          <button type="button" class="filter-drawer__clear btn btn--primary" data-filter-clear disabled>
             Clear all
           </button>
-          <button type="button" class="filter-drawer__close" data-drawer-close aria-label="Close filters">
-            <i data-lucide="x"></i>
+          <button type="button" class="filter-drawer__close btn btn--primary" data-drawer-close aria-label="Close filters">
+            <i data-lucide="x" class="icon icon-sm"></i>
           </button>
         </div>
       </div>
@@ -212,7 +212,7 @@
               Category
               <span class="filter-section__count"></span>
             </div>
-            <i data-lucide="chevron-down" class="filter-section__chevron"></i>
+            <i data-lucide="chevron-down" class="filter-section__chevron icon icon-sm"></i>
           </div>
           <div class="filter-section__body">
             {% for category in category_filters %}
@@ -222,8 +222,7 @@
                 name="category" 
                 value="{{ category.value }}" 
                 data-filter-input
-                {% if category.value in selected_categories %}checked{% endif %}
-              >
+                {% if category.value in selected_categories %}checked{% endif %}>
               <span class="filter-option__label">{{ category.label }}</span>
             </label>
             {% endfor %}
@@ -237,17 +236,17 @@
               Location
               <span class="filter-section__count"></span>
             </div>
-            <i data-lucide="chevron-down" class="filter-section__chevron"></i>
+            <i data-lucide="chevron-down" class="filter-section__chevron icon icon-sm"></i>
           </div>
           <div class="filter-section__body">
             <div class="filter-search">
-              <i data-lucide="search" class="filter-search__icon"></i>
+              <i data-lucide="search" class="filter-search__icon icon icon-sm"></i>
               <input 
                 type="text" 
                 placeholder="Search locations..." 
                 data-location-search
                 autocomplete="off"
-              >
+               class="form-control">
             </div>
             <div data-location-list>
               {% if location_facets %}
@@ -258,8 +257,7 @@
                       name="location"
                       value="{{ facet.label }}"
                       data-filter-input
-                      {% if facet.label in selected_locations %}checked{% endif %}
-                    >
+                      {% if facet.label in selected_locations %}checked{% endif %}>
                     <span class="filter-option__label">{{ facet.label }}</span>
                     <span class="filter-option__count">{{ facet.count }}</span>
                   </label>
@@ -278,14 +276,14 @@
               Capacity
               <span class="filter-section__count"></span>
             </div>
-            <i data-lucide="chevron-down" class="filter-section__chevron"></i>
+            <i data-lucide="chevron-down" class="filter-section__chevron icon icon-sm"></i>
           </div>
           <div class="filter-section__body">
             <div class="filter-range">
               <div class="filter-range__inputs">
                 <input 
                   type="number" 
-                  class="filter-range__input" 
+                  class="filter-range__input form-control" 
                   placeholder="Min" 
                   min="1" 
                   data-capacity-min
@@ -294,7 +292,7 @@
                 <span class="filter-range__separator">-</span>
                 <input 
                   type="number" 
-                  class="filter-range__input" 
+                  class="filter-range__input form-control" 
                   placeholder="Max" 
                   min="1" 
                   data-capacity-max
@@ -312,7 +310,7 @@
               Availability
               <span class="filter-section__count"></span>
             </div>
-            <i data-lucide="chevron-down" class="filter-section__chevron"></i>
+            <i data-lucide="chevron-down" class="filter-section__chevron icon icon-sm"></i>
           </div>
         <div class="filter-section__body">
             <div class="filter-date">
@@ -324,7 +322,7 @@
                   id="filters-date-from"
                   data-availability-from
                   value="{{ date_from or '' }}"
-                >
+                 class="form-control">
               </div>
               <div class="filter-date__input-group">
                 <label class="filter-date__label" for="filters-date-to">Available To</label>
@@ -334,7 +332,7 @@
                   id="filters-date-to"
                   data-availability-to
                   value="{{ date_to or '' }}"
-                >
+                 class="form-control">
               </div>
             </div>
           </div>
@@ -348,7 +346,7 @@
               Status
               <span class="filter-section__count"></span>
             </div>
-            <i data-lucide="chevron-down" class="filter-section__chevron"></i>
+            <i data-lucide="chevron-down" class="filter-section__chevron icon icon-sm"></i>
           </div>
           <div class="filter-section__body">
             {% for status in status_filters %}
@@ -358,8 +356,7 @@
                 name="status" 
                 value="{{ status.value }}" 
                 data-filter-input
-                {% if status.value in selected_statuses %}checked{% endif %}
-              >
+                {% if status.value in selected_statuses %}checked{% endif %}>
               <span class="filter-option__label">{{ status.label }}</span>
             </label>
             {% endfor %}
@@ -371,7 +368,7 @@
 
       {# Footer with Apply Button (mobile only) #}
       <div class="filter-drawer__footer">
-        <button type="button" class="btn btn--outline" data-drawer-close>
+        <button type="button" class="btn btn--outline btn--primary" data-drawer-close>
           Cancel
         </button>
         <button type="button" class="btn btn--primary" data-filter-apply>
@@ -426,13 +423,13 @@
                   >
                   {% if images|length > 1 %}
                     <div class="resource-card__image-count">
-                      <i data-lucide="images"></i>
+                      <i data-lucide="images" class="icon icon-sm"></i>
                       <span>{{ images|length }}</span>
                     </div>
                   {% endif %}
                 {% else %}
                   <div class="resource-card__placeholder">
-                    <i data-lucide="image"></i>
+                    <i data-lucide="image" class="icon icon-sm"></i>
                     <span>No image</span>
                   </div>
                 {% endif %}
@@ -480,14 +477,14 @@
                 <div class="resource-card__meta">
                   {% if resource.location %}
                     <span class="meta-item">
-                      <i data-lucide="map-pin"></i>
+                      <i data-lucide="map-pin" class="icon icon-sm"></i>
                       {{ resource.location }}
                     </span>
                   {% endif %}
                   
                   {% if resource.capacity %}
                     <span class="meta-item">
-                      <i data-lucide="users"></i>
+                      <i data-lucide="users" class="icon icon-sm"></i>
                       {{ resource.capacity }} people
                     </span>
                   {% endif %}
@@ -496,13 +493,13 @@
                   {% set avg_rating = resource.get_average_rating() %}
                   {% if avg_rating %}
                     <span class="meta-item meta-item--rating" aria-label="Rating {{ avg_rating }} out of 5">
-                      <i data-lucide="star" class="icon-filled"></i>
+                      <i data-lucide="star" class="icon-filled icon icon-sm"></i>
                       {{ avg_rating }}
                       <span class="text-muted">({{ resource.get_review_count() }})</span>
                     </span>
                   {% else %}
                     <span class="meta-item meta-item--rating text-muted">
-                      <i data-lucide="star"></i>
+                      <i data-lucide="star" class="icon icon-sm"></i>
                       No reviews yet
                     </span>
                   {% endif %}
@@ -515,7 +512,7 @@
                   href="{{ url_for('resources.detail', resource_id=resource.resource_id) }}" 
                   class="btn btn--sm btn--outline"
                 >
-                  <i data-lucide="eye"></i>
+                  <i data-lucide="eye" class="icon icon-sm"></i>
                   <span>View</span>
                 </a>
                 {% if current_user.is_authenticated and resource.status == 'published' %}
@@ -528,7 +525,7 @@
                     data-booking-url="{{ url_for('bookings.new', resource_id=resource.resource_id) }}"
                     data-availability-url="{{ url_for('resources.availability', resource_id=resource.resource_id) }}"
                   >
-                    <i data-lucide="calendar-check"></i>
+                    <i data-lucide="calendar-check" class="icon icon-sm"></i>
                     <span>Book</span>
                   </button>
                 {% endif %}
@@ -546,7 +543,7 @@
               {# Previous #}
               {% if page > 1 %}
                 <a href="{{ page_url(page - 1) }}" class="pagination__item pagination__item--prev">
-                  <i data-lucide="chevron-left"></i>
+                  <i data-lucide="chevron-left" class="icon icon-sm"></i>
                   <span>Previous</span>
                 </a>
               {% endif %}
@@ -568,7 +565,7 @@
               {% if page < max_pages %}
                 <a href="{{ page_url(page + 1) }}" class="pagination__item pagination__item--next">
                   <span>Next</span>
-                  <i data-lucide="chevron-right"></i>
+                  <i data-lucide="chevron-right" class="icon icon-sm"></i>
                 </a>
               {% endif %}
             </nav>
@@ -579,7 +576,7 @@
         {# Empty State #}
         <div class="empty-state">
           <div class="empty-state__icon">
-            <i data-lucide="inbox"></i>
+            <i data-lucide="inbox" class="icon icon-sm"></i>
           </div>
           <h2 class="empty-state__title">No resources found</h2>
           <p class="empty-state__message">
@@ -595,13 +592,13 @@
           <div class="empty-state__actions">
             {% if request.args.get('q') or request.args.get('category') or request.args.get('location') %}
               <a href="{{ url_for('resources.index') }}" class="btn btn--outline">
-                <i data-lucide="x-circle"></i>
+                <i data-lucide="x-circle" class="icon icon-sm"></i>
                 <span>Clear Filters</span>
               </a>
             {% endif %}
             {% if current_user.is_authenticated %}
               <a href="{{ url_for('resources.create') }}" class="btn btn--primary">
-                <i data-lucide="plus-circle"></i>
+                <i data-lucide="plus-circle" class="icon icon-sm"></i>
                 <span>Create Resource</span>
               </a>
             {% endif %}

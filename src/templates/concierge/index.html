@@ -1,4 +1,5 @@
-{% extends"base.html" %}{% block title %}AI Resource Concierge - Campus Resource Hub{% endblock %}{% block extra_css %}{% endblock %}{% block content %}<div class="concierge-hero">
+{% extends "base.html" %}
+{% block title %}AI Resource Concierge - Campus Resource Hub{% endblock %}{% block extra_css %}{% endblock %}{% block content %}<div class="concierge-hero">
   <div class="container">
     <h1>🤖 AI Resource Concierge</h1>
     <p class="subtitle">Just tell me what you need - I'll find it for you!</p>
@@ -12,12 +13,12 @@
       <form id="concierge-form">
         <div class="space-b-3">
           <label class="form-label" for="query-input">What are you looking for?</label>
-          <input autocomplete="off" class="query-input" id="query-input" maxlength="500" name="query" placeholder="Try: 'Find a study room for 4 people tomorrow'" required="" type="text"/>
+          <input autocomplete="off" class="query-input form-control" id="query-input" maxlength="500" name="query" placeholder="Try: 'Find a study room for 4 people tomorrow'" required="" type="text"/>
           <small class="text-dim">Ask in plain English - I understand natural language!</small>
         </div>
         
-        <button class="search-btn" id="search-btn" type="submit">
-          <i class="bi bi-search"></i> Search
+        <button class="search-btn btn btn--primary" id="search-btn" type="submit">
+          <i class="bi bi-search icon"></i> Search
         </button>
       </form>
       
@@ -39,7 +40,7 @@
     
     <!-- No Results -->
     <div class="no-results" id="no-results" style="display: none;">
-      <i class="bi bi-inbox"></i>
+      <i class="bi bi-inbox icon"></i>
       <h4>No results found</h4>
       <p>Try adjusting your search or browse all resources.</p>
       </div></div>{{ url_for('resources.index') }}" class="btn btn-outline">
@@ -129,7 +130,7 @@
     return message
       .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
       .replace(/\n\n/g, '<br/><br/>')
-      .replace(/•/g, '<i class="bi bi-check-circle"></i>');
+      .replace(/•/g, '<i class="bi bi-check-circle icon"></i>');
   }
   
   function createResourceCard(resource) {
@@ -140,12 +141,12 @@
       <h4>${resource.title}</h4>
       <p class="text-dim small">${resource.description || 'No description available'}</p>
       <div class="resource-meta">
-        ${resource.capacity ? `<span><i class="bi bi-people"></i> ${resource.capacity}</span>` : ''}
-        ${resource.location ? `<span><i class="bi bi-geo-alt"></i> ${resource.location}</span>` : ''}
+        ${resource.capacity ? `<span><i class="bi bi-people icon"></i> ${resource.capacity}</span>` : ''}
+        ${resource.location ? `<span><i class="bi bi-geo-alt icon"></i> ${resource.location}</span>` : ''}
         ${resource.category ? `<span class="badge badge-primary">${resource.category}</span>` : ''}
       </div>
       <a class="btn btn-primary" href="${resource.url}">
-        View Details <i class="bi bi-arrow-right"></i>
+        View Details <i class="bi bi-arrow-right icon"></i>
       </a>
     `;
     

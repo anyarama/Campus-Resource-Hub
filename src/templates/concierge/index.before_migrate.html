@@ -1,11 +1,12 @@
-{% extends"base.html" %}
+{% extends "base.html" %}
+
 
 {% block title %}AI Resource Concierge - Campus Resource Hub{% endblock %}
 
 {% block extra_css %}
 <style>
   .concierge-hero {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, var(--brand-600) 0%, var(--brand-600) 100%);
     color: white;
     padding: 3rem 0;
     margin: -1.5rem -1.5rem 2rem;
@@ -40,13 +41,13 @@
     width: 100%;
     padding: 1rem;
     font-size: 1.1rem;
-    border: 2px solid #e0e0e0;
+    border: 2px solid var(--brand-600);
     border-radius: 8px;
     transition: all 0.3s;
   }
   
   .query-input:focus {
-    border-color: #667eea;
+    border-color: var(--brand-600);
     box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
     outline: none;
   }
@@ -56,7 +57,7 @@
     padding: 1rem;
     font-size: 1.1rem;
     font-weight: 600;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, var(--brand-600) 0%, var(--brand-600) 100%);
     border: none;
     border-radius: 8px;
     color: white;
@@ -82,8 +83,8 @@
     display: inline-block;
     padding: 0.5rem 1rem;
     margin: 0.25rem;
-    background: #f5f5f5;
-    border: 1px solid #e0e0e0;
+    background: var(--surface-50);
+    border: 1px solid var(--brand-600);
     border-radius: 20px;
     font-size: 0.9rem;
     cursor: pointer;
@@ -91,9 +92,9 @@
   }
   
   .example-chip:hover {
-    background: #667eea;
+    background: var(--brand-600);
     color: white;
-    border-color: #667eea;
+    border-color: var(--brand-600);
     transform: translateY(-2px);
   }
   
@@ -108,8 +109,8 @@
   }
   
   .ai-message {
-    background: #f8f9fa;
-    border-left: 4px solid #667eea;
+    background: var(--brand-600);
+    border-left: 4px solid var(--brand-600);
     padding: 1.5rem;
     border-radius: 8px;
     margin-bottom: 2rem;
@@ -117,7 +118,7 @@
   }
   
   .ai-message strong {
-    color: #667eea;
+    color: var(--brand-600);
   }
   
   .resource-grid {
@@ -129,7 +130,7 @@
   
   .resource-result-card {
     background: white;
-    border: 1px solid #e0e0e0;
+    border: 1px solid var(--brand-600);
     border-radius: 8px;
     padding: 1.5rem;
     transition: all 0.3s;
@@ -142,7 +143,7 @@
   
   .resource-result-card h4 {
     margin-bottom: 0.5rem;
-    color: #333;
+    color: var(--brand-600);
   }
   
   .resource-meta {
@@ -150,7 +151,7 @@
     gap: 1rem;
     margin: 0.75rem 0;
     font-size: 0.9rem;
-    color: #666;
+    color: var(--brand-600);
   }
   
   .resource-meta i {
@@ -171,8 +172,8 @@
     display: inline-block;
     width: 40px;
     height: 40px;
-    border: 4px solid #f3f3f3;
-    border-top: 4px solid #667eea;
+    border: 4px solid var(--brand-600);
+    border-top: 4px solid var(--brand-600);
     border-radius: 50%;
     animation: spin 1s linear infinite;
   }
@@ -185,12 +186,12 @@
   .no-results {
     text-align: center;
     padding: 3rem;
-    color: #666;
+    color: var(--brand-600);
   }
   
   .no-results i {
     font-size: 4rem;
-    color: #ddd;
+    color: var(--brand-600);
     margin-bottom: 1rem;
   }
   
@@ -218,7 +219,7 @@
   }
   
   .feature-card p {
-    color: #666;
+    color: var(--brand-600);
     font-size: 0.95rem;
   }
 </style>
@@ -243,7 +244,7 @@
             type="text" 
             id="query-input" 
             name="query"
-            class="query-input" 
+            class="query-input form-control" 
             placeholder="Try: 'Find a study room for 4 people tomorrow'"
             maxlength="500"
             autocomplete="off"
@@ -252,8 +253,8 @@
           <small class="text-muted">Ask in plain English - I understand natural language!</small>
         </div>
         
-        <button type="submit" class="search-btn" id="search-btn">
-          <i class="bi bi-search"></i> Search
+        <button type="submit" class="search-btn btn btn--primary" id="search-btn">
+          <i class="bi bi-search icon"></i> Search
         </button>
       </form>
       
@@ -283,7 +284,7 @@
     
     <!-- No Results -->
     <div class="no-results" id="no-results" style="display: none;">
-      <i class="bi bi-inbox"></i>
+      <i class="bi bi-inbox icon"></i>
       <h4>No results found</h4>
       <p>Try adjusting your search or browse all resources.</p>
       <a href="{{ url_for('resources.index') }}" class="btn btn-outline-primary">
@@ -412,7 +413,7 @@ document.addEventListener('DOMContentLoaded', function() {
     return message
       .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
       .replace(/\n\n/g, '<br><br>')
-      .replace(/•/g, '<i class="bi bi-check-circle"></i>');
+      .replace(/•/g, '<i class="bi bi-check-circle icon"></i>');
   }
   
   function createResourceCard(resource) {
@@ -423,12 +424,12 @@ document.addEventListener('DOMContentLoaded', function() {
       <h4>${resource.title}</h4>
       <p class="text-muted small">${resource.description || 'No description available'}</p>
       <div class="resource-meta">
-        ${resource.capacity ? `<span><i class="bi bi-people"></i> ${resource.capacity}</span>` : ''}
-        ${resource.location ? `<span><i class="bi bi-geo-alt"></i> ${resource.location}</span>` : ''}
+        ${resource.capacity ? `<span><i class="bi bi-people icon"></i> ${resource.capacity}</span>` : ''}
+        ${resource.location ? `<span><i class="bi bi-geo-alt icon"></i> ${resource.location}</span>` : ''}
         ${resource.category ? `<span class="badge badge-primary">${resource.category}</span>` : ''}
       </div>
       <a href="${resource.url}" class="btn btn-primary">
-        View Details <i class="bi bi-arrow-right"></i>
+        View Details <i class="bi bi-arrow-right icon"></i>
       </a>
     `;
     

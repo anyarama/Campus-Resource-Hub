@@ -1,11 +1,12 @@
-{% extends"base.html" %}{% block title %}Booking Details - {{ resource.title }}{% endblock %}{% block content %}<div class="grid">
+{% extends "base.html" %}
+{% block title %}Booking Details - {{ resource.title }}{% endblock %}{% block content %}<div class="grid">
     <!-- Booking Information Card -->
     <div class="layout-col" data-col-lg="8">
       <div class="card">
         <div class="card-header border-bottom">
           <div class="flex">
             <h4 class="space-b-0">
-              <i class="bi bi-calendar-check"></i>Booking Details
+              <i class="bi bi-calendar-check icon"></i>Booking Details
             </h4>
             </div></div></div></div></div>{% if booking.status == 'pending' %}<span class="badge badge-warning text-dark">Pending Approval</span>
             {% elif booking.status == 'approved' %}<span class="badge badge-success">Approved</span>
@@ -22,35 +23,35 @@
                    class="rounded"
                    style="width: 80px; height: 80px; object-fit: cover;">
               {% else %}<div class="bg-neutral rounded" style="width: 80px; height: 80px;">
-                  <i class="bi bi-image" style="font-size: 2rem;"></i>
+                  <i class="bi bi-image icon" style="font-size: 2rem;"></i>
                 </div>
               {% endif %}<div>
                 <h5 class="space-b-1">
                   </h5></div>{{ url_for('resources.detail', resource_id=resource.resource_id) }}" 
                     class="text-decoration-none">
                     {{ resource.title }}<p class="text-dim">
-                  <i class="bi bi-geo-alt"></i></p>{{ resource.location }}<p class="text-dim">
-                  <i class="bi bi-tag"></i></p>{{ resource.category }}<div class="layout-grid">
+                  <i class="bi bi-geo-alt icon"></i></p>{{ resource.location }}<p class="text-dim">
+                  <i class="bi bi-tag icon"></i></p>{{ resource.category }}<div class="layout-grid">
             <div class="layout-col" data-col="12">
               <h6 class="text-dim">
-                <i class="bi bi-calendar-event"></i>Start Time
+                <i class="bi bi-calendar-event icon"></i>Start Time
               </h6>
               <p class="space-b-0">
                 </p></div></div>{{ booking.start_datetime.strftime('%B %d, %Y') }}<br/>
                 <strong></strong>{{ booking.start_datetime.strftime('%I:%M %p') }}<div class="layout-col" data-col="12">
               <h6 class="text-dim">
-                <i class="bi bi-calendar-x"></i>End Time
+                <i class="bi bi-calendar-x icon"></i>End Time
               </h6>
               <p class="space-b-0">
                 </p></div>{{ booking.end_datetime.strftime('%B %d, %Y') }}<br/>
                 <strong></strong>{{ booking.end_datetime.strftime('%I:%M %p') }}<div class="space-b-3">
             <h6 class="text-dim">
-              <i class="bi bi-clock"></i>Duration
+              <i class="bi bi-clock icon"></i>Duration
             </h6>
             </div>{% set duration = (booking.end_datetime - booking.start_datetime).total_seconds() %}{% set hours = (duration // 3600)|int %}{% set minutes = ((duration % 3600) // 60)|int %}<p class="space-b-0">
               </p>{% if hours > 0 %}{{ hours }}hour{{ 's' if hours != 1 else '' }}{% endif %}{% if minutes > 0 %}{{ minutes }}minute{{ 's' if minutes != 1 else '' }}{% endif %}<div class="space-b-3">
             <h6 class="text-dim">
-              <i class="bi bi-person"></i>Requested By
+              <i class="bi bi-person icon"></i>Requested By
             </h6>
             <p class="space-b-0"></p></div>{{ requester.name }}({{ requester.email }})<p></p>
           
@@ -58,55 +59,55 @@
            Notes 
           {% if booking.notes %}<div class="space-b-3">
             <h6 class="text-dim">
-              <i class="bi bi-chat-left-text"></i>Notes
+              <i class="bi bi-chat-left-text icon"></i>Notes
             </h6>
             <p class="space-b-0"></p></div>{{ booking.notes }}{% endif %}{% if booking.status == 'rejected' and booking.rejection_reason %}<div class="alert alert-danger">
             <h6 class="alert-heading">
-              <i class="bi bi-exclamation-triangle"></i>Rejection Reason
+              <i class="bi bi-exclamation-triangle icon"></i>Rejection Reason
             </h6>
             <p class="space-b-0"></p></div>{{ booking.rejection_reason }}{% endif %}<div class="space-t-4 pad-t-3 border-top">
             <small class="text-dim">
-              <i class="bi bi-clock-history"></i>
+              <i class="bi bi-clock-history icon"></i>
               Created: </small></div>{{ booking.created_at.strftime('%B %d, %Y at %I:%M %p') }}{% if booking.updated_at and booking.updated_at != booking.created_at %}<br/>
-              <i class="bi bi-arrow-clockwise"></i>
+              <i class="bi bi-arrow-clockwise icon"></i>
               Updated: {{ booking.updated_at.strftime('%B %d, %Y at %I:%M %p') }}{% endif %}<div class="layout-col" data-col-lg="4">
       <div class="card">
         <div class="card-header">
           <h5 class="space-b-0">
-            <i class="bi bi-lightning-charge"></i>Actions
+            <i class="bi bi-lightning-charge icon"></i>Actions
           </h5>
         </div>
         <div class="card-body">
           <!-- Staff/Admin Approval Actions -->
           </div></div></div>{% if booking.status == 'pending' and (current_user.role == 'staff' or current_user.role == 'admin' or current_user.user_id == resource.owner_id) %}{{ url_for('bookings.approve', booking_id=booking.booking_id) }}" class="mb-2">
             {{ csrf_token() }}">
-            <button class="btn btn-success" type="submit">
-              <i class="bi bi-check-circle"></i>Approve Booking
+            <button class="btn btn-success btn--primary" type="submit">
+              <i class="bi bi-check-circle icon"></i>Approve Booking
             </button>
           
-          <button class="btn btn-danger" data-bs-target="#rejectModal" data-bs-toggle="modal" type="button">
-            <i class="bi bi-x-circle"></i>Reject Booking
+          <button class="btn btn-danger btn--primary" data-bs-target="#rejectModal" data-bs-toggle="modal" type="button">
+            <i class="bi bi-x-circle icon"></i>Reject Booking
           </button>
           {% endif %}{% if booking.status in ['pending', 'approved'] and current_user.user_id == booking.requester_id %}{{ url_for('bookings.cancel', booking_id=booking.booking_id) }}" 
              onsubmit="return confirm('Are you sure you want to cancel this booking?');" class="mb-2">
             {{ csrf_token() }}">
-            <button class="btn btn-warning" type="submit">
-              <i class="bi bi-x-circle"></i>Cancel Booking
+            <button class="btn btn-warning btn--primary" type="submit">
+              <i class="bi bi-x-circle icon"></i>Cancel Booking
             </button>
           
           {% endif %}{% if booking.status == 'approved' and current_user.role == 'admin' %}{{ url_for('bookings.complete', booking_id=booking.booking_id) }}" 
              onsubmit="return confirm('Mark this booking as completed?');" class="mb-2">
             {{ csrf_token() }}">
-            <button class="btn btn-primary" type="submit">
-              <i class="bi bi-check-all"></i>Mark Complete
+            <button class="btn btn-primary btn--primary" type="submit">
+              <i class="bi bi-check-all icon"></i>Mark Complete
             </button>
           
           {% endif %}{% if booking.status == 'completed' and current_user.user_id == booking.requester_id %}{{ url_for('resources.detail', resource_id=resource.resource_id) }}#reviews" 
             class="btn btn-secondary">
-            <i class="bi bi-star"></i>Leave a Review
+            <i class="bi bi-star icon"></i>Leave a Review
           
           {% endif %}{{ url_for('bookings.my_bookings') }}" class="btn btn-ghost">
-            <i class="bi bi-arrow-left"></i>Back to My Bookings
+            <i class="bi bi-arrow-left icon"></i>Back to My Bookings
           
         
       
@@ -115,14 +116,14 @@
       {% if current_user.user_id != resource.owner_id %}<div class="card">
         <div class="card-header">
           <h5 class="space-b-0">
-            <i class="bi bi-chat-dots"></i>Contact
+            <i class="bi bi-chat-dots icon"></i>Contact
           </h5>
         </div>
         <div class="card-body">
           <p class="text-dim">Have questions about this booking?</p>
-          </div></div>{{ url_for('messages.compose', recipient_id=resource.owner_id) }}" 
+          </div></div>{{ url_for('messages.compose', user_id=resource.owner_id) }}" 
             class="btn btn-secondary">
-            <i class="bi bi-envelope"></i>Message Owner
+            <i class="bi bi-envelope icon"></i>Message Owner
           
         
       
@@ -133,9 +134,9 @@
         {{ csrf_token() }}">
         <div class="modal-header">
           <h5 class="modal-title" id="rejectModalLabel">
-            <i class="bi bi-x-circle"></i>Reject Booking
+            <i class="bi bi-x-circle icon"></i>Reject Booking
           </h5>
-          <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
+          <button aria-label="Close" class="btn-close btn btn--primary" data-bs-dismiss="modal" type="button"></button>
         </div>
         <div class="modal-body">
           <div class="space-b-3">
@@ -145,9 +146,9 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button class="btn btn-secondary" data-bs-dismiss="modal" type="button">Cancel</button>
-          <button class="btn btn-danger" type="submit">
-            <i class="bi bi-x-circle"></i>Reject Booking
+          <button class="btn btn-secondary btn--primary" data-bs-dismiss="modal" type="button">Cancel</button>
+          <button class="btn btn-danger btn--primary" type="submit">
+            <i class="bi bi-x-circle icon"></i>Reject Booking
           </button>
         </div>
       

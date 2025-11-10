@@ -5,7 +5,7 @@ Data Access Layer for Resource model.
 Per .clinerules: All database operations encapsulated in repositories.
 """
 
-from typing import List, Optional, Dict, Sequence
+from typing import List, Optional, Dict, Sequence, Union, Any
 from sqlalchemy import or_, func
 from datetime import datetime
 from src.models import db, Resource, Booking
@@ -15,22 +15,44 @@ class ResourceRepository:
     """Repository for Resource model CRUD operations."""
 
     @staticmethod
-    def create(owner_id: int, title: str, category: str, **kwargs) -> Resource:
-        """Create a new resource."""
-        resource = Resource(
-            owner_id=owner_id,
-            title=title,
-            category=category,
-            description=kwargs.get("description"),
-            location=kwargs.get("location"),
-            capacity=kwargs.get("capacity"),
-            images=kwargs.get("images", []),
-            availability_rules=kwargs.get("availability_rules", {}),
-            status=kwargs.get("status", "draft"),
-        )
-        db.session.add(resource)
+    def create(
+        owner_id: Optional[int] = None,
+        title: Optional[str] = None,
+        category: Optional[str] = None,
+        resource: Optional[Resource] = None,
+        **kwargs: Any,
+    ) -> Resource:
+        """
+        Create a new resource.
+
+        Accepts either a fully-instantiated Resource model (via positional argument or explicit
+        `resource=` kwarg) or the primitive fields used to build one.
+        """
+        resource_model: Optional[Resource] = None
+
+        if resource is not None:
+            resource_model = resource
+        elif isinstance(owner_id, Resource):
+            resource_model = owner_id
+        else:
+            if owner_id is None or title is None or category is None:
+                raise ValueError(
+                    "owner_id, title, and category are required when creating a resource"
+                )
+            resource_model = Resource(
+                owner_id=owner_id,
+                title=title,
+                category=category,
+                description=kwargs.get("description"),
+                location=kwargs.get("location"),
+                capacity=kwargs.get("capacity"),
+                images=kwargs.get("images", []),
+                availability_rules=kwargs.get("availability_rules", {}),
+                status=kwargs.get("status", "draft"),
+            )
+        db.session.add(resource_model)
         db.session.commit()
-        return resource
+        return resource_model
 
     @staticmethod
     def get_by_id(resource_id: int) -> Optional[Resource]:
@@ -85,11 +107,11 @@ class ResourceRepository:
     ) -> List[Resource]:
         """
         Search resources by title, description, or location.
-        
+
         Note: Returns list for backward compatibility with routes/resources.py
         """
         query = Resource.query
-        
+
         # Apply status filter (default to published if not specified)
         if statuses:
             query = query.filter(Resource.status.in_(statuses))
@@ -97,7 +119,7 @@ class ResourceRepository:
             query = query.filter_by(status=status)
         else:
             query = query.filter(Resource.status == "published")
-        
+
         # Apply search filter if query string provided
         if query_str:
             search_filter = or_(
@@ -112,12 +134,10 @@ class ResourceRepository:
             query = query.filter(Resource.category.in_(categories))
         elif category:
             query = query.filter_by(category=category)
-            
+
         # Apply location filter (single or multiple, partial match)
         if locations:
-            location_filters = [
-                Resource.location.ilike(f"%{loc}%") for loc in locations if loc
-            ]
+            location_filters = [Resource.location.ilike(f"%{loc}%") for loc in locations if loc]
             if location_filters:
                 query = query.filter(or_(*location_filters))
         elif location:
@@ -159,16 +179,22 @@ class ResourceRepository:
 
         # Derived sorting (rating/popularity) happens in Python since it depends on relationships
         if sort == "rating_desc":
-            results.sort(key=lambda r: (r.get_average_rating() or 0, r.get_review_count()), reverse=True)
+            results.sort(
+                key=lambda r: (r.get_average_rating() or 0, r.get_review_count()), reverse=True
+            )
         elif sort == "popular":
             results.sort(key=lambda r: r.get_booking_count(), reverse=True)
 
         return results
 
     @staticmethod
-    def update(resource_id: int, **kwargs) -> Optional[Resource]:
+    def update(resource_or_id: Union[Resource, int], **kwargs: Any) -> Optional[Resource]:
         """Update resource fields."""
-        resource = Resource.query.get(resource_id)
+        resource = (
+            resource_or_id
+            if isinstance(resource_or_id, Resource)
+            else Resource.query.get(resource_or_id)
+        )
         if not resource:
             return None
 
