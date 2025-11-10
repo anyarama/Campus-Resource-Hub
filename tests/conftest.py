@@ -56,6 +56,16 @@ def client(app):
 
 
 @pytest.fixture(scope="function")
+def db(app):
+    """
+    Provide database access for tests that need direct session control.
+    """
+    from src.app import db as _db
+
+    yield _db
+
+
+@pytest.fixture(scope="function")
 def runner(app):
     """
     Create a CLI runner for the app.

@@ -1,225 +1,180 @@
-{% extends"base.html" %}{% block title %}User Management - Campus Resource Hub{% endblock %}{% block extra_css %}{% endblock %}{% block content %}<div class="layout-grid">
-  <div class="layout-col" data-col="12">
-    <h1 class="h2"><i class="bi bi-people"></i> User Management</h1>
-    <p class="text-dim">Manage platform users and permissions</p>
+{% extends "base.html" %}
+{% block title %}User Management{% endblock %}
+
+{% block main_content %}
+<section class="admin-page__header">
+  <div>
+    <p class="eyebrow">Administration</p>
+    <h1>User Management</h1>
+    <p>Search, filter, and take action on platform accounts.</p>
   </div>
-  <div class="layout-col" data-col="12">
-    </div></div>{{ url_for('admin.dashboard') }}" class="btn btn-secondary">
-      <i class="bi bi-arrow-left"></i> Back to Dashboard
-    
-  
+  <a href="{{ url_for('admin.dashboard') }}" class="btn btn--ghost">
+    <i data-lucide="arrow-left"></i>
+    <span>Back to dashboard</span>
+  </a>
+</section>
 
+<form method="get" class="user-filter" aria-label="Filter users">
+  <label>
+    <span>Search</span>
+    <input type="search" name="search" value="{{ search_term }}" placeholder="Name or email" autocomplete="off">
+  </label>
+  <label>
+    <span>Role</span>
+    <select name="role">
+      <option value="">All roles</option>
+      <option value="admin" {% if role_filter == 'admin' %}selected{% endif %}>Admin</option>
+      <option value="staff" {% if role_filter == 'staff' %}selected{% endif %}>Staff</option>
+      <option value="student" {% if role_filter == 'student' %}selected{% endif %}>Student</option>
+    </select>
+  </label>
+  <label>
+    <span>Status</span>
+    <select name="status">
+      <option value="">All statuses</option>
+      <option value="active" {% if status_filter == 'active' %}selected{% endif %}>Active</option>
+      <option value="suspended" {% if status_filter == 'suspended' %}selected{% endif %}>Suspended</option>
+    </select>
+  </label>
+  <button type="submit" class="btn btn--primary">
+    <i data-lucide="search"></i>
+    <span>Apply</span>
+  </button>
+</form>
 
- Search & Filter Section 
-<div class="card">
-  <div class="card-body">
-    </div></div>{{ url_for('admin.users') }}" class="layout-grid g-3 align-items-end">
-       Search 
-      <div class="layout-col" data-col="12">
-        <label class="form-label" for="search">Search Users</label>
-        <div class="input-group">
-          </div></div>{{ request.args.get('search', '') }}">
-          <button class="btn btn-primary" type="submit">
-            <i class="bi bi-search"></i> Search
-          </button>
-        
-      
-      
-       Role Filter 
-      <div class="layout-col" data-col="12">
-        <label class="form-label" for="role">Role</label>
-        <select class="form-select" id="role" name="role" onchange="this.form.submit()">
-          <option value="">All Roles</option>
-          </select></div>{{ 'selected' if request.args.get('role') == 'admin' else '' }}>Admin
-          {{ 'selected' if request.args.get('role') == 'staff' else '' }}>Staff
-          {{ 'selected' if request.args.get('role') == 'student' else '' }}>Student
-        
-      
-      
-       Status Filter 
-      <div class="layout-col" data-col="12">
-        <label class="form-label" for="status">Status</label>
-        <select class="form-select" id="status" name="status" onchange="this.form.submit()">
-          <option value="">All Status</option>
-          </select></div>{{ 'selected' if request.args.get('status') == 'active' else '' }}>Active
-          {{ 'selected' if request.args.get('status') == 'suspended' else '' }}>Suspended
-        
-      
-    
-    
-     Active Filters Display 
-    {% if request.args.get('search') or request.args.get('role') or request.args.get('status') %}<div class="space-t-3">
-      <strong>Active Filters:</strong>
-      </div>{% if request.args.get('search') %}<span class="badge badge-info">Search: </span>{{ request.args.get('search') }}{% endif %}{% if request.args.get('role') %}<span class="badge badge-primary">Role: </span>{{ request.args.get('role') }}{% endif %}{% if request.args.get('status') %}<span class="badge badge-secondary">Status: </span>{{ request.args.get('status') }}{% endif %}{{ url_for('admin.users') }}" class="badge badge-danger">
-        <i class="bi bi-x"></i> Clear All
-      
-    
-    {% endif %}<div class="layout-grid g-3">
-  <div class="layout-col" data-col="12">
-    <div class="card">
-      <div class="card-body">
-        <h3 class="space-b-0"></h3></div></div></div></div>{{ users|length }}<p class="text-dim small">Total Users Shown</p>
-      
-    
-  
-  <div class="layout-col" data-col="12">
-    <div class="card">
-      <div class="card-body">
-        <h3 class="space-b-0"></h3></div></div></div>{{ users|selectattr('is_active')|list|length }}<p class="text-dim small">Active</p>
-      
-    
-  
-  <div class="layout-col" data-col="12">
-    <div class="card">
-      <div class="card-body">
-        <h3 class="space-b-0"></h3></div></div></div>{{ users|rejectattr('is_active')|list|length }}<p class="text-dim small">Suspended</p>
-      
-    
-  
-  <div class="layout-col" data-col="12">
-    <div class="card">
-      <div class="card-body">
-        <h3 class="space-b-0 text-primary"></h3></div></div></div>{{ page }}<p class="text-dim small">Current Page</p>
-      
-    
-  
+<section class="user-metrics">
+  <article>
+    <p class="user-metrics__label">Total users</p>
+    <p class="user-metrics__value">{{ total_users }}</p>
+  </article>
+  <article>
+    <p class="user-metrics__label">Active</p>
+    <p class="user-metrics__value text-success">{{ active_count }}</p>
+  </article>
+  <article>
+    <p class="user-metrics__label">Suspended</p>
+    <p class="user-metrics__value text-warning">{{ suspended_count }}</p>
+  </article>
+</section>
 
-
- Users Table 
-<div class="card">
-  <div class="card-header">
-    <h5 class="space-b-0">Users List</h5>
-  </div>
-  <div class="card-body">
-    </div></div>{% if users %}<div class="table-responsive">
-      <table class="table table-hover user-table">
-        <thead class="table-light">
+<section class="card">
+  <header class="card__header">
+    <div>
+      <h2>Users</h2>
+      <p class="text-muted">Use the checkboxes to perform bulk actions.</p>
+    </div>
+  </header>
+  {% if users %}
+  <form method="POST" action="{{ url_for('admin.bulk_update_users') }}" data-bulk-form>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="action" value="" data-bulk-action-input>
+    <div class="bulk-toolbar">
+      <span data-bulk-count>0 selected</span>
+      <div class="bulk-toolbar__actions">
+        <button type="submit" class="btn btn--ghost" data-bulk-action value="activate" disabled>
+          <i data-lucide="play"></i>
+          <span>Activate</span>
+        </button>
+        <button type="submit" class="btn btn--warning" data-bulk-action value="suspend" disabled>
+          <i data-lucide="pause"></i>
+          <span>Suspend</span>
+        </button>
+      </div>
+    </div>
+    <div class="table-scroll table-scroll--sticky" role="region">
+      <table class="table table--sticky" role="table">
+        <thead>
           <tr>
-            <th>User</th>
-            <th>Email</th>
-            <th>Role</th>
-            <th>Department</th>
-            <th>Status</th>
-            <th>Joined</th>
-            <th class="text-end">Actions</th>
+            <th scope="col">
+              <label class="checkbox">
+                <input type="checkbox" data-bulk-master aria-label="Select all users">
+                <span></span>
+              </label>
+            </th>
+            <th scope="col">User</th>
+            <th scope="col">Role</th>
+            <th scope="col">Department</th>
+            <th scope="col">Status</th>
+            <th scope="col">Joined</th>
+            <th scope="col" class="text-end">Actions</th>
           </tr>
         </thead>
         <tbody>
-          </tbody></table></div>{% for user in users %}
-            
-              <div class="flex">
-                </div>{% if user.profile_image %}{{ url_for('static', filename='uploads/' + user.profile_image) }}" 
-                     alt="{{ user.name }}" class="user-avatar">
-                {% else %}<div class="user-avatar bg-secondary text-inverse">
-                    </div>{{ user.name[0].upper() }}{% endif %}{{ url_for('admin.user_detail', user_id=user.user_id) }}" class="text-decoration-none">
-                  <strong></strong>{{ user.name }}{{ user.email }}
-              {% if user.role == 'admin' %}<span class="badge badge-danger">Admin</span>
-              {% elif user.role == 'staff' %}<span class="badge badge-primary">Staff</span>
-              {% else %}<span class="badge badge-secondary">Student</span>
-              {% endif %}{{ user.department or '-' }}
-              {% if user.is_active %}<span class="badge badge-success user-status-badge">
-                  <i class="bi bi-check-circle"></i> Active
-                </span>
-              {% else %}<span class="badge badge-danger user-status-badge">
-                  <i class="bi bi-x-circle"></i> Suspended
-                </span>
-              {% endif %}{{ user.created_at.strftime('%b %d, %Y') }}
+          {% for user in users %}
+          <tr tabindex="0">
+            <td data-label="Select">
+              <label class="checkbox">
+                <input type="checkbox" name="user_ids" value="{{ user.user_id }}" data-bulk-checkbox aria-label="Select {{ user.name }}">
+                <span></span>
+              </label>
+            </td>
+            <td data-label="User">
+              <strong>{{ user.name }}</strong>
+              <p class="text-muted">{{ user.email }}</p>
+            </td>
+            <td data-label="Role">
+              {% if user.role == 'admin' %}
+                <span class="chip chip--error">Admin</span>
+              {% elif user.role == 'staff' %}
+                <span class="chip chip--info">Staff</span>
+              {% else %}
+                <span class="chip chip--success">Student</span>
+              {% endif %}
+            </td>
+            <td data-label="Department">{{ user.department or '—' }}</td>
+            <td data-label="Status">
+              {% if user.is_active %}
+                <span class="badge badge--success">Active</span>
+              {% else %}
+                <span class="badge badge--warning">Suspended</span>
+              {% endif %}
+            </td>
+            <td data-label="Joined">{{ user.created_at.strftime('%b %d, %Y') }}</td>
+            <td class="text-end">
               <div class="btn-group">
-                </div>{{ url_for('admin.user_detail', user_id=user.user_id) }}" 
-                  class="btn btn-ghost action-btn" title="View Details">
-                  <i class="bi bi-eye"></i>
-                
-                
-                {% if user.role != 'admin' and user.user_id != current_user.user_id %}{% if user.is_active %}{{ user.user_id }}"
-                        title="Suspend User">
-                      <i class="bi bi-pause-circle"></i>
-                    
-                  {% else %}{{ url_for('admin.activate_user', user_id=user.user_id) }}" 
-                       style="display: inline;" onsubmit="return confirm('Activate this user?');">
-                      {{ csrf_token() }}"/>
-                      <button class="btn btn-success action-btn" title="Activate User" type="submit">
-                        <i class="bi bi-play-circle"></i>
+                <a href="{{ url_for('admin.user_detail', user_id=user.user_id) }}" class="btn btn--ghost btn--sm" title="View details">
+                  <i data-lucide="eye"></i>
+                </a>
+                {% if user.role != 'admin' and user.user_id != current_user.user_id %}
+                  {% if user.is_active %}
+                    <form method="POST" action="{{ url_for('admin.suspend_user', user_id=user.user_id) }}" class="inline-form">
+                      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                      <button class="btn btn--warning btn--sm" title="Suspend user" onclick="return confirm('Suspend {{ user.name }}?');">
+                        <i data-lucide="pause"></i>
                       </button>
-                    
-                  {% endif %}{{ user.user_id }}"
-                      title="Delete User">
-                    <i class="bi bi-trash"></i>
-                  
-                {% endif %}{{ user.user_id }}" tabindex="-1">
-            <div class="modal-dialog">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h5 class="modal-title">Suspend User</h5>
-                  <button class="btn-close" data-bs-dismiss="modal" type="button"></button>
-                </div>
-                <div class="modal-body">
-                  <p>Are you sure you want to suspend <strong></strong></p></div></div></div>{{ user.name }}?<p></p>
-                  <p class="text-dim small">Suspended users cannot log in or access the platform.</p>
-                
-                <div class="modal-footer">
-                  <button class="btn btn-secondary" data-bs-dismiss="modal" type="button">Cancel</button>
-                  </div>{{ url_for('admin.suspend_user', user_id=user.user_id) }}" style="display: inline;">
-                    {{ csrf_token() }}"/>
-                    <button class="btn btn-warning" type="submit">Suspend User</button>
-                  
-                
-              
-            
-          
-          
-           Delete Modal 
-          {{ user.user_id }}" tabindex="-1">
-            <div class="modal-dialog">
-              <div class="modal-content">
-                <div class="modal-header bg-danger text-inverse">
-                  <h5 class="modal-title">Delete User</h5>
-                  <button class="btn-close btn-close-white" data-bs-dismiss="modal" type="button"></button>
-                </div>
-                <div class="modal-body">
-                  <p><strong>⚠️ WARNING: This action cannot be undone!</strong></p>
-                  <p>Are you sure you want to permanently delete <strong></strong></p></div></div></div>{{ user.name }}?<p></p>
-                  <p class="text-dim small">This will delete:</p>
-                  <ul class="text-dim small">
-                    <li>User account and profile</li>
-                    <li>All resources owned by this user</li>
-                    <li>All bookings made by this user</li>
-                    <li>All messages sent/received</li>
-                    <li>All reviews written</li>
-                  </ul>
-                
-                <div class="modal-footer">
-                  <button class="btn btn-secondary" data-bs-dismiss="modal" type="button">Cancel</button>
-                  </div>{{ url_for('admin.delete_user', user_id=user.user_id) }}" style="display: inline;">
-                    {{ csrf_token() }}"/>
-                    <button class="btn btn-danger" type="submit">Delete Permanently</button>
-                  
-                
-              
-            
-          
-          {% endfor %}{% else %}<div class="text-center">
-      <i class="bi bi-inbox fs-1"></i>
-      <p class="text-dim">No users found matching your criteria.</p>
-      </div>{{ url_for('admin.users') }}" class="btn btn-secondary">Clear Filters
-    
-    {% endif %}{% if total_pages > 1 %}<div class="card-footer">
-    <nav>
-      <ul class="pagination">
-        </ul></nav></div>{{ 'disabled' if page == 1 else '' }}">
-          {{ url_for('admin.users', page=page-1, search=request.args.get('search', ''), role=request.args.get('role', ''), status=request.args.get('status', '')) }}">
-            Previous
-          
-        
-        
-        {% for p in range(1, total_pages + 1) %}{% if p == page %}<li class="page-item active"><span class="page-link"></span></li>{{ p }}{% elif p == 1 or p == total_pages or (p >= page - 2 and p <= page + 2) %}<li class="page-item">
-              </li>{{ url_for('admin.users', page=p, search=request.args.get('search', ''), role=request.args.get('role', ''), status=request.args.get('status', '')) }}">
-                {{ p }}{% elif p == page - 3 or p == page + 3 %}<li class="page-item disabled"><span class="page-link">...</span></li>
-          {% endif %}{% endfor %}{{ 'disabled' if page == total_pages else '' }}">
-          {{ url_for('admin.users', page=page+1, search=request.args.get('search', ''), role=request.args.get('role', ''), status=request.args.get('status', '')) }}">
-            Next
-          
-        
-      
-    
-  
-  {% endif %}{% endblock %}
+                    </form>
+                  {% else %}
+                    <form method="POST" action="{{ url_for('admin.activate_user', user_id=user.user_id) }}" class="inline-form">
+                      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                      <button class="btn btn--success btn--sm" title="Activate user">
+                        <i data-lucide="play"></i>
+                      </button>
+                    </form>
+                  {% endif %}
+                {% endif %}
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </form>
+  {% else %}
+    <div class="empty-state empty-state--inline">
+      <i data-lucide="users"></i>
+      <h3>No users match the filters</h3>
+      <p>Try adjusting the search or filters above.</p>
+    </div>
+  {% endif %}
+</section>
+{% endblock %}
+
+{% block extra_js %}
+  <script type="module" src="{{ vite_asset('src/static/js/admin-dashboard.js') }}"></script>
+  <script type="module">
+    if (typeof lucide !== 'undefined') {
+      lucide.createIcons();
+    }
+  </script>
+{% endblock %}

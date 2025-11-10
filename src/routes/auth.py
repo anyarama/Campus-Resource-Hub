@@ -86,14 +86,13 @@ def register():
 
         # Create new user
         try:
-            new_user = User(
-                name=name, email=email, role=role, department=department if department else None
+            UserRepository.create(
+                name=name,
+                email=email,
+                password=password,
+                role=role,
+                department=department if department else None,
             )
-            new_user.password = password  # Uses property setter (hashes automatically)
-
-            db.session.add(new_user)
-            db.session.commit()
-
             flash("Registration successful! Please log in.", "success")
             return redirect(url_for("auth.login"))
 

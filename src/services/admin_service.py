@@ -9,7 +9,7 @@ Reviewed and extended by developer on 2025-11-06
 """
 
 from typing import Dict, List, Any, Optional
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from sqlalchemy import func, and_, or_
 from src.app import db
 from src.models.user import User
@@ -129,6 +129,7 @@ class AdminService:
                 # Resource stats
                 'total_resources': total_resources,
                 'published_resources': published_resources,
+                'archived_resources': archived_resources,
                 'draft_resources': draft_resources,
                 'archived_resources': archived_resources,
                 
@@ -504,3 +505,256 @@ class AdminService:
             
         except Exception as e:
             raise AdminServiceError(f"Failed to get booking trends: {e}")
+
+    @staticmethod
+    def get_approvals_queue(limit: int = 10) -> List[Dict[str, Any]]:
+        """Return pending bookings requiring admin approval."""
+        try:
+            rows = (
+                db.session.query(Booking, Resource, User)
+                    .join(Resource, Booking.resource_id == Resource.resource_id)
+                    .join(User, Booking.requester_id == User.user_id)
+                    .filter(Booking.status == 'pending')
+                    .order_by(Booking.created_at.asc())
+                    .limit(limit)
+                    .all()
+            )
+
+            approvals = []
+            for booking, resource, requester in rows:
+                approvals.append(
+                    {
+                        'booking_id': booking.booking_id,
+                        'resource_title': resource.title,
+                        'resource_category': resource.category,
+                        'requester_name': requester.name,
+                        'requester_email': requester.email,
+                        'start_datetime': booking.start_datetime,
+                        'end_datetime': booking.end_datetime,
+                        'created_at': booking.created_at,
+                    }
+                )
+            return approvals
+        except Exception as e:
+            raise AdminServiceError(f"Failed to load approvals queue: {e}")
+
+    @staticmethod
+    def process_booking_approvals(booking_ids: List[int], action: str, admin_id: int) -> Dict[str, int]:
+        """
+        Bulk approve or reject bookings.
+        Returns counts of processed and skipped bookings.
+        """
+        if not booking_ids:
+            raise AdminServiceError("No bookings selected")
+        if action not in {'approve', 'reject'}:
+            raise AdminServiceError("Invalid action")
+
+        try:
+            bookings = Booking.query.filter(Booking.booking_id.in_(booking_ids)).all()
+            processed = 0
+            skipped = 0
+
+            for booking in bookings:
+                if booking.status != 'pending':
+                    skipped += 1
+                    continue
+
+                if action == 'approve':
+                    booking.approve()
+                else:
+                    booking.reject()
+                processed += 1
+
+            db.session.commit()
+            return {'processed': processed, 'skipped': skipped, 'total': len(booking_ids)}
+        except Exception as e:
+            db.session.rollback()
+            raise AdminServiceError(f"Failed to update approvals: {e}")
+
+    @staticmethod
+    def get_flagged_reviews(limit: int = 5) -> List[Dict[str, Any]]:
+        """Return recently flagged/hidden reviews."""
+        try:
+            reviews = (
+                Review.query.filter(Review.is_hidden == True)
+                .order_by(Review.hidden_at.desc())
+                .limit(limit)
+                .all()
+            )
+
+            flagged = []
+            for review in reviews:
+                flagged.append(
+                    {
+                        'review_id': review.review_id,
+                        'resource_title': review.resource.title if review.resource else 'Unknown resource',
+                        'reviewer_name': review.reviewer.name if review.reviewer else 'Unknown user',
+                        'rating': review.rating,
+                        'comment': review.comment,
+                        'hidden_reason': review.hidden_reason,
+                        'hidden_at': review.hidden_at,
+                        'resource_id': review.resource_id,
+                    }
+                )
+            return flagged
+        except Exception as e:
+            raise AdminServiceError(f"Failed to load flagged reviews: {e}")
+
+    @staticmethod
+    def get_bookings_per_day(days: int = 14) -> Dict[str, Any]:
+        """Return bookings per day over the provided window."""
+        try:
+            days = max(1, days)
+            today = date.today()
+            start_day = today - timedelta(days=days - 1)
+            start_dt = datetime.combine(start_day, datetime.min.time())
+
+            day_field = func.date(Booking.start_datetime)
+            rows = (
+                db.session.query(day_field.label('day'), func.count(Booking.booking_id))
+                .filter(Booking.start_datetime >= start_dt)
+                .group_by(day_field)
+                .order_by(day_field)
+                .all()
+            )
+
+            counts_map = {}
+            for day_value, count in rows:
+                if isinstance(day_value, str):
+                    parsed_day = datetime.strptime(day_value, "%Y-%m-%d").date()
+                elif isinstance(day_value, datetime):
+                    parsed_day = day_value.date()
+                else:
+                    parsed_day = day_value
+                counts_map[parsed_day] = count
+            labels = []
+            data = []
+            for i in range(days):
+                current_day = start_day + timedelta(days=i)
+                labels.append(current_day.strftime('%b %d'))
+                data.append(counts_map.get(current_day, 0))
+
+            return {
+                'labels': labels,
+                'datasets': [
+                    {
+                        'label': 'Bookings per day',
+                        'data': data,
+                    }
+                ],
+            }
+        except Exception as e:
+            raise AdminServiceError(f"Failed to build booking timeline: {e}")
+
+    @staticmethod
+    def get_category_popularity(days: Optional[int] = None, limit: int = 6) -> Dict[str, Any]:
+        """Return booking counts grouped by resource category."""
+        try:
+            query = (
+                db.session.query(Resource.category, func.count(Booking.booking_id).label('count'))
+                .join(Booking, Booking.resource_id == Resource.resource_id)
+                .filter(Booking.status.in_(['approved', 'completed']))
+            )
+
+            if days:
+                cutoff = datetime.utcnow() - timedelta(days=days)
+                query = query.filter(Booking.created_at >= cutoff)
+
+            rows = (
+                query.group_by(Resource.category)
+                .order_by(func.count(Booking.booking_id).desc())
+                .limit(limit)
+                .all()
+            )
+
+            if not rows:
+                # Fallback to resource counts
+                rows = (
+                    db.session.query(Resource.category, func.count(Resource.resource_id))
+                    .filter(Resource.status == 'published')
+                    .group_by(Resource.category)
+                    .order_by(func.count(Resource.resource_id).desc())
+                    .limit(limit)
+                    .all()
+                )
+
+            labels = []
+            data = []
+            for category, count in rows:
+                labels.append((category or 'Uncategorized').replace('_', ' ').title())
+                data.append(count)
+
+            return {'labels': labels, 'datasets': [{'label': 'Bookings', 'data': data}]}
+        except Exception as e:
+            raise AdminServiceError(f"Failed to build category popularity: {e}")
+
+    @staticmethod
+    def get_utilization_summary() -> Dict[str, Any]:
+        """Estimate resource utilization for analytics."""
+        try:
+            total_resources = db.session.query(func.count(Resource.resource_id)).scalar() or 0
+            archived_resources = db.session.query(func.count(Resource.resource_id)).filter(
+                Resource.status == 'archived'
+            ).scalar() or 0
+            booked_resources = (
+                db.session.query(func.count(func.distinct(Booking.resource_id)))
+                .filter(Booking.status.in_(['approved', 'completed']))
+                .scalar()
+                or 0
+            )
+            available_resources = max(total_resources - archived_resources - booked_resources, 0)
+
+            return {
+                'labels': ['Booked', 'Available', 'Archived'],
+                'data': [booked_resources, available_resources, archived_resources],
+            }
+        except Exception as e:
+            raise AdminServiceError(f"Failed to calculate utilization: {e}")
+
+    @staticmethod
+    def get_analytics_snapshot(period_days: int = 30) -> Dict[str, Any]:
+        """Bundle analytics datasets for the analytics page."""
+        try:
+            bookings = AdminService.get_bookings_per_day(days=period_days)
+            categories = AdminService.get_category_popularity(days=period_days)
+            utilization = AdminService.get_utilization_summary()
+            return {
+                'period': period_days,
+                'bookingsPerDay': bookings,
+                'popularCategories': categories,
+                'utilization': utilization,
+            }
+        except Exception as e:
+            raise AdminServiceError(f"Failed to assemble analytics snapshot: {e}")
+
+    @staticmethod
+    def bulk_update_users(user_ids: List[int], action: str, admin_id: int) -> Dict[str, int]:
+        """Suspend or activate many users at once."""
+        if not user_ids:
+            raise AdminServiceError("No users selected")
+        if action not in {'suspend', 'activate'}:
+            raise AdminServiceError("Invalid action")
+
+        try:
+            users = User.query.filter(User.user_id.in_(user_ids)).all()
+            updated = 0
+            skipped = 0
+
+            for user in users:
+                if user.role == 'admin' or user.user_id == admin_id:
+                    skipped += 1
+                    continue
+
+                if action == 'suspend':
+                    user.is_active = False
+                    user.suspended_at = datetime.utcnow()
+                else:
+                    user.is_active = True
+                    user.suspended_at = None
+                updated += 1
+
+            db.session.commit()
+            return {'updated': updated, 'skipped': skipped, 'total': len(user_ids)}
+        except Exception as e:
+            db.session.rollback()
+            raise AdminServiceError(f"Failed to update users: {e}")

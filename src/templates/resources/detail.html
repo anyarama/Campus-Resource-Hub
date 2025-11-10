@@ -1,188 +1,355 @@
-{% extends"base.html" %}{% from"reviews/_star_rating.html" import render_rating_summary %}{% from"reviews/_review_form.html" import render_review_form %}{% from"reviews/_review_list.html" import render_review_list %}{% block title %}{{ resource.title }}- Campus Resource Hub{% endblock %}{% block content %}<nav aria-label="breadcrumb" class="space-b-4">
+{% extends "base.html" %}
+
+{% block title %}{{ resource.title }} - Campus Resource Hub{% endblock %}
+
+{% set category_label = resource.category|replace('_', ' ')|title %}
+{% set hours = availability.get('hours', {}) if availability else {} %}
+{% set availability_days = availability.get('days', []) if availability else [] %}
+{% set availability_notes = availability.get('notes') if availability else None %}
+
+{% block content %}
+<div class="resource-detail">
+  <nav aria-label="Breadcrumb" class="resource-detail__breadcrumbs">
     <ol class="breadcrumb">
-      <li class="breadcrumb-item"></li></ol></nav>{{ url_for('resources.index') }}">Resources
-      <li aria-current="page" class="breadcrumb-item active"></li>{{ resource.title }}<div class="layout-grid">
-    <!-- Left Column: Images & Main Info -->
-    <div class="layout-col" data-col-lg="8">
-      <!-- Image Gallery -->
-      </div></div>{% if images and images|length > 0 %}<div class="carousel slide" data-bs-ride="carousel" id="resourceCarousel">
-        <div class="carousel-indicators">
-          </div></div>{% for img in images %}{{ loop.index0 }}" 
-              {% if loop.first %}class="active" aria-current="true"{% endif %}aria-label="Slide {{ loop.index }}">
-          {% endfor %}<div class="carousel-inner rounded">
-          </div>{% for img in images %}{% if loop.first %}active{% endif %}">
-            {{ url_for('static', filename='uploads/' + img) }}" 
-               class="d-block" 
-               alt="{{ resource.title }}- Image {{ loop.index }}"
-               style="max-height: 500px; object-fit: cover;">
-          
-          {% endfor %}{% if images|length > 1 %}<button class="carousel-control-prev" data-bs-slide="prev" data-bs-target="#resourceCarousel" type="button">
-          <span aria-hidden="true" class="carousel-control-prev-icon"></span>
-          <span class="visually-hidden">Previous</span>
-        </button>
-        <button class="carousel-control-next" data-bs-slide="next" data-bs-target="#resourceCarousel" type="button">
-          <span aria-hidden="true" class="carousel-control-next-icon"></span>
-          <span class="visually-hidden">Next</span>
-        </button>
-        {% endif %}{% else %}<div class="card">
-        <div class="card-body" style="min-height: 300px; display: flex; align-items: center; justify-content: center;">
-          <div>
-            <i class="bi bi-image" style="font-size: 4rem; color: #ccc;"></i>
-            <p class="text-dim">No images available</p>
-          </div>
-        </div>
-      </div>
-      {% endif %}<div class="card">
-        <div class="card-header">
-          <h2 class="h4"></h2></div></div>{{ resource.title }}<div class="space-t-2">
-            <span class="badge badge-primary"></span></div>{{ resource.category or 'Uncategorized' }}{% if resource.status == 'draft' %}<span class="badge badge-secondary">Draft</span>
-            {% elif resource.status == 'published' %}<span class="badge badge-success">Published</span>
-            {% elif resource.status == 'archived' %}<span class="badge badge-warning">Archived</span>
-            {% endif %}<div class="card-body">
-          <!-- Description -->
-          <h5 class="card-title">Description</h5>
-          <p class="card-text"></p></div>{{ resource.description or 'No description provided.' }}<div class="layout-grid">
-            <div class="layout-col" data-col="12">
-              <p class="space-b-1"><strong><i class="bi bi-geo-alt"></i> Location:</strong></p>
-              <p class="text-dim"></p></div></div>{{ resource.location or 'Not specified' }}<div class="layout-col" data-col="12">
-              <p class="space-b-1"><strong><i class="bi bi-people"></i> Capacity:</strong></p>
-              <p class="text-dim"></p></div>{{ resource.capacity or 'Not specified' }}<div class="layout-col" data-col="12">
-              <p class="space-b-1"><strong><i class="bi bi-calendar-event"></i> Created:</strong></p>
-              <p class="text-dim"></p></div>{{ resource.created_at.strftime('%B %d, %Y') if resource.created_at else 'Unknown' }}<div class="layout-col" data-col="12">
-              <p class="space-b-1"><strong><i class="bi bi-person"></i> Owner:</strong></p>
-              <p class="text-dim"></p></div>{{ resource.owner.name if resource.owner else 'Unknown' }}{% if availability %}<div class="space-t-4">
-            <h5 class="card-title">Availability</h5>
-            <div class="alert alert-info">
-              <i class="bi bi-clock"></i> </div></div>{{ availability.get('description', 'Check with owner for availability') }}{% endif %}{% if current_user.is_authenticated and can_review %}{{ render_review_form(resource, user_review, is_edit=(user_review is not none)) }}{% endif %}{% if reviews %}{{ render_review_list(reviews, resource, current_user, show_moderation=(current_user.role == 'admin' if current_user.is_authenticated else False)) }}{% else %}<div class="card" id="reviews">
-          <div class="card-header">
-            <h5 class="space-b-0">
-              <i class="bi bi-chat-left-quote"></i>Reviews
-            </h5>
-          </div>
-          <div class="card-body">
-            <i class="bi bi-chat-left-quote" style="font-size: 4rem;"></i>
-            <h5 class="space-t-3">No Reviews Yet</h5>
-            <p class="text-dim">Be the first to review this resource!</p>
-            </div></div>{% if current_user.is_authenticated and can_review %}<a class="btn btn-primary" href="#review-form">
-                <i class="bi bi-star"></i>Write a Review
-              </a>
-            {% endif %}{% endif %}<div class="layout-col" data-col-lg="4">
-      <!-- Action Buttons Card -->
-      <div class="card sticky-top" style="top: 20px;">
-        <div class="card-body">
-          </div></div></div>{% if current_user.is_authenticated %}{% if resource.owner_id == current_user.user_id %}<h5 class="card-title">Manage Resource</h5>
-            
-            {{ url_for('resources.edit', resource_id=resource.resource_id) }}" 
-              class="btn btn-primary">
-              <i class="bi bi-pencil"></i> Edit Resource
-            
+      <li class="breadcrumb-item"><a href="{{ url_for('resources.index') }}">Resources</a></li>
+      <li class="breadcrumb-item"><a href="{{ url_for('resources.index', category=resource.category) }}">{{ category_label }}</a></li>
+      <li class="breadcrumb-item active" aria-current="page">{{ resource.title }}</li>
+    </ol>
+  </nav>
 
-            {% if resource.status == 'draft' %}{{ url_for('resources.publish', resource_id=resource.resource_id) }}" class="mb-2">
-              {{ csrf_token() }}">
-              <button class="btn btn-success" type="submit">
-                <i class="bi bi-check-circle"></i> Publish Resource
-              </button>
-            
-            {% elif resource.status == 'published' %}{{ url_for('resources.archive', resource_id=resource.resource_id) }}" class="mb-2">
-              {{ csrf_token() }}">
-              <button class="btn btn-warning" type="submit">
-                <i class="bi bi-archive"></i> Archive Resource
-              </button>
-            
-            {% endif %}<hr/>
-
-            {{ url_for('resources.delete', resource_id=resource.resource_id) }}" 
-               onsubmit="return confirm('Are you sure you want to delete this resource? This action cannot be undone.');"
-               class="mb-0">
-              {{ csrf_token() }}">
-              <button class="btn btn-danger" type="submit">
-                <i class="bi bi-trash"></i> Delete Resource
-              </button>
-            
-
-            {% else %}<h5 class="card-title">Book This Resource</h5>
-            
-            {% if resource.status == 'published' %}{{ url_for('bookings.new', resource_id=resource.resource_id) }}" 
-              class="btn btn-success">
-              <i class="bi bi-calendar-check"></i> Request Booking
-            
-            <p class="text-dim small">
-              <i class="bi bi-clock"></i> Choose your preferred date and time
-            </p>
-            {% else %}<div class="alert alert-warning">
-              <i class="bi bi-exclamation-triangle"></i> This resource is not available for booking.
+  <div class="resource-detail__hero layout-grid">
+    <div class="layout-col" data-col="12" data-col-lg="8">
+      {% if images %}
+        <section class="resource-carousel">
+          <div class="carousel" data-carousel aria-label="Resource images">
+            <div class="carousel__track">
+              {% for image in images %}
+              <div class="carousel__slide{% if loop.first %} is-active{% endif %}" aria-hidden="{{ 'false' if loop.first else 'true' }}">
+                <img 
+                  data-src="{{ url_for('static', filename='uploads/' + image) }}" 
+                  alt="{{ resource.title }} image {{ loop.index }}" 
+                >
+              </div>
+              {% endfor %}
             </div>
-            {% endif %}<hr/>
-
-            {{ url_for('messages.about_resource', resource_id=resource.resource_id) }}" 
-              class="btn btn-outline">
-              <i class="bi bi-chat-dots"></i> Message Owner
-            
-            <p class="text-dim small">
-              <i class="bi bi-info-circle"></i> Ask questions about this resource
-            </p>
-            {% endif %}{% else %}<h5 class="card-title">Book This Resource</h5>
-          <div class="alert alert-info">
-            <i class="bi bi-info-circle"></i> Please </div>{{ url_for('auth.login') }}">log in to book this resource.
-          
-          {% endif %}<div class="card">
-        <div class="card-header">
-          <h6 class="space-b-0">Quick Info</h6>
-        </div>
-        <div class="card-body">
-          <div class="flex">
-            <span><i class="bi bi-calendar-check"></i> Bookings:</span>
-            <span class="badge badge-info"></span></div></div></div>{{ booking_count }}total
-          
-          <div class="flex">
-            <span><i class="bi bi-star"></i> Reviews:</span>
-            </div>{% if resource.average_rating %}<div>
-                </div>{{ render_rating_summary(resource.average_rating, reviews|length, size='sm') }}{% else %}<span class="badge badge-secondary">No reviews yet</span>
-            {% endif %}<div class="card">
-        <div class="card-body">
-          <h6 class="card-title">Share This Resource</h6>
-          <div class="d-grid gap-2">
-            <button class="btn btn-ghost" disabled="">
-              <i class="bi bi-link-45deg"></i> Copy Link
+            <div class="carousel__nav carousel__nav--prev">
+              <button type="button" data-carousel-prev aria-label="Previous image">
+                <i data-lucide="chevron-left"></i>
+              </button>
+            </div>
+            <div class="carousel__nav carousel__nav--next">
+              <button type="button" data-carousel-next aria-label="Next image">
+                <i data-lucide="chevron-right"></i>
+              </button>
+            </div>
+            <div class="carousel__controls">
+              <span class="carousel__counter" data-carousel-counter>1 / {{ images|length }}</span>
+              <button type="button" class="carousel__fullscreen" data-carousel-fullscreen aria-label="Toggle fullscreen">
+                <i data-lucide="maximize-2"></i>
+              </button>
+            </div>
+          </div>
+          {% if images|length > 1 %}
+          <div class="carousel__thumbnails">
+            {% for image in images %}
+            <button type="button" class="carousel__thumb{% if loop.first %} is-active{% endif %}" aria-label="Go to image {{ loop.index }}">
+              <img src="{{ url_for('static', filename='uploads/' + image) }}" alt="Thumbnail {{ loop.index }}">
             </button>
-            <button class="btn btn-ghost" disabled="">
-              <i class="bi bi-envelope"></i> Email
-            </button>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </section>
+      {% else %}
+        <div class="resource-carousel resource-carousel--empty">
+          <div class="resource-carousel__placeholder">
+            <i data-lucide="image"></i>
+            <p>No images uploaded yet</p>
           </div>
         </div>
+      {% endif %}
+
+      <header class="resource-header">
+        <div class="resource-header__labels">
+          <span class="badge badge--ghost">{{ category_label }}</span>
+          {% if resource.status != 'published' %}
+            <span class="badge badge--secondary">{{ resource.status|title }}</span>
+          {% endif %}
+        </div>
+        <h1 class="resource-title">{{ resource.title }}</h1>
+        <div class="resource-meta">
+          {% if average_rating %}
+          <div class="resource-meta__item">
+            <i data-lucide="star" class="icon-filled"></i>
+            <strong>{{ average_rating }}</strong>
+            <span class="text-muted">({{ review_count }} reviews)</span>
+          </div>
+          {% else %}
+          <div class="resource-meta__item text-muted">
+            <i data-lucide="star"></i>
+            No reviews yet
+          </div>
+          {% endif %}
+          {% if resource.capacity %}
+          <div class="resource-meta__item">
+            <i data-lucide="users"></i>
+            {{ resource.capacity }} person{{ 's' if resource.capacity != 1 else '' }} max
+          </div>
+          {% endif %}
+          {% if resource.location %}
+          <div class="resource-meta__item">
+            <i data-lucide="map-pin"></i>
+            {{ resource.location }}
+          </div>
+          {% endif %}
+        </div>
+      </header>
+
+      <div class="resource-quick-facts">
+        <div class="quick-fact">
+          <span class="quick-fact__label">Capacity</span>
+          <span class="quick-fact__value">{{ resource.capacity if resource.capacity else 'Flexible' }}</span>
+        </div>
+        <div class="quick-fact">
+          <span class="quick-fact__label">Building</span>
+          <span class="quick-fact__value">
+            {% if resource.location %}
+              {{ resource.location.split(',')[0] }}
+            {% else %}
+              Not specified
+            {% endif %}
+          </span>
+        </div>
+        <div class="quick-fact">
+          <span class="quick-fact__label">Equipment</span>
+          <span class="quick-fact__value">
+            {% if availability and availability.get('equipment') %}
+              {{ availability.get('equipment')|join(', ') }}
+            {% elif availability_notes %}
+              {{ availability_notes }}
+            {% else %}
+              Standard AV + Wi-Fi
+            {% endif %}
+          </span>
+        </div>
       </div>
-    
-  
+    </div>
 
+    <aside class="layout-col resource-detail__rail" data-col="12" data-col-lg="4">
+      <section class="resource-card resource-card--availability">
+        <div class="resource-card__header">
+          <div>
+            <p class="eyebrow">Availability</p>
+            <h3>Upcoming 2 weeks</h3>
+          </div>
+          {% if next_available_date %}
+          <span class="badge badge--success">Next open {{ next_available_date.strftime('%b %d') }}</span>
+          {% endif %}
+        </div>
+        <div class="availability-calendar" role="list">
+          {% for day in availability_calendar %}
+          <div class="availability-day availability-day--{{ day.status }}" role="listitem">
+            <span class="availability-day__dow">{{ day.date.strftime('%a') }}</span>
+            <span class="availability-day__date">{{ day.date.strftime('%b %d') }}</span>
+          </div>
+          {% endfor %}
+        </div>
+        {% if current_user.is_authenticated and resource.status == 'published' %}
+        <button
+          type="button"
+          class="btn btn--primary btn--full"
+          data-booking-open
+          data-resource-id="{{ resource.resource_id }}"
+          data-resource-title="{{ resource.title }}"
+          data-booking-url="{{ url_for('bookings.new', resource_id=resource.resource_id) }}"
+          data-availability-url="{{ url_for('resources.availability', resource_id=resource.resource_id) }}"
+        >
+          <i data-lucide="calendar-check"></i>
+          Book this resource
+        </button>
+        {% else %}
+        <a href="{{ url_for('bookings.new', resource_id=resource.resource_id) }}" class="btn btn--primary btn--full">
+          <i data-lucide="calendar-check"></i>
+          View booking options
+        </a>
+        {% endif %}
+      </section>
 
-<style>
-  /* Custom styles for detail page */
-  .carousel-item img {
-    border-radius: 0.5rem;
-  }
-  
-  .sticky-top {
-    z-index: 1020;
-  }
+      <section class="resource-card">
+        <div class="resource-card__header">
+          <p class="eyebrow">Owner</p>
+          <h3>Managed by</h3>
+        </div>
+        <div class="resource-owner">
+          <div class="resource-owner__avatar">
+            <i data-lucide="shield"></i>
+          </div>
+          <div>
+            <p class="resource-owner__name">{{ resource.owner.name if resource.owner else 'Campus Staff' }}</p>
+            {% if resource.owner and resource.owner.department %}
+              <p class="text-muted">{{ resource.owner.department }}</p>
+            {% endif %}
+          </div>
+        </div>
+        <ul class="resource-list">
+          <li>
+            <i data-lucide="mail"></i>
+            <span>{{ resource.owner.email if resource.owner else 'Contact via messaging' }}</span>
+          </li>
+          <li>
+            <i data-lucide="clock-3"></i>
+            <span>Replies within 1 business day</span>
+          </li>
+        </ul>
+      </section>
+    </aside>
+  </div>
 
-  /* Smooth transitions for action buttons */
-  .btn {
-    transition: all 0.3s ease;
-  }
+  <div class="resource-detail__body layout-grid">
+    <section class="layout-col resource-panel" data-col="12" data-col-lg="8">
+      <h2>About this resource</h2>
+      <p>
+        {% if resource.description %}
+          {{ resource.description }}
+        {% else %}
+          The owner has not added a description yet.
+        {% endif %}
+      </p>
 
-  /* Badge styling */
-  .badge {
-    font-size: 0.85rem;
-    padding: 0.4em 0.6em;
-  }
+      <div class="resource-availability">
+        <div>
+          <p class="eyebrow">Preferred days</p>
+          {% if availability_days %}
+            <p>{{ availability_days|map('capitalize')|join(', ') }}</p>
+          {% else %}
+            <p>Owner will coordinate availability after booking.</p>
+          {% endif %}
+        </div>
+        <div>
+          <p class="eyebrow">Hours</p>
+          {% if hours %}
+            <p>{{ hours.get('start', '08:00') }} - {{ hours.get('end', '18:00') }}</p>
+          {% else %}
+            <p>Standard business hours</p>
+          {% endif %}
+        </div>
+        <div>
+          <p class="eyebrow">Approval</p>
+          <p>{{ 'Requires owner approval' if availability and availability.get('requires_approval') else 'Auto-approve' }}</p>
+        </div>
+      </div>
+    </section>
 
-  /* Card shadow on hover */
-  .card {
-    transition: box-shadow 0.3s ease;
-  }
+    <section class="layout-col resource-panel" data-col="12">
+      <div class="resource-reviews__header">
+        <div>
+          <p class="eyebrow">Reviews</p>
+          <h2>{{ review_count }} review{{ 's' if review_count != 1 else '' }}</h2>
+        </div>
+        {% if can_review %}
+          <button type="button" class="btn btn--outline" data-drawer-open="reviewSheet">
+            <i data-lucide="star"></i>
+            Write a review
+          </button>
+        {% elif not current_user.is_authenticated %}
+          <a href="{{ url_for('auth.login') }}" class="btn btn--outline">
+            <i data-lucide="log-in"></i>
+            Sign in to review
+          </a>
+        {% endif %}
+      </div>
 
-  .card:hover {
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  }
-</style>
+      {% if reviews %}
+      <div class="resource-reviews">
+        {% for review in reviews %}
+          <article class="review-card{% if review.is_hidden %} review-card--hidden{% endif %}">
+            <div class="review-card__header">
+              <div>
+                <p class="review-card__name">{{ review.reviewer.name }}</p>
+                <p class="review-card__meta">
+                  <i data-lucide="clock-3"></i>
+                  {{ review.timestamp.strftime('%b %d, %Y') }}
+                </p>
+              </div>
+              <div class="review-card__badges">
+                {% if review.booking_id %}
+                  <span class="chip chip--success">
+                    <i data-lucide="badge-check"></i>
+                    Verified booking
+                  </span>
+                {% endif %}
+                {% if show_moderation %}
+                  <span class="chip chip--info">
+                    <i data-lucide="shield"></i>
+                    {{ 'Hidden' if review.is_hidden else 'Visible' }}
+                  </span>
+                {% endif %}
+              </div>
+            </div>
+            <div class="review-card__rating">
+              {% for star in range(1, 6) %}
+                <i data-lucide="star" class="{% if star <= review.rating %}icon-filled{% endif %}"></i>
+              {% endfor %}
+            </div>
+            <p class="review-card__body">
+              {{ review.comment or 'Reviewer did not leave additional comments.' }}
+            </p>
+          </article>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="empty-state empty-state--inline">
+        <div class="empty-state__icon">
+          <i data-lucide="chat-bubble-oval-ellipsis"></i>
+        </div>
+        <h3>No reviews yet</h3>
+        <p>Be the first to share feedback after booking.</p>
+      </div>
+      {% endif %}
+    </section>
+  </div>
+</div>
+
+{# Review Drawer #}
+{% if current_user.is_authenticated and can_review %}
+<div id="reviewSheet" class="drawer" role="dialog" aria-modal="true" aria-labelledby="review-sheet-title">
+  <div class="drawer-header">
+    <h2 id="review-sheet-title">Share your experience</h2>
+    <button type="button" class="drawer-close" data-drawer-close aria-label="Close review drawer">
+      <i data-lucide="x"></i>
+    </button>
+  </div>
+  <div class="drawer-body">
+    <form method="POST" action="{{ url_for('reviews.create', resource_id=resource.resource_id) }}" class="form-grid">
+      {{ csrf_token() }}
+      <div class="form-group">
+        <label for="review-rating">Rating</label>
+        <select id="review-rating" name="rating" required>
+          <option value="">Select...</option>
+          {% for value in range(5, 0, -1) %}
+            <option value="{{ value }}">{{ value }} - {{ ['Poor','Fair','Good','Very good','Excellent'][value-1] }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="review-comment">Comments</label>
+        <textarea id="review-comment" name="comment" rows="4" placeholder="What should other students know?" required></textarea>
+      </div>
+      <button type="submit" class="btn btn--primary btn--full">
+        Submit review
+      </button>
+    </form>
+  </div>
+</div>
+{% endif %}
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+  <script type="module" src="{{ vite_asset('src/static/js/image-carousel.js') }}"></script>
+  <script type="module">
+    if (typeof lucide !== 'undefined') {
+      lucide.createIcons();
+    }
+  </script>
 {% endblock %}

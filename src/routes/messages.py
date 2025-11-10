@@ -21,25 +21,42 @@ messages_bp = Blueprint("messages", __name__)
 @login_required
 def inbox():
     """
-    Display user's message inbox (conversation list).
-    
-    Shows all conversations grouped by users, with unread counts.
+    Display messaging workspace with conversation list + active thread.
     """
     try:
-        # Get all conversations for current user
+        selected_user_id = request.args.get("user_id", type=int)
+
         conversations = MessageService.get_conversations(current_user.user_id)
-        
-        # Get unread count
-        unread_count = MessageService.get_unread_count(current_user.user_id)
-        
-        # Get message stats
         stats = MessageService.get_message_stats(current_user.user_id)
-        
+
+        # Determine active conversation partner
+        active_user = None
+        if selected_user_id:
+            active_user = UserRepository.get_by_id(selected_user_id)
+
+        if active_user and active_user.user_id == current_user.user_id:
+            active_user = None
+
+        if not active_user and conversations:
+            active_user = conversations[0]["other_user"]
+
+        active_messages = []
+        if active_user and active_user.user_id != current_user.user_id:
+            try:
+                active_messages = MessageService.get_conversation(
+                    current_user.user_id, active_user.user_id
+                )
+            except MessageServiceError as conv_error:
+                flash(str(conv_error), "error")
+                active_user = None
+
         return render_template(
             "messages/inbox.html",
             conversations=conversations,
-            unread_count=unread_count,
             stats=stats,
+            active_user=active_user,
+            active_messages=active_messages,
+            selected_user_id=active_user.user_id if active_user else None,
         )
     except Exception as e:
         flash(f"Error loading messages: {str(e)}", "error")
@@ -73,11 +90,7 @@ def conversation(user_id):
         # Get conversation messages (also marks as read)
         messages = MessageService.get_conversation(current_user.user_id, user_id)
         
-        return render_template(
-            "messages/conversation.html",
-            other_user=other_user,
-            messages=messages,
-        )
+        return redirect(url_for("messages.inbox", user_id=other_user.user_id))
     except MessageServiceError as e:
         flash(str(e), "error")
         return redirect(url_for("messages.inbox"))
@@ -127,7 +140,7 @@ def compose(user_id):
         )
         
         flash("Message sent successfully!", "success")
-        return redirect(url_for("messages.conversation", user_id=user_id))
+        return redirect(url_for("messages.inbox", user_id=user_id))
         
     except MessageServiceError as e:
         flash(str(e), "error")
@@ -163,7 +176,7 @@ def send():
             if request.is_json or request.headers.get("X-Requested-With") == "XMLHttpRequest":
                 return jsonify({"error": "Message content required"}), 400
             flash("Message content cannot be empty", "error")
-            return redirect(url_for("messages.conversation", user_id=receiver_id))
+            return redirect(url_for("messages.inbox", user_id=receiver_id))
         
         # Send message
         message = MessageService.send_message(
@@ -183,7 +196,7 @@ def send():
         
         # Regular form submission - redirect to conversation
         flash("Message sent!", "success")
-        return redirect(url_for("messages.conversation", user_id=receiver_id))
+        return redirect(url_for("messages.inbox", user_id=receiver_id))
         
     except MessageServiceError as e:
         if request.is_json or request.headers.get("X-Requested-With") == "XMLHttpRequest":
@@ -232,7 +245,7 @@ def mark_read(user_id):
             return jsonify({"success": True}), 200
         
         flash("Messages marked as read", "success")
-        return redirect(url_for("messages.conversation", user_id=user_id))
+        return redirect(url_for("messages.inbox", user_id=user_id))
         
     except Exception as e:
         if request.is_json or request.headers.get("X-Requested-With") == "XMLHttpRequest":
@@ -349,7 +362,7 @@ def about_booking(booking_id):
                 return redirect(url_for("bookings.my_bookings"))
         
         # Redirect to compose or conversation
-        return redirect(url_for("messages.conversation", user_id=other_user_id))
+        return redirect(url_for("messages.inbox", user_id=other_user_id))
         
     except Exception as e:
         flash(f"Error: {str(e)}", "error")

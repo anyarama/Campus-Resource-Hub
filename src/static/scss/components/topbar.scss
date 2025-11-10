@@ -1,0 +1,313 @@
+// =============================================================================
+// TOPBAR - Enterprise application header with search, actions, and user menu
+// =============================================================================
+
+@use '../tokens' as *;
+
+// -----------------------------------------------------------------------------
+// Topbar Container
+// -----------------------------------------------------------------------------
+.app-topbar {
+  position: sticky;
+  top: 0;
+  height: 64px;
+  background-color: var(--color-white);
+  border-bottom: 1px solid var(--color-border-default);
+  display: flex;
+  align-items: center;
+  padding: 0 var(--spacing-6);
+  gap: var(--spacing-4);
+  z-index: var(--z-index-navbar);
+  transition: left 0.3s ease;
+  
+  @media (max-width: 767px) {
+    padding: 0 var(--spacing-4);
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Topbar Brand (Mobile)
+// -----------------------------------------------------------------------------
+.topbar-brand {
+  display: none;
+  align-items: center;
+  gap: var(--spacing-2);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
+  text-decoration: none;
+  
+  @media (max-width: 767px) {
+    display: flex;
+  }
+  
+  .brand-icon {
+    font-size: 1.5rem;
+  }
+  
+  .brand-text {
+    font-size: var(--font-size-lg);
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Topbar Toggle (Mobile Sidebar Toggle)
+// -----------------------------------------------------------------------------
+.topbar-toggle {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: var(--color-gray-700);
+  cursor: pointer;
+  padding: var(--spacing-2);
+  border-radius: var(--border-radius-md);
+  transition: background-color 0.2s ease;
+  width: 40px;
+  height: 40px;
+  align-items: center;
+  justify-content: center;
+  
+  &:hover {
+    background-color: var(--color-gray-100);
+  }
+  
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+  
+  @media (max-width: 767px) {
+    display: flex;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Topbar Search
+// -----------------------------------------------------------------------------
+.topbar-search {
+  flex: 1;
+  max-width: 500px;
+  
+  @media (max-width: 767px) {
+    max-width: none;
+  }
+  
+  input[type="search"] {
+    width: 100%;
+    height: 40px;
+    padding: 0 var(--spacing-3);
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--border-radius-md);
+    font-size: var(--font-size-sm);
+    background-color: var(--color-bg-secondary);
+    transition: all 0.2s ease;
+    
+    &:focus {
+      outline: none;
+      border-color: var(--color-primary);
+      background-color: var(--color-white);
+      box-shadow: 0 0 0 3px var(--color-primary-50);
+    }
+    
+    &::placeholder {
+      color: var(--color-text-tertiary);
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Topbe Actions
+// -----------------------------------------------------------------------------
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  margin-left: auto;
+}
+
+.topbar-action {
+  background: none;
+  border: none;
+  font-size: 1.25rem;
+  color: var(--color-gray-700);
+  cursor: pointer;
+  padding: var(--spacing-2);
+  border-radius: var(--border-radius-md);
+  transition: all 0.2s ease;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  
+  &:hover {
+    background-color: var(--color-gray-100);
+    color: var(--color-gray-900);
+  }
+  
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+  
+  // Notification badge
+  .badge {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 4px;
+    font-size: 0.625rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Theme Toggle
+// -----------------------------------------------------------------------------
+.theme-toggle {
+  .theme-icon {
+    font-size: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// User Menu Dropdown
+// -----------------------------------------------------------------------------
+.topbar-user-menu {
+  position: relative;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 200px;
+  background-color: var(--color-white);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-lg);
+  padding: var(--spacing-2);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-8px);
+  transition: all 0.2s ease;
+  z-index: 1000;
+  
+  &.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  padding: var(--spacing-2) var(--spacing-3);
+  color: var(--color-gray-700);
+  text-decoration: none;
+  font-size: var(--font-size-sm);
+  border-radius: var(--border-radius-sm);
+  transition: all 0.2s ease;
+  width: 100%;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  
+  i {
+    font-size: var(--font-size-lg);
+    width: 20px;
+    text-align: center;
+  }
+  
+  &:hover {
+    background-color: var(--color-gray-50);
+    color: var(--color-gray-900);
+  }
+  
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: -2px;
+  }
+}
+
+.dropdown-divider {
+  height: 1px;
+  background-color: var(--color-border-default);
+  margin: var(--spacing-2) 0;
+}
+
+// -----------------------------------------------------------------------------
+// Page Header (Below Topbar)
+// -----------------------------------------------------------------------------
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-4);
+  margin-bottom: var(--spacing-6);
+  
+  @media (max-width: 767px) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  h1 {
+    margin: 0;
+    font-size: var(--typography-h2-size);
+    font-weight: var(--typography-h2-weight);
+    color: var(--color-text-primary);
+  }
+}
+
+.page-toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  
+  @media (max-width: 767px) {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Breadcrumbs
+// -----------------------------------------------------------------------------
+.breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--spacing-4);
+  
+  a {
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    transition: color 0.2s ease;
+    
+    &:hover {
+      color: var(--color-primary);
+    }
+  }
+  
+  .separator {
+    color: var(--color-text-tertiary);
+  }
+  
+  .current {
+    color: var(--color-text-primary);
+    font-weight: var(--font-weight-medium);
+  }
+}

@@ -1,0 +1,498 @@
+// =============================================================================
+// APP SIDEBAR - Icon-only compact sidebar with hover tooltips
+// =============================================================================
+// Design: Compact 72px width, icon-only with titles as hover tooltips
+// IU Crimson brand, enterprise-grade, comfortable density
+// =============================================================================
+
+@use '../tokens' as *;
+
+// -----------------------------------------------------------------------------
+// App Sidebar Container - Icon-Only Compact Mode
+// -----------------------------------------------------------------------------
+.app-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 72px;  // Compact icon-only width
+  height: 100vh;
+  background-color: var(--color-white);
+  border-right: 1px solid var(--color-gray-200);
+  display: flex;
+  flex-direction: column;
+  z-index: var(--z-index-sidebar);
+  overflow-y: auto;
+  overflow-x: hidden;
+  transition: width 0.3s ease, transform 0.3s ease;
+  
+  // Expanded state (optional for larger screens)
+  &.expanded {
+    width: 260px;
+    
+    .sidebar-link span:not(.badge) {
+      display: inline;
+    }
+    
+    .brand-text {
+      display: inline;
+    }
+    
+    .sidebar-link::after {
+      display: none;
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Sidebar Header (Brand Logo) - Compact Icon Only
+// -----------------------------------------------------------------------------
+.sidebar-header {
+  padding: var(--spacing-3);
+  border-bottom: 1px solid var(--color-gray-200);
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+}
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+  width: 48px;
+  height: 48px;
+  
+  &:hover {
+    opacity: 0.8;
+  }
+  
+  .brand-icon {
+    font-size: 1.75rem;
+  }
+  
+  .brand-text {
+    display: none;  // Hidden in compact mode
+    font-size: var(--font-size-base);
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Sidebar Navigation - Icon-Only with Tooltips
+// -----------------------------------------------------------------------------
+.sidebar-nav {
+  flex: 1;
+  padding: var(--spacing-3) 0;
+  overflow-y: auto;
+  overflow-x: visible;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-3);
+  margin: var(--spacing-1) var(--spacing-2);
+  color: var(--color-gray-700);
+  text-decoration: none;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  transition: all 0.2s ease;
+  border-radius: var(--border-radius-md);
+  position: relative;
+  height: 44px;  // Comfortable control height
+  
+  i {
+    font-size: 1.25rem;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  
+  // Hide text labels in compact mode
+  span:not(.badge) {
+    display: none;
+  }
+  
+  // Badge positioning for compact mode
+  .badge {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 4px;
+    font-size: 0.625rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  // Hover tooltip
+  &::after {
+    content: attr(title);
+    position: absolute;
+    left: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    margin-left: var(--spacing-2);
+    padding: var(--spacing-2) var(--spacing-3);
+    background-color: var(--color-gray-900);
+    color: var(--color-white);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    white-space: nowrap;
+    border-radius: var(--border-radius-md);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+    z-index: 1000;
+    box-shadow: var(--shadow-lg);
+  }
+  
+  &:hover {
+    background-color: var(--color-gray-100);
+    color: var(--color-gray-900);
+    
+    &::after {
+      opacity: 1;
+    }
+  }
+  
+  &.active {
+    background-color: var(--color-primary-50);
+    color: var(--color-primary);
+    font-weight: var(--font-weight-semibold);
+    
+    &::before {
+      content: '';
+      position: absolute;
+      left: -8px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 3px;
+      height: 24px;
+      background-color: var(--color-primary);
+      border-radius: 0 2px 2px 0;
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Sidebar Divider & Section Title - Compact Mode
+// -----------------------------------------------------------------------------
+.sidebar-divider {
+  height: 1px;
+  background-color: var(--color-gray-200);
+  margin: var(--spacing-3) var(--spacing-3);
+}
+
+.sidebar-section-title {
+  padding: var(--spacing-2);
+  font-size: 0.625rem;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-gray-400);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  text-align: center;
+  display: none;  // Hidden in compact mode, shows only icon divider
+}
+
+// -----------------------------------------------------------------------------
+// Sidebar Footer (User Profile) - Compact Mode
+// -----------------------------------------------------------------------------
+.sidebar-footer {
+  padding: var(--spacing-3);
+  border-top: 1px solid var(--color-gray-200);
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+}
+
+.sidebar-user {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  color: var(--color-gray-900);
+  transition: transform 0.2s ease;
+  padding: var(--spacing-2);
+  border-radius: var(--border-radius-full);
+  position: relative;
+  
+  &:hover {
+    transform: scale(1.05);
+    
+    &::after {
+      opacity: 1;
+    }
+  }
+  
+  // Tooltip for user info
+  &::after {
+    content: attr(data-username);
+    position: absolute;
+    left: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    margin-left: var(--spacing-2);
+    padding: var(--spacing-2) var(--spacing-3);
+    background-color: var(--color-gray-900);
+    color: var(--color-white);
+    font-size: var(--font-size-sm);
+    white-space: nowrap;
+    border-radius: var(--border-radius-md);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+    z-index: 1000;
+    box-shadow: var(--shadow-lg);
+  }
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--border-radius-full);
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+  color: var(--color-white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-base);
+  flex-shrink: 0;
+  box-shadow: var(--shadow-sm);
+}
+
+.user-info {
+  display: none;  // Hidden in compact mode
+}
+
+.user-name {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-900);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.user-role {
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-600);
+  text-transform: capitalize;
+}
+
+// -----------------------------------------------------------------------------
+// App Shell (Sidebar + Content Wrapper)
+// -----------------------------------------------------------------------------
+.app-shell {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--color-gray-50);
+}
+
+// -----------------------------------------------------------------------------
+// App Topbar (Header for authenticated users)
+// -----------------------------------------------------------------------------
+.app-topbar {
+  position: sticky;
+  top: 0;
+  left: 72px;  // Match compact sidebar
+  right: 0;
+  height: 64px;
+  background-color: var(--color-white);
+  border-bottom: 1px solid var(--color-gray-200);
+  display: flex;
+  align-items: center;
+  padding: 0 var(--spacing-6);
+  gap: var(--spacing-4);
+  z-index: var(--z-index-navbar);
+  
+  .app-sidebar.expanded ~ & {
+    left: 260px;
+  }
+}
+
+.topbar-toggle {
+  display: none;
+  background: none;
+  border: none;
+  font-size: var(--font-size-xl);
+  color: var(--color-gray-700);
+  cursor: pointer;
+  padding: var(--spacing-2);
+  border-radius: var(--border-radius-md);
+  transition: background-color 0.2s ease;
+  
+  &:hover {
+    background-color: var(--color-gray-100);
+  }
+  
+  @media (max-width: 767px) {
+    display: block;
+  }
+}
+
+.topbar-search {
+  flex: 1;
+  max-width: 400px;
+}
+
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  margin-left: auto;
+}
+
+.topbar-action {
+  background: none;
+  border: none;
+  font-size: var(--font-size-lg);
+  color: var(--color-gray-700);
+  cursor: pointer;
+  padding: var(--spacing-2);
+  border-radius: var(--border-radius-md);
+  transition: background-color 0.2s ease;
+  
+  &:hover {
+    background-color: var(--color-gray-100);
+  }
+}
+
+.topbar-user-menu {
+  position: relative;
+}
+
+// -----------------------------------------------------------------------------
+// App Main Content Area - Adjusted for Compact Sidebar
+// -----------------------------------------------------------------------------
+.app-main {
+  flex: 1;
+  margin-left: 72px;  // Match compact sidebar width
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  
+  .app-sidebar.expanded ~ & {
+    margin-left: 260px;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Mobile Responsive
+// -----------------------------------------------------------------------------
+@media (max-width: 767px) {
+  .app-sidebar {
+    transform: translateX(-100%);
+    
+    &.open {
+      transform: translateX(0);
+    }
+  }
+  
+  .app-main {
+    margin-left: 0;
+  }
+  
+  .app-topbar {
+    left: 0;
+  }
+}
+
+// Sidebar Overlay (for mobile)
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: calc(var(--z-index-sidebar) - 1);
+  
+  @media (max-width: 767px) {
+    &.active {
+      display: block;
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Guest Layout (Non-authenticated)
+// -----------------------------------------------------------------------------
+.guest-layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.guest-header {
+  background-color: var(--color-white);
+  border-bottom: 1px solid var(--color-gray-200);
+  padding: var(--spacing-4) 0;
+}
+
+.guest-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.guest-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-gray-900);
+  text-decoration: none;
+  
+  .brand-icon {
+    font-size: 2rem;
+  }
+}
+
+.guest-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+}
+
+.guest-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.guest-footer {
+  background-color: var(--color-gray-100);
+  border-top: 1px solid var(--color-gray-200);
+  padding: var(--spacing-6) 0;
+  text-align: center;
+  color: var(--color-gray-600);
+  font-size: var(--font-size-sm);
+}
+
+// -----------------------------------------------------------------------------
+// Page Content Container
+// -----------------------------------------------------------------------------
+.page-content {
+  flex: 1;
+  padding: var(--spacing-6);
+  max-width: 1440px;
+  width: 100%;
+  margin: 0 auto;
+}

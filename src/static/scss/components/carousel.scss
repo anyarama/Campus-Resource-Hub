@@ -1,0 +1,490 @@
+// =============================================================================
+// CAROUSEL COMPONENT
+// =============================================================================
+// AI Contribution: Cline created these styles on 2025-11-09
+// Image carousel for resource detail pages with fullscreen support
+// =============================================================================
+
+@use '../tokens' as *;
+
+// -----------------------------------------------------------------------------
+// Carousel Container
+// -----------------------------------------------------------------------------
+.carousel {
+  position: relative;
+  width: 100%;
+  background-color: var(--color-gray-900);
+  border-radius: $border-radius-lg;
+  overflow: hidden;
+  
+  &.is-fullscreen {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-index-modal);
+    border-radius: 0;
+    
+    .carousel__controls {
+      opacity: 1;
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Carousel Track (Slide Container)
+// -----------------------------------------------------------------------------
+.carousel__track {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%; // 16:9 aspect ratio
+  overflow: hidden;
+  
+  .is-fullscreen & {
+    padding-bottom: 0;
+    height: 100vh;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Carousel Slides
+// -----------------------------------------------------------------------------
+.carousel__slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  &.is-active {
+    opacity: 1;
+    visibility: visible;
+    z-index: 1;
+  }
+  
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: opacity 0.3s ease;
+    
+    &:not(.is-loaded) {
+      opacity: 0;
+    }
+    
+    &.is-loaded {
+      opacity: 1;
+    }
+  }
+}
+
+// Loading placeholder
+.carousel__slide-loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(
+    90deg,
+    var(--color-gray-800) 25%,
+    var(--color-gray-700) 50%,
+    var(--color-gray-800) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  
+  @keyframes shimmer {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Navigation Buttons
+// -----------------------------------------------------------------------------
+.carousel__nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  
+  button {
+    width: 48px;
+    height: 48px;
+    background-color: rgba(0, 0, 0, 0.5);
+    border: none;
+    border-radius: 50%;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(4px);
+    
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.7);
+      transform: scale(1.1);
+    }
+    
+    &:active {
+      transform: scale(0.95);
+    }
+    
+    &:focus-visible {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 2px;
+    }
+    
+    svg, i {
+      width: 24px;
+      height: 24px;
+    }
+  }
+  
+  &--prev {
+    left: $spacing-4;
+  }
+  
+  &--next {
+    right: $spacing-4;
+  }
+  
+  // Hide on mobile if tight space
+  @media (max-width: 480px) {
+    button {
+      width: 40px;
+      height: 40px;
+      
+      svg, i {
+        width: 20px;
+        height: 20px;
+      }
+    }
+    
+    &--prev {
+      left: $spacing-2;
+    }
+    
+    &--next {
+      right: $spacing-2;
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Carousel Controls (Counter, Fullscreen)
+// -----------------------------------------------------------------------------
+.carousel__controls {
+  position: absolute;
+  bottom: $spacing-4;
+  right: $spacing-4;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: $spacing-3;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  
+  &:hover,
+  .carousel:hover & {
+    opacity: 1;
+  }
+  
+  .is-fullscreen & {
+    opacity: 1;
+  }
+}
+
+.carousel__counter {
+  background-color: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  color: white;
+  padding: $spacing-2 $spacing-4;
+  border-radius: $border-radius-full;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  user-select: none;
+}
+
+.carousel__fullscreen {
+  width: 40px;
+  height: 40px;
+  background-color: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  border: none;
+  border-radius: 50%;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.9);
+    transform: scale(1.1);
+  }
+  
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+  
+  svg, i {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Thumbnails
+// -----------------------------------------------------------------------------
+.carousel__thumbnails {
+  display: flex;
+  gap: $spacing-2;
+  padding: $spacing-4;
+  overflow-x: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-gray-400) var(--color-gray-200);
+  
+  &::-webkit-scrollbar {
+    height: 6px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: var(--color-gray-200);
+    border-radius: $border-radius-sm;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: var(--color-gray-400);
+    border-radius: $border-radius-sm;
+    
+    &:hover {
+      background: var(--color-gray-500);
+    }
+  }
+}
+
+.carousel__thumb {
+  flex-shrink: 0;
+  width: 80px;
+  height: 60px;
+  border-radius: $border-radius-md;
+  overflow: hidden;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all 0.2s ease;
+  position: relative;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.3);
+    transition: opacity 0.2s ease;
+  }
+  
+  &.is-active {
+    border-color: var(--color-primary);
+    
+    &::after {
+      opacity: 0;
+    }
+  }
+  
+  &:hover:not(.is-active) {
+    border-color: var(--color-gray-400);
+    
+    &::after {
+      opacity: 0.5;
+    }
+  }
+  
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+  
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Empty State (No Images)
+// -----------------------------------------------------------------------------
+.carousel__empty {
+  width: 100%;
+  padding-bottom: 56.25%; // 16:9
+  background-color: var(--color-gray-100);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: $spacing-2;
+  color: var(--color-gray-500);
+  position: relative;
+  
+  &-content {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: $spacing-2;
+  }
+  
+  svg, i {
+    width: 64px;
+    height: 64px;
+    opacity: 0.5;
+  }
+  
+  p {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Touch Indicators (Mobile)
+// -----------------------------------------------------------------------------
+.carousel__dots {
+  position: absolute;
+  bottom: $spacing-4;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: $spacing-2;
+  z-index: 2;
+  
+  @media (min-width: 768px) {
+    display: none;
+  }
+}
+
+.carousel__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.5);
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  &.is-active {
+    background-color: white;
+    width: 24px;
+    border-radius: $border-radius-full;
+  }
+  
+  &:hover:not(.is-active) {
+    background-color: rgba(255, 255, 255, 0.8);
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Responsive Adjustments
+// -----------------------------------------------------------------------------
+@media (max-width: 768px) {
+  .carousel {
+    border-radius: 0;
+  }
+  
+  .carousel__controls {
+    bottom: $spacing-2;
+    right: $spacing-2;
+  }
+  
+  .carousel__counter {
+    font-size: $font-size-xs;
+    padding: $spacing-1 $spacing-3;
+  }
+  
+  .carousel__thumbnails {
+    padding: $spacing-2;
+    gap: $spacing-1;
+  }
+  
+  .carousel__thumb {
+    width: 60px;
+    height: 45px;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Dark Theme
+// -----------------------------------------------------------------------------
+@media (prefers-color-scheme: dark) {
+  .carousel {
+    background-color: var(--color-gray-950);
+  }
+  
+  .carousel__empty {
+    background-color: var(--color-gray-800);
+    color: var(--color-gray-400);
+  }
+  
+  .carousel__thumbnails {
+    &::-webkit-scrollbar-track {
+      background: var(--color-gray-800);
+    }
+    
+    &::-webkit-scrollbar-thumb {
+      background: var(--color-gray-600);
+      
+      &:hover {
+        background: var(--color-gray-500);
+      }
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Accessibility Features
+// -----------------------------------------------------------------------------
+.carousel {
+  // Reduced motion support
+  @media (prefers-reduced-motion: reduce) {
+    .carousel__slide,
+    .carousel__thumb,
+    .carousel__nav button {
+      transition: none;
+    }
+  }
+  
+  // Focus indicators for keyboard navigation
+  &:focus-within {
+    .carousel__controls {
+      opacity: 1;
+    }
+  }
+}
+
+// Screen reader only text
+.carousel__sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}

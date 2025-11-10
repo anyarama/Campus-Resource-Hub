@@ -78,14 +78,28 @@ class Resource(db.Model):
     )
 
     # Constraints
+    CATEGORY_CHOICES = ("study_room", "equipment", "lab", "space", "tutoring")
+    CATEGORY_ALIASES = {
+        "meeting_room": "study_room",
+        "conference_room": "study_room",
+        "study_room": "study_room",
+        "studyspace": "study_room",
+        "equipment": "equipment",
+        "technology": "equipment",
+        "tech": "equipment",
+        "lab": "lab",
+        "laboratory": "lab",
+        "event": "space",
+        "event_space": "space",
+        "space": "space",
+        "tutoring": "tutoring",
+    }
+
     __table_args__ = (
         db.CheckConstraint(
             status.in_(["draft", "published", "archived"]), name="check_valid_status"
         ),
-        db.CheckConstraint(
-            category.in_(["study_room", "equipment", "lab", "space", "tutoring"]),
-            name="check_valid_category",
-        ),
+        db.CheckConstraint(category.in_(CATEGORY_CHOICES), name="check_valid_category"),
     )
 
     def __init__(
@@ -116,7 +130,7 @@ class Resource(db.Model):
         """
         self.owner_id = owner_id
         self.title = title
-        self.category = category
+        self.category = self._normalize_category(category)
         self.description = description
         self.location = location
         self.capacity = capacity
@@ -196,6 +210,24 @@ class Resource(db.Model):
         """Check if resource requires booking approval."""
         rules = self.get_availability_rules()
         return rules.get("requires_approval", False)
+
+    @classmethod
+    def _normalize_category(cls, value: str) -> str:
+        """
+        Normalize incoming category strings to allowed slugs.
+
+        Args:
+            value: Raw category value from forms/tests
+
+        Returns:
+            Canonical slug defined in CATEGORY_CHOICES
+        """
+        if not value:
+            return "space"
+
+        slug = value.strip().lower().replace(" ", "_")
+        canonical = cls.CATEGORY_ALIASES.get(slug, slug)
+        return canonical if canonical in cls.CATEGORY_CHOICES else "space"
 
     def is_published(self) -> bool:
         """Check if resource is published and visible."""

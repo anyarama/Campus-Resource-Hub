@@ -1,168 +1,288 @@
-{% extends"base.html" %}{% block title %}Dashboard - Campus Resource Hub{% endblock %}{% block main_content %}<div style="margin-bottom: 2rem;">
-  <h1 style="font-size: 2rem; font-weight: 600; color: #1f2937; margin: 0 0 0.5rem 0;">Welcome, </h1></div>{{ current_user.name }}!
-  <p style="font-size: 1.125rem; color: #6b7280; margin: 0;">Manage your resources, bookings, and messages all in one place.</p>
+{% extends "base.html" %}
 
+{% block title %}Dashboard - Campus Resource Hub{% endblock %}
 
-   Quick Stats Cards 
-  <div class="layout-grid">
-    <div class="layout-col" data-col="12">
-      <div class="card">
-        <div class="card-body">
-          <i class="bi bi-box-seam fs-1 text-primary"></i>
-          <h3 class="space-t-2">0</h3>
-          <p class="text-dim">My Resources</p>
-        </div>
-      </div>
+{% block main_content %}
+<div class="page-container" style="padding: 2rem;">
+    <!-- Welcome Header -->
+    <div class="page-header" style="margin-bottom: 2.5rem;">
+        <h1 class="page-title">Welcome, {{ current_user.name }}!</h1>
+        <p class="page-subtitle">Manage your resources, bookings, and messages all in one place.</p>
     </div>
-    <div class="layout-col" data-col="12">
-      <div class="card">
-        <div class="card-body">
-          <i class="bi bi-calendar-check fs-1"></i>
-          <h3 class="space-t-2">0</h3>
-          <p class="text-dim">Active Bookings</p>
-        </div>
-      </div>
-    </div>
-    <div class="layout-col" data-col="12">
-      <div class="card">
-        <div class="card-body">
-          <i class="bi bi-envelope fs-1 text-info"></i>
-          <h3 class="space-t-2">0</h3>
-          <p class="text-dim">Unread Messages</p>
-        </div>
-      </div>
-    </div>
-    <div class="layout-col" data-col="12">
-      <div class="card">
-        <div class="card-body">
-          <i class="bi bi-star fs-1"></i>
-          <h3 class="space-t-2">0</h3>
-          <p class="text-dim">Reviews</p>
-        </div>
-      </div>
-    </div>
-  </div>
 
-   Main Content Tabs 
-  <div class="grid">
-    <div class="grid-" data-col="2">
-      <ul class="nav nav-tabs" id="dashboardTabs" role="tablist">
-        <li class="nav-item" role="presentation">
-          <button aria-controls="resources" aria-selected="true" class="nav-link active" data-bs-target="#resources" data-bs-toggle="tab" id="resources-tab" role="tab" type="button">
-            <i class="bi bi-box-seam"></i> My Resources
-          </button>
-        </li>
-        <li class="nav-item" role="presentation">
-          <button aria-controls="bookings" aria-selected="false" class="nav-link" data-bs-target="#bookings" data-bs-toggle="tab" id="bookings-tab" role="tab" type="button">
-            <i class="bi bi-calendar-check"></i> My Bookings
-          </button>
-        </li>
-        <li class="nav-item" role="presentation">
-          <button aria-controls="messages" aria-selected="false" class="nav-link" data-bs-target="#messages" data-bs-toggle="tab" id="messages-tab" role="tab" type="button">
-            <i class="bi bi-envelope"></i> Messages
-          </button>
-        </li>
-      </ul>
-
-      <div class="tab-content" id="dashboardTabContent">
-        <!-- Resources Tab -->
-        <div aria-labelledby="resources-tab" class="tab-pane fade show active" id="resources" role="tabpanel">
-          <div class="card">
-            <div class="card-body">
-              <div class="flex">
-                <h5 class="space-b-0">My Resources</h5>
-                <a class="btn btn-primary" href="#">
-                  <i class="bi bi-plus-circle"></i> Create Resource
-                </a>
-              </div>
-              <div class="text-center">
-                <i class="bi bi-inbox fs-1"></i>
-                <p class="text-dim">No resources yet. Create your first resource to get started!</p>
-              </div>
+    <!-- KPI Tiles Row -->
+    <div class="grid-row" style="margin-bottom: 2.5rem; gap: 1.5rem;">
+        <div class="grid-col-3">
+            <div class="card" style="padding: 1.5rem; text-align: center;">
+                <div class="kpi-icon" style="font-size: 2.5rem; color: var(--color-crimson); margin-bottom: 0.75rem;">
+                    <i data-lucide="package" style="width: 48px; height: 48px;"></i>
+                </div>
+                <div class="kpi-value" id="kpi-my-resources" style="font-size: 2rem; font-weight: 700; color: var(--color-charcoal); margin-bottom: 0.25rem;">0</div>
+                <div class="kpi-label" style="font-size: 0.875rem; color: var(--color-slate); font-weight: 500; margin-bottom: 0.5rem;">My Resources</div>
+                <div class="kpi-change" id="kpi-my-resources-change" style="font-size: 0.75rem; color: var(--color-success);"></div>
             </div>
-          </div>
         </div>
-
-        <!-- Bookings Tab -->
-        <div aria-labelledby="bookings-tab" class="tab-pane fade" id="bookings" role="tabpanel">
-          <div class="card">
-            <div class="card-body">
-              <div class="flex">
-                <h5 class="space-b-0">My Bookings</h5>
-                </div></div></div></div></div></div></div>{{ url_for('resources.index') }}" class="btn btn-primary">
-                  <i class="bi bi-search"></i> Browse Resources
-                
-              
-              <div class="text-center">
-                <i class="bi bi-calendar-x fs-1"></i>
-                <p class="text-dim">No bookings yet. Browse available resources to make your first booking!</p>
-              </div>
-            
-          
         
-
-         Messages Tab 
-        <div aria-labelledby="messages-tab" class="tab-pane fade" id="messages" role="tabpanel">
-          <div class="card">
-            <div class="card-body">
-              <div class="flex">
-                <h5 class="space-b-0">Messages</h5>
-              </div>
-              <div class="text-center">
-                <i class="bi bi-chat-dots fs-1"></i>
-                <p class="text-dim">No messages yet. Messages will appear here when you book resources or communicate with resource owners.</p>
-              </div>
+        <div class="grid-col-3">
+            <div class="card" style="padding: 1.5rem; text-align: center;">
+                <div class="kpi-icon" style="font-size: 2.5rem; color: var(--color-success); margin-bottom: 0.75rem;">
+                    <i data-lucide="calendar-check" style="width: 48px; height: 48px;"></i>
+                </div>
+                <div class="kpi-value" id="kpi-active-bookings" style="font-size: 2rem; font-weight: 700; color: var(--color-charcoal); margin-bottom: 0.25rem;">0</div>
+                <div class="kpi-label" style="font-size: 0.875rem; color: var(--color-slate); font-weight: 500; margin-bottom: 0.5rem;">Active Bookings</div>
+                <div class="kpi-change" id="kpi-active-bookings-change" style="font-size: 0.75rem; color: var(--color-success);"></div>
             </div>
-          </div>
         </div>
-      
-    
-  
-
-   Admin Section (if admin role) 
-  {% if current_user.role == 'admin' %}<div class="layout-grid">
-    <div class="grid-" data-col="2">
-      <div class="card border-danger">
-        <div class="card-header bg-danger text-inverse">
-          <h5 class="space-b-0"><i class="bi bi-shield-lock"></i> Admin Panel</h5>
-        </div>
-        <div class="card-body">
-          <p class="space-b-3">You have administrator privileges. Access advanced management features:</p>
-          <div class="flex gap-2 flex-wrap">
-            </div></div></div></div></div>{{ url_for('resources.admin_ping') }}" class="btn btn-secondary">
-              <i class="bi bi-terminal"></i> Admin Ping Test
-            
-            <a class="btn btn-danger disabled" href="#">
-              <i class="bi bi-people"></i> User Management
-            </a>
-            <a class="btn btn-danger disabled" href="#">
-              <i class="bi bi-bar-chart"></i> Analytics
-            </a>
-            <a class="btn btn-danger disabled" href="#">
-              <i class="bi bi-flag"></i> Moderation
-            </a>
-          
-          <p class="text-dim small">
-            <em>Note: Additional admin features will be implemented in Phase 5-6</em>
-          </p>
         
-      
-    
-  
-  {% endif %}<div class="layout-grid">
-    <div class="grid-" data-col="2">
-      <div class="card">
-        <div class="card-header">
-          <h5 class="space-b-0">Recent Activity</h5>
+        <div class="grid-col-3">
+            <div class="card" style="padding: 1.5rem; text-align: center;">
+                <div class="kpi-icon" style="font-size: 2.5rem; color: var(--color-info); margin-bottom: 0.75rem;">
+                    <i data-lucide="message-circle" style="width: 48px; height: 48px;"></i>
+                </div>
+                <div class="kpi-value" id="kpi-unread-messages" style="font-size: 2rem; font-weight: 700; color: var(--color-charcoal); margin-bottom: 0.25rem;">0</div>
+                <div class="kpi-label" style="font-size: 0.875rem; color: var(--color-slate); font-weight: 500; margin-bottom: 0.5rem;">Unread Messages</div>
+                <div class="kpi-change" id="kpi-unread-messages-change" style="font-size: 0.75rem; color: var(--color-success);"></div>
+            </div>
         </div>
-        <div class="card-body">
-          <div class="text-center">
-            <i class="bi bi-clock-history fs-1"></i>
-            <p class="text-dim">No recent activity to display.</p>
-          </div>
+        
+        <div class="grid-col-3">
+            <div class="card" style="padding: 1.5rem; text-align: center;">
+                <div class="kpi-icon" style="font-size: 2.5rem; color: var(--color-warning); margin-bottom: 0.75rem;">
+                    <i data-lucide="star" style="width: 48px; height: 48px;"></i>
+                </div>
+                <div class="kpi-value" id="kpi-avg-rating" style="font-size: 2rem; font-weight: 700; color: var(--color-charcoal); margin-bottom: 0.25rem;">0.0</div>
+                <div class="kpi-label" style="font-size: 0.875rem; color: var(--color-slate); font-weight: 500; margin-bottom: 0.5rem;">Average Rating</div>
+                <div class="kpi-change" id="kpi-avg-rating-change" style="font-size: 0.75rem; color: var(--color-success);"></div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
 
+    <!-- Charts Row -->
+    <div class="grid-row" style="margin-bottom: 2.5rem; gap: 1.5rem;">
+        <!-- Bookings Timeline Chart -->
+        <div class="grid-col-8">
+            <div class="card" style="padding: 1.5rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <h3 style="font-size: 1.125rem; font-weight: 600; color: var(--color-charcoal); margin: 0;">Bookings Over Time</h3>
+                    <div class="button-group" style="display: flex; gap: 0.5rem;">
+                        <button class="btn btn-sm btn-secondary" data-period="week">Week</button>
+                        <button class="btn btn-sm btn-secondary active" data-period="month">Month</button>
+                        <button class="btn btn-sm btn-secondary" data-period="year">Year</button>
+                    </div>
+                </div>
+                <div style="position: relative; height: 300px;">
+                    <canvas id="bookings-timeline-chart"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Category Mix Chart -->
+        <div class="grid-col-4">
+            <div class="card" style="padding: 1.5rem;">
+                <h3 style="font-size: 1.125rem; font-weight: 600; color: var(--color-charcoal); margin: 0 0 1.5rem 0;">Category Breakdown</h3>
+                <div style="position: relative; height: 300px;">
+                    <canvas id="category-mix-chart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Secondary Content Row -->
+    <div class="grid-row" style="gap: 1.5rem;">
+        <!-- Upcoming Bookings -->
+        <div class="grid-col-6">
+            <div class="card" style="padding: 1.5rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <h3 style="font-size: 1.125rem; font-weight: 600; color: var(--color-charcoal); margin: 0;">Upcoming Bookings</h3>
+                    <a href="{{ url_for('bookings.my_bookings') }}" class="btn btn-sm btn-ghost" style="display: flex; align-items: center; gap: 0.25rem;">
+                        View All
+                        <i data-lucide="arrow-right" style="width: 16px; height: 16px;"></i>
+                    </a>
+                </div>
+                <div id="upcoming-bookings-container">
+                    <!-- Loading skeleton -->
+                    <div class="skeleton-loader" style="height: 60px; margin-bottom: 0.75rem;"></div>
+                    <div class="skeleton-loader" style="height: 60px; margin-bottom: 0.75rem;"></div>
+                    <div class="skeleton-loader" style="height: 60px;"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Recent Activity -->
+        <div class="grid-col-6">
+            <div class="card" style="padding: 1.5rem;">
+                <h3 style="font-size: 1.125rem; font-weight: 600; color: var(--color-charcoal); margin: 0 0 1.5rem 0;">Recent Activity</h3>
+                <div id="recent-activity-container">
+                    <!-- Loading skeleton -->
+                    <div class="skeleton-loader" style="height: 50px; margin-bottom: 0.75rem;"></div>
+                    <div class="skeleton-loader" style="height: 50px; margin-bottom: 0.75rem;"></div>
+                    <div class="skeleton-loader" style="height: 50px; margin-bottom: 0.75rem;"></div>
+                    <div class="skeleton-loader" style="height: 50px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Dashboard Chart Initialization Script -->
+<script type="module">
+import { createLineChart, createDoughnutChart, updateChartData } from '{{ vite_asset("src/static/js/charts.js") }}';
+import { 
+    fetchDashboardData, 
+    formatDateTime, 
+    formatTimeRange, 
+    getStatusColor 
+} from '{{ vite_asset("src/static/js/adapters/dashboardData.js") }}';
+
+// Initialize charts
+let bookingsChart = null;
+let categoryChart = null;
+
+// Render KPIs
+function renderKPIs(kpis) {
+    // My Resources
+    document.getElementById('kpi-my-resources').textContent = kpis.myResources.value;
+    const myResourcesChange = document.getElementById('kpi-my-resources-change');
+    if (kpis.myResources.change !== 0) {
+        const sign = kpis.myResources.change > 0 ? '+' : '';
+        myResourcesChange.textContent = `${sign}${kpis.myResources.change} ${kpis.myResources.changeLabel}`;
+        myResourcesChange.style.color = kpis.myResources.change > 0 ? 'var(--color-success)' : 'var(--color-danger)';
+    }
+    
+    // Active Bookings
+    document.getElementById('kpi-active-bookings').textContent = kpis.activeBookings.value;
+    const activeBookingsChange = document.getElementById('kpi-active-bookings-change');
+    if (kpis.activeBookings.change !== 0) {
+        const sign = kpis.activeBookings.change > 0 ? '+' : '';
+        activeBookingsChange.textContent = `${sign}${kpis.activeBookings.change} ${kpis.activeBookings.changeLabel}`;
+        activeBookingsChange.style.color = kpis.activeBookings.change > 0 ? 'var(--color-success)' : 'var(--color-danger)';
+    }
+    
+    // Unread Messages
+    document.getElementById('kpi-unread-messages').textContent = kpis.unreadMessages.value;
+    const unreadMessagesChange = document.getElementById('kpi-unread-messages-change');
+    if (kpis.unreadMessages.change !== 0) {
+        const sign = kpis.unreadMessages.change > 0 ? '+' : '';
+        unreadMessagesChange.textContent = `${sign}${kpis.unreadMessages.change} ${kpis.unreadMessages.changeLabel}`;
+        unreadMessagesChange.style.color = kpis.unreadMessages.change > 0 ? 'var(--color-success)' : 'var(--color-danger)';
+    }
+    
+    // Average Rating
+    document.getElementById('kpi-avg-rating').textContent = kpis.avgRating.value.toFixed(1);
+    const avgRatingChange = document.getElementById('kpi-avg-rating-change');
+    if (kpis.avgRating.change !== 0) {
+        const sign = kpis.avgRating.change > 0 ? '+' : '';
+        avgRatingChange.textContent = `${sign}${kpis.avgRating.change.toFixed(1)} ${kpis.avgRating.changeLabel}`;
+        avgRatingChange.style.color = kpis.avgRating.change > 0 ? 'var(--color-success)' : 'var(--color-danger)';
+    }
+}
+
+// Render charts
+function renderCharts(data) {
+    // Bookings Timeline Chart
+    const bookingsCanvas = document.getElementById('bookings-timeline-chart');
+    if (bookingsCanvas && data.bookingsTimeline) {
+        if (bookingsChart) {
+            updateChartData(bookingsChart, data.bookingsTimeline);
+        } else {
+            bookingsChart = createLineChart(bookingsCanvas, data.bookingsTimeline);
+        }
+    }
+    
+    // Category Mix Chart
+    const categoryCanvas = document.getElementById('category-mix-chart');
+    if (categoryCanvas && data.categoryMix) {
+        if (categoryChart) {
+            categoryChart.destroy();
+        }
+        categoryChart = createDoughnutChart(categoryCanvas, data.categoryMix);
+    }
+}
+
+// Render upcoming bookings
+function renderUpcomingBookings(bookings) {
+    const container = document.getElementById('upcoming-bookings-container');
+    if (!bookings || bookings.length === 0) {
+        container.innerHTML = `
+            <div style="text-align: center; padding: 2rem 1rem; color: var(--color-slate);">
+                <i data-lucide="calendar-x" style="width: 48px; height: 48px; margin-bottom: 0.5rem;"></i>
+                <p style="margin: 0;">No upcoming bookings</p>
+            </div>
+        `;
+        if (window.lucide) window.lucide.createIcons();
+        return;
+    }
+    
+    container.innerHTML = bookings.map(booking => `
+        <div class="booking-item" style="display: flex; align-items: center; padding: 1rem; border: 1px solid var(--color-border); border-radius: 8px; margin-bottom: 0.75rem; transition: all 0.2s;">
+            <div style="flex: 1;">
+                <div style="font-weight: 600; color: var(--color-charcoal); margin-bottom: 0.25rem;">${booking.resource}</div>
+                <div style="font-size: 0.875rem; color: var(--color-slate);">${formatTimeRange(booking.startTime, booking.endTime)}</div>
+            </div>
+            <span class="badge badge-${getStatusColor(booking.status)}">${booking.status}</span>
+        </div>
+    `).join('');
+}
+
+// Render recent activity
+function renderRecentActivity(activities) {
+    const container = document.getElementById('recent-activity-container');
+    if (!activities || activities.length === 0) {
+        container.innerHTML = `
+            <div style="text-align: center; padding: 2rem 1rem; color: var(--color-slate);">
+                <i data-lucide="activity" style="width: 48px; height: 48px; margin-bottom: 0.5rem;"></i>
+                <p style="margin: 0;">No recent activity</p>
+            </div>
+        `;
+        if (window.lucide) window.lucide.createIcons();
+        return;
+    }
+    
+    container.innerHTML = activities.map(activity => `
+        <div class="activity-item" style="display: flex; gap: 1rem; padding: 0.75rem 0; border-bottom: 1px solid var(--color-border-light);">
+            <div style="flex-shrink: 0; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: var(--color-bg-subtle);">
+                <i data-lucide="${activity.icon}" style="width: 18px; height: 18px; color: var(--color-crimson);"></i>
+            </div>
+            <div style="flex: 1;">
+                <div style="font-size: 0.875rem; color: var(--color-charcoal); margin-bottom: 0.25rem;">${activity.message}</div>
+                <div style="font-size: 0.75rem; color: var(--color-slate);">${formatDateTime(activity.timestamp)}</div>
+            </div>
+        </div>
+    `).join('');
+    
+    if (window.lucide) window.lucide.createIcons();
+}
+
+// Load dashboard data
+async function loadDashboard() {
+    try {
+        // Force mock data for now (API endpoint not yet implemented)
+        const data = await fetchDashboardData(true);
+        
+        // Render all components
+        renderKPIs(data.kpis);
+        renderCharts(data);
+        renderUpcomingBookings(data.upcomingBookings);
+        renderRecentActivity(data.recentActivity);
+        
+        // Initialize Lucide icons
+        if (window.lucide) {
+            window.lucide.createIcons();
+        }
+    } catch (error) {
+        console.error('[Dashboard] Failed to load data:', error);
+    }
+}
+
+// Initialize dashboard
+document.addEventListener('DOMContentLoaded', loadDashboard);
+
+// Handle theme changes
+window.addEventListener('charts-theme-changed', () => {
+    // Re-render charts on theme change
+    if (bookingsChart && categoryChart) {
+        loadDashboard();
+    }
+});
+</script>
 {% endblock %}

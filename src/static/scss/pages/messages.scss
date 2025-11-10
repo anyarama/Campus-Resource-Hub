@@ -95,6 +95,24 @@
     }
   }
 
+  .conversation-metrics {
+    margin-top: $spacing-4;
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing-3;
+    font-size: $font-size-xs;
+    color: var(--color-text-tertiary);
+
+    span {
+      display: inline-flex;
+      align-items: center;
+      gap: $spacing-1;
+      padding: $spacing-1 $spacing-2;
+      border: 1px solid var(--color-border-subtle);
+      border-radius: $border-radius-full;
+    }
+  }
+
   &__compose-btn {
     margin-top: $spacing-4;
     width: 100%;
@@ -458,6 +476,12 @@
     }
   }
 
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-3;
+  }
+
   &__input-wrapper {
     display: flex;
     gap: $spacing-3;
@@ -518,6 +542,12 @@
   &__send-btn {
     flex-shrink: 0;
   }
+}
+
+.composer-hint {
+  margin-left: auto;
+  font-size: $font-size-xs;
+  color: var(--color-text-tertiary);
 }
 
 // -----------------------------------------------------------------------------

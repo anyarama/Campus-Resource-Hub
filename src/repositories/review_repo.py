@@ -51,6 +51,11 @@ class ReviewRepository:
         )
 
     @staticmethod
+    def get_by_resource_and_reviewer(resource_id: int, reviewer_id: int) -> Optional[Review]:
+        """Return a single review for a resource by the specified reviewer."""
+        return Review.query.filter_by(resource_id=resource_id, reviewer_id=reviewer_id).first()
+
+    @staticmethod
     def get_all(page: int = 1, per_page: int = 50, include_hidden: bool = False) -> Dict:
         """Get all reviews with pagination."""
         query = Review.query

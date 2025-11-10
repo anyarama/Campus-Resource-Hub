@@ -1,196 +1,630 @@
 {% extends "base.html" %}
-{% from "_components.html" import form_field, button, card, badge, pagination, empty_state %}
+{# AI Contribution: Cline rebuilt this template with enterprise UI patterns on 2025-11-09 #}
+{# Features: Filter drawer, responsive cards, status badges, skeleton loaders, grid/list toggle #}
 
 {% block title %}Browse Resources - Campus Resource Hub{% endblock %}
 
-{% block page_title %}Browse Resources{% endblock %}
+{% block content %}
+{% set filters = filter_state or {} %}
+{% set selected_categories = filters.get('categories', []) %}
+{% set selected_locations = filters.get('locations', []) %}
+{% set capacity_min = filters.get('capacity_min') %}
+{% set capacity_max = filters.get('capacity_max') %}
+{% set date_from = filters.get('date_from') %}
+{% set date_to = filters.get('date_to') %}
+{% set selected_sort = filters.get('sort', 'created_desc') %}
+{% set selected_statuses = filters.get('statuses', []) %}
 
-{% block toolbar %}
-    {% if current_user.is_authenticated %}
-        {{ button(
-            text="Create Resource",
-           icon="bi-plus-circle",
-            href=url_for('resources.create'),
-            variant="primary"
-        ) }}
-        {{ button(
-            text="My Resources",
-            icon="bi-folder",
-            href=url_for('resources.my_resources'),
-            variant="outline"
-        ) }}
-    {% endif %}
+{% macro sort_url(value) -%}
+  {{ url_for(
+    'resources.index',
+    q=request.args.get('q'),
+    category=selected_categories,
+    location=selected_locations,
+    status=selected_statuses,
+    capacity_min=capacity_min,
+    capacity_max=capacity_max,
+    date_from=date_from,
+    date_to=date_to,
+    sort=value
+  ) }}
+{%- endmacro %}
+
+{% macro page_url(value) -%}
+  {{ url_for(
+    'resources.index',
+    q=request.args.get('q'),
+    category=selected_categories,
+    location=selected_locations,
+    status=selected_statuses,
+    capacity_min=capacity_min,
+    capacity_max=capacity_max,
+    date_from=date_from,
+    date_to=date_to,
+    sort=selected_sort,
+    page=value
+  ) }}
+{%- endmacro %}
+
+<div class="resources-browse-page">
+  
+  {# ========================================================================= #}
+  {# PAGE HEADER with Toolbar #}
+  {# ========================================================================= #}
+  <div class="page-header">
+    <div class="page-header__content">
+      <div class="page-header__text">
+        <h1 class="page-title">
+          <i data-lucide="package"></i>
+          Browse Resources
+        </h1>
+        <p class="page-subtitle">Find and book campus resources</p>
+      </div>
+      
+      <div class="page-header__actions">
+        {% if current_user.is_authenticated %}
+          <a href="{{ url_for('resources.my_resources') }}" class="btn btn--outline">
+            <i data-lucide="folder"></i>
+            <span>My Resources</span>
+          </a>
+          <a href="{{ url_for('resources.create') }}" class="btn btn--primary">
+            <i data-lucide="plus-circle"></i>
+            <span>Create Resource</span>
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  {# ========================================================================= #}
+  {# TOOLBAR: Search, Sort, View Toggle, Filter Button #}
+  {# ========================================================================= #}
+  <div class="resources-toolbar">
+    <div class="resources-toolbar__left">
+      {# Mobile Filter Toggle #}
+      <button type="button" class="filter-toggle" data-filter-toggle aria-label="Open filters">
+        <i data-lucide="sliders-horizontal"></i>
+        <span>Filters</span>
+        <span class="badge" data-filter-count style="display: none;">0</span>
+      </button>
+
+      {# Search Bar #}
+      <form method="GET" action="{{ url_for('resources.index') }}" class="resources-search">
+        <div class="input-group">
+          <i data-lucide="search" class="input-icon"></i>
+          <input 
+            type="text" 
+            name="q" 
+            class="form-input" 
+            placeholder="Search resources..."
+            value="{{ request.args.get('q', '') }}"
+            autocomplete="off"
+          >
+          {# Preserve active filters when submitting search #}
+          {% for category in selected_categories %}
+            <input type="hidden" name="category" value="{{ category }}">
+          {% endfor %}
+          {% for location_name in selected_locations %}
+            <input type="hidden" name="location" value="{{ location_name }}">
+          {% endfor %}
+          {% for status_value in selected_statuses %}
+            <input type="hidden" name="status" value="{{ status_value }}">
+          {% endfor %}
+          {% if capacity_min %}
+            <input type="hidden" name="capacity_min" value="{{ capacity_min }}">
+          {% endif %}
+          {% if capacity_max %}
+            <input type="hidden" name="capacity_max" value="{{ capacity_max }}">
+          {% endif %}
+          {% if date_from %}
+            <input type="hidden" name="date_from" value="{{ date_from }}">
+          {% endif %}
+          {% if date_to %}
+            <input type="hidden" name="date_to" value="{{ date_to }}">
+          {% endif %}
+          {% if selected_sort %}
+            <input type="hidden" name="sort" value="{{ selected_sort }}">
+          {% endif %}
+          {% if request.args.get('q') %}
+            <button type="button" class="input-clear" aria-label="Clear search">
+              <i data-lucide="x"></i>
+            </button>
+          {% endif %}
+        </div>
+      </form>
+    </div>
+
+    <div class="resources-toolbar__right">
+      {# Sort Dropdown #}
+      <div class="dropdown" data-dropdown>
+        <button type="button" class="btn btn--ghost dropdown-trigger" aria-haspopup="true" aria-expanded="false">
+          <i data-lucide="arrow-up-down"></i>
+          <span>Sort</span>
+        </button>
+        <div class="dropdown-menu" role="menu">
+          <a href="{{ sort_url('created_desc') }}" class="dropdown-item{% if selected_sort == 'created_desc' %} is-active{% endif %}" role="menuitem">
+            <i data-lucide="calendar"></i> Newest First
+          </a>
+          <a href="{{ sort_url('created_asc') }}" class="dropdown-item{% if selected_sort == 'created_asc' %} is-active{% endif %}" role="menuitem">
+            <i data-lucide="calendar"></i> Oldest First
+          </a>
+          <a href="{{ sort_url('title_asc') }}" class="dropdown-item{% if selected_sort == 'title_asc' %} is-active{% endif %}" role="menuitem">
+            <i data-lucide="type"></i> Title A-Z
+          </a>
+          <a href="{{ sort_url('rating_desc') }}" class="dropdown-item{% if selected_sort == 'rating_desc' %} is-active{% endif %}" role="menuitem">
+            <i data-lucide="star"></i> Highest Rated
+          </a>
+          <a href="{{ sort_url('popular') }}" class="dropdown-item{% if selected_sort == 'popular' %} is-active{% endif %}" role="menuitem">
+            <i data-lucide="trending-up"></i> Most Popular
+          </a>
+        </div>
+      </div>
+
+      {# View Toggle: Grid / List #}
+      <div class="view-toggle" role="group" aria-label="View mode">
+        <button type="button" class="view-toggle__btn is-active" data-view="grid" aria-label="Grid view">
+          <i data-lucide="layout-grid"></i>
+        </button>
+        <button type="button" class="view-toggle__btn" data-view="list" aria-label="List view">
+          <i data-lucide="list"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  {# ========================================================================= #}
+  {# MAIN CONTENT AREA with Filter Drawer #}
+  {# ========================================================================= #}
+  <div class="resources-content layout-grid">
+    
+    {# LEFT SIDEBAR: Filter Drawer #}
+    <aside class="layout-col filter-drawer filter-drawer--resources" data-col="12" data-col-lg="3" data-drawer="filters" aria-labelledby="filter-drawer-title">
+      
+      {# Header #}
+      <div class="filter-drawer__header">
+        <h2 class="filter-drawer__header-title" id="filter-drawer-title">
+          <i data-lucide="sliders-horizontal"></i>
+          Filters
+        </h2>
+        <div class="filter-drawer__header-actions">
+          <button type="button" class="filter-drawer__clear" data-filter-clear disabled>
+            Clear all
+          </button>
+          <button type="button" class="filter-drawer__close" data-drawer-close aria-label="Close filters">
+            <i data-lucide="x"></i>
+          </button>
+        </div>
+      </div>
+
+      {# Active Filters Summary #}
+      <div class="filter-active" data-active-filters style="display: none;">
+        <div class="filter-active__title">Active Filters</div>
+        <div class="filter-active__list"></div>
+      </div>
+
+      {# Filter Body (Scrollable) #}
+      <div class="filter-drawer__body">
+        
+        {# Category Filter #}
+        <div class="filter-section" data-filter="category">
+          <div class="filter-section__header">
+            <div class="filter-section__title">
+              Category
+              <span class="filter-section__count"></span>
+            </div>
+            <i data-lucide="chevron-down" class="filter-section__chevron"></i>
+          </div>
+          <div class="filter-section__body">
+            {% for category in category_filters %}
+            <label class="filter-option">
+              <input 
+                type="checkbox" 
+                name="category" 
+                value="{{ category.value }}" 
+                data-filter-input
+                {% if category.value in selected_categories %}checked{% endif %}
+              >
+              <span class="filter-option__label">{{ category.label }}</span>
+            </label>
+            {% endfor %}
+          </div>
+        </div>
+
+        {# Location Filter #}
+        <div class="filter-section" data-filter="location">
+          <div class="filter-section__header">
+            <div class="filter-section__title">
+              Location
+              <span class="filter-section__count"></span>
+            </div>
+            <i data-lucide="chevron-down" class="filter-section__chevron"></i>
+          </div>
+          <div class="filter-section__body">
+            <div class="filter-search">
+              <i data-lucide="search" class="filter-search__icon"></i>
+              <input 
+                type="text" 
+                placeholder="Search locations..." 
+                data-location-search
+                autocomplete="off"
+              >
+            </div>
+            <div data-location-list>
+              {% if location_facets %}
+                {% for facet in location_facets %}
+                  <label class="filter-option">
+                    <input
+                      type="checkbox"
+                      name="location"
+                      value="{{ facet.label }}"
+                      data-filter-input
+                      {% if facet.label in selected_locations %}checked{% endif %}
+                    >
+                    <span class="filter-option__label">{{ facet.label }}</span>
+                    <span class="filter-option__count">{{ facet.count }}</span>
+                  </label>
+                {% endfor %}
+              {% else %}
+                <p class="filter-empty">Locations will appear after resources are created.</p>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+        {# Capacity Filter #}
+        <div class="filter-section" data-filter="capacity">
+          <div class="filter-section__header">
+            <div class="filter-section__title">
+              Capacity
+              <span class="filter-section__count"></span>
+            </div>
+            <i data-lucide="chevron-down" class="filter-section__chevron"></i>
+          </div>
+          <div class="filter-section__body">
+            <div class="filter-range">
+              <div class="filter-range__inputs">
+                <input 
+                  type="number" 
+                  class="filter-range__input" 
+                  placeholder="Min" 
+                  min="1" 
+                  data-capacity-min
+                  value="{{ capacity_min or '' }}"
+                >
+                <span class="filter-range__separator">-</span>
+                <input 
+                  type="number" 
+                  class="filter-range__input" 
+                  placeholder="Max" 
+                  min="1" 
+                  data-capacity-max
+                  value="{{ capacity_max or '' }}"
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {# Availability Date Filter #}
+        <div class="filter-section" data-filter="availability">
+          <div class="filter-section__header">
+            <div class="filter-section__title">
+              Availability
+              <span class="filter-section__count"></span>
+            </div>
+            <i data-lucide="chevron-down" class="filter-section__chevron"></i>
+          </div>
+        <div class="filter-section__body">
+            <div class="filter-date">
+              <div class="filter-date__input-group">
+                <label class="filter-date__label" for="filters-date-from">Available From</label>
+                <input 
+                  type="date" 
+                  name="date_from" 
+                  id="filters-date-from"
+                  data-availability-from
+                  value="{{ date_from or '' }}"
+                >
+              </div>
+              <div class="filter-date__input-group">
+                <label class="filter-date__label" for="filters-date-to">Available To</label>
+                <input 
+                  type="date" 
+                  name="date_to" 
+                  id="filters-date-to"
+                  data-availability-to
+                  value="{{ date_to or '' }}"
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {# Status Filter (only for staff/admin) #}
+        {% if current_user.is_authenticated and current_user.role in ['staff', 'admin'] %}
+        <div class="filter-section" data-filter="status">
+          <div class="filter-section__header">
+            <div class="filter-section__title">
+              Status
+              <span class="filter-section__count"></span>
+            </div>
+            <i data-lucide="chevron-down" class="filter-section__chevron"></i>
+          </div>
+          <div class="filter-section__body">
+            {% for status in status_filters %}
+            <label class="filter-option">
+              <input 
+                type="checkbox" 
+                name="status" 
+                value="{{ status.value }}" 
+                data-filter-input
+                {% if status.value in selected_statuses %}checked{% endif %}
+              >
+              <span class="filter-option__label">{{ status.label }}</span>
+            </label>
+            {% endfor %}
+          </div>
+        </div>
+        {% endif %}
+
+      </div>
+
+      {# Footer with Apply Button (mobile only) #}
+      <div class="filter-drawer__footer">
+        <button type="button" class="btn btn--outline" data-drawer-close>
+          Cancel
+        </button>
+        <button type="button" class="btn btn--primary" data-filter-apply>
+          Apply Filters
+        </button>
+      </div>
+
+    </aside>
+
+    {# RIGHT MAIN AREA: Resource Grid #}
+    <main class="layout-col resources-main" data-col="12" data-col-lg="9">
+      
+      {# Results Info Bar #}
+      <div class="results-info">
+        <p class="results-info__text">
+          <strong data-results-count>{{ total }}</strong> resources found
+          {% if request.args.get('q') or request.args.get('category') or request.args.get('location') %}
+            <span class="results-info_filtered">(filtered)</span>
+          {% endif %}
+        </p>
+      </div>
+
+      {# Loading Skeleton (shown during AJAX loads) #}
+      <div class="resources-skeleton" data-skeleton style="display: none;">
+        {% for i in range(6) %}
+          <div class="resource-card resource-card--skeleton">
+            <div class="resource-card__image skeleton-box"></div>
+            <div class="resource-card__content">
+              <div class="skeleton-text skeleton-text--sm" style="width: 60%;"></div>
+              <div class="skeleton-text skeleton-text--lg" style="width: 100%;"></div>
+              <div class="skeleton-text" style="width: 90%;"></div>
+              <div class="skeleton-text" style="width: 70%;"></div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+
+      {# Resource Cards Grid #}
+      {% if resources %}
+        <div class="resources-grid" data-view-mode="grid" role="list">
+          {% for resource in resources %}
+            <article class="resource-card" data-resource-id="{{ resource.resource_id }}" role="listitem">
+              
+              {# 16:9 Image Container #}
+              <div class="resource-card__image">
+                {% set images = resource.get_images() %}
+                {% if images and images|length > 0 %}
+                  <img 
+                    src="{{ url_for('static', filename='uploads/' + images[0]) }}" 
+                    alt="{{ resource.title }}"
+                    loading="lazy"
+                  >
+                  {% if images|length > 1 %}
+                    <div class="resource-card__image-count">
+                      <i data-lucide="images"></i>
+                      <span>{{ images|length }}</span>
+                    </div>
+                  {% endif %}
+                {% else %}
+                  <div class="resource-card__placeholder">
+                    <i data-lucide="image"></i>
+                    <span>No image</span>
+                  </div>
+                {% endif %}
+
+                {# Status Badge Overlay #}
+                {% set badge_label = 'Available' %}
+                {% set badge_class = 'badge--success' %}
+                {% if resource.status == 'draft' %}
+                  {% set badge_label = 'Soon' %}
+                  {% set badge_class = 'badge--warning' %}
+                {% elif resource.status == 'archived' %}
+                  {% set badge_label = 'Full' %}
+                  {% set badge_class = 'badge--secondary' %}
+                {% endif %}
+                <div class="resource-card__badge">
+                  <span class="badge {{ badge_class }}">{{ badge_label }}</span>
+                </div>
+              </div>
+
+              {# Card Content #}
+              <div class="resource-card__content">
+                
+                {# Category Tag #}
+                <div class="resource-card__category">
+                  <span class="tag tag--sm">{{ resource.category|replace('_', ' ')|title }}</span>
+                </div>
+
+                {# Title #}
+                <h3 class="resource-card__title">
+                  <a href="{{ url_for('resources.detail', resource_id=resource.resource_id) }}">
+                    {{ resource.title }}
+                  </a>
+                </h3>
+
+                {# Description Preview #}
+                <p class="resource-card__description">
+                  {% if resource.description %}
+                    {{ resource.description[:120] }}{% if resource.description|length > 120 %}...{% endif %}
+                  {% else %}
+                    No description available
+                  {% endif %}
+                </p>
+
+                {# Meta Info #}
+                <div class="resource-card__meta">
+                  {% if resource.location %}
+                    <span class="meta-item">
+                      <i data-lucide="map-pin"></i>
+                      {{ resource.location }}
+                    </span>
+                  {% endif %}
+                  
+                  {% if resource.capacity %}
+                    <span class="meta-item">
+                      <i data-lucide="users"></i>
+                      {{ resource.capacity }} people
+                    </span>
+                  {% endif %}
+
+                  {# Rating (if reviews exist) #}
+                  {% set avg_rating = resource.get_average_rating() %}
+                  {% if avg_rating %}
+                    <span class="meta-item meta-item--rating" aria-label="Rating {{ avg_rating }} out of 5">
+                      <i data-lucide="star" class="icon-filled"></i>
+                      {{ avg_rating }}
+                      <span class="text-muted">({{ resource.get_review_count() }})</span>
+                    </span>
+                  {% else %}
+                    <span class="meta-item meta-item--rating text-muted">
+                      <i data-lucide="star"></i>
+                      No reviews yet
+                    </span>
+                  {% endif %}
+                </div>
+              </div>
+
+              {# Card Actions #}
+              <div class="resource-card__actions">
+                <a 
+                  href="{{ url_for('resources.detail', resource_id=resource.resource_id) }}" 
+                  class="btn btn--sm btn--outline"
+                >
+                  <i data-lucide="eye"></i>
+                  <span>View</span>
+                </a>
+                {% if current_user.is_authenticated and resource.status == 'published' %}
+                  <button
+                    type="button"
+                    class="btn btn--sm btn--primary"
+                    data-booking-open
+                    data-resource-id="{{ resource.resource_id }}"
+                    data-resource-title="{{ resource.title }}"
+                    data-booking-url="{{ url_for('bookings.new', resource_id=resource.resource_id) }}"
+                    data-availability-url="{{ url_for('resources.availability', resource_id=resource.resource_id) }}"
+                  >
+                    <i data-lucide="calendar-check"></i>
+                    <span>Book</span>
+                  </button>
+                {% endif %}
+              </div>
+
+            </article>
+          {% endfor %}
+        </div>
+
+        {# Pagination #}
+        {% if total > per_page %}
+          <div class="pagination-wrapper">
+            {% set max_pages = (total / per_page)|round(0, 'ceil')|int %}
+            <nav class="pagination" aria-label="Resource list pagination">
+              {# Previous #}
+              {% if page > 1 %}
+                <a href="{{ page_url(page - 1) }}" class="pagination__item pagination__item--prev">
+                  <i data-lucide="chevron-left"></i>
+                  <span>Previous</span>
+                </a>
+              {% endif %}
+
+              {# Page Numbers #}
+              <div class="pagination__pages">
+                {% for p in range(1, max_pages + 1) %}
+                  {% if p == page %}
+                    <span class="pagination__item is-active" aria-current="page">{{ p }}</span>
+                  {% elif p == 1 or p == max_pages or (p >= page - 1 and p <= page + 1) %}
+                    <a href="{{ page_url(p) }}" class="pagination__item">{{ p }}</a>
+                  {% elif p == page - 2 or p == page + 2 %}
+                    <span class="pagination__ellipsis">...</span>
+                  {% endif %}
+                {% endfor %}
+              </div>
+
+              {# Next #}
+              {% if page < max_pages %}
+                <a href="{{ page_url(page + 1) }}" class="pagination__item pagination__item--next">
+                  <span>Next</span>
+                  <i data-lucide="chevron-right"></i>
+                </a>
+              {% endif %}
+            </nav>
+          </div>
+        {% endif %}
+
+      {% else %}
+        {# Empty State #}
+        <div class="empty-state">
+          <div class="empty-state__icon">
+            <i data-lucide="inbox"></i>
+          </div>
+          <h2 class="empty-state__title">No resources found</h2>
+          <p class="empty-state__message">
+            {% if request.args.get('q') or request.args.get('category') or request.args.get('location') %}
+              Try adjusting your search filters to find what you're looking for.
+            {% else %}
+              No resources have been created yet.
+              {% if current_user.is_authenticated %}
+                Be the first to share a resource!
+              {% endif %}
+            {% endif %}
+          </p>
+          <div class="empty-state__actions">
+            {% if request.args.get('q') or request.args.get('category') or request.args.get('location') %}
+              <a href="{{ url_for('resources.index') }}" class="btn btn--outline">
+                <i data-lucide="x-circle"></i>
+                <span>Clear Filters</span>
+              </a>
+            {% endif %}
+            {% if current_user.is_authenticated %}
+              <a href="{{ url_for('resources.create') }}" class="btn btn--primary">
+                <i data-lucide="plus-circle"></i>
+                <span>Create Resource</span>
+              </a>
+            {% endif %}
+          </div>
+        </div>
+      {% endif %}
+
+    </main>
+
+  </div>
+
+  {# Filter Drawer Backdrop (mobile) #}
+  <div class="filter-drawer-backdrop" data-drawer-backdrop></div>
+
+</div>
 {% endblock %}
 
-{% block main_content %}
-<div class="page-container">
-    <!-- Search and Filters -->
-    <div class="filter-section">
-        <form method="GET" action="{{ url_for('resources.index') }}" class="filter-form">
-            <div class="filter-grid">
-                <!-- Search Bar -->
-                <div class="filter-item filter-item--wide">
-                    {{ form_field(
-                        type="text",
-                        name="q",
-                        label="Search",
-                        value=search_term or '',
-                        placeholder="Search resources..."
-                    ) }}
-                </div>
-
-                <!-- Category Filter -->
-                <div class="filter-item">
-                    <label for="category" class="form-label">Category</label>
-                    <select class="form-select" id="category" name="category">
-                        <option value="">All Categories</option>
-                        <option value="study_room" {% if category == 'study_room' %}selected{% endif %}>Study Room</option>
-                        <option value="equipment" {% if category == 'equipment' %}selected{% endif %}>Equipment</option>
-                        <option value="lab" {% if category == 'lab' %}selected{% endif %}>Lab</option>
-                        <option value="event_space" {% if category == 'event_space' %}selected{% endif %}>Event Space</option>
-                        <option value="tutoring" {% if category == 'tutoring' %}selected{% endif %}>Tutoring</option>
-                        <option value="other" {% if category == 'other' %}selected{% endif %}>Other</option>
-                    </select>
-                </div>
-
-                <!-- Location Filter -->
-                <div class="filter-item">
-                    {{ form_field(
-                        type="text",
-                        name="location",
-                        label="Location",
-                        value=location or '',
-                        placeholder="Building or room"
-                    ) }}
-                </div>
-
-                <!-- Filter Actions -->
-                <div class="filter-actions">
-                    {{ button(
-                        text="Search",
-                        icon="bi-search",
-                        type="submit",
-                        variant="primary"
-                    ) }}
-                    {{ button(
-                        text="Clear",
-                        icon="bi-x-circle",
-                        href=url_for('resources.index'),
-                        variant="outline"
-                    ) }}
-                </div>
-            </div>
-        </form>
-    </div>
-
-    <!-- Results Count -->
-    <div class="results-info">
-        <p class="text-muted">
-            Showing {{ resources|length }} of {{ total }} resources
-            {% if search_term or category or location %}
-                <span class="text-primary">(filtered)</span>
-            {% endif %}
-        </p>
-    </div>
-
-    <!-- Resource Cards Grid -->
-    {% if resources %}
-    <div class="resource-grid">
-        {% for resource in resources %}
-        <div class="resource-card-wrapper">
-            {% call card(class="resource-card") %}
-                <!-- Resource Image -->
-                <div class="resource-card__image">
-                    {% if resource.images %}
-                        {% set images_list = resource.images|tojson|safe %}
-                        {% set first_image = images_list[0] if images_list else None %}
-                        {% if first_image %}
-                        <img src="{{ url_for('static', filename=first_image) }}" 
-                             alt="{{ resource.title }}">
-                        {% else %}
-                        <div class="resource-card__placeholder">
-                            <i class="bi bi-image"></i>
-                        </div>
-                        {% endif %}
-                    {% else %}
-                    <div class="resource-card__placeholder">
-                        <i class="bi bi-image"></i>
-                    </div>
-                    {% endif %}
-                </div>
-
-                <div class="resource-card__content">
-                    <!-- Category Badge -->
-                    {{ badge(
-                        text=resource.category|replace('_', ' ')|title,
-                        variant="info"
-                    ) }}
-
-                    <!-- Title -->
-                    <h3 class="resource-card__title">{{ resource.title }}</h3>
-
-                    <!-- Description -->
-                    <p class="resource-card__description">
-                        {% if resource.description %}
-                            {{ resource.description[:100] }}{% if resource.description|length > 100 %}...{% endif %}
-                        {% else %}
-                            No description available
-                        {% endif %}
-                    </p>
-
-                    <!-- Meta Information -->
-                    <div class="resource-card__meta">
-                        {% if resource.location %}
-                        <span class="meta-item">
-                            <i class="bi bi-geo-alt"></i> {{ resource.location }}
-                        </span>
-                        {% endif %}
-
-                        {% if resource.capacity %}
-                        <span class="meta-item">
-                            <i class="bi bi-people"></i> Capacity: {{ resource.capacity }}
-                        </span>
-                        {% endif %}
-                    </div>
-                </div>
-
-                <div class="resource-card__footer">
-                    {{ button(
-                        text="View Details",
-                        href=url_for('resources.detail', resource_id=resource.resource_id),
-                        variant="primary",
-                        size="sm",
-                        full_width=true
-                    ) }}
-                </div>
-            {% endcall %}
-        </div>
-        {% endfor %}
-    </div>
-    {% else %}
-    <!-- Empty State -->
-    <div class="empty-state-wrapper">
-        {{ empty_state(
-            icon="bi-inbox",
-            title="No resources found",
-            message="Try adjusting your search filters" if (search_term or category or location) else "Be the first to create a resource!",
-            action_text="Create Resource" if current_user.is_authenticated else none,
-            action_url=url_for('resources.create') if current_user.is_authenticated else none
-        ) }}
-    </div>
-    {% endif %}
-
-    <!-- Pagination -->
-    {% if total > per_page %}
-    <div class="pagination-wrapper">
-        {% set max_pages = (total / per_page)|round(0, 'ceil')|int %}
-        {{ pagination(
-            page=page,
-            total_pages=max_pages,
-            endpoint='resources.index',
-            query_params={'q': search_term, 'category': category, 'location': location}
-        ) }}
-    </div>
-    {% endif %}
-</div>
+{% block extra_js %}
+{# Resource filters JavaScript will be loaded via Vite #}
+<script type="module">
+  // Initialize Lucide icons (for inline icons)
+  if (typeof lucide !== 'undefined') {
+    lucide.createIcons();
+  }
+</script>
 {% endblock %}

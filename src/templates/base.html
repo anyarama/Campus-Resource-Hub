@@ -4,73 +4,110 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    {% set canonical_href = canonical_url if canonical_url is defined else (request.url_root.rstrip('/') ~ request.path) %}
     <title>{% block title %}Campus Resource Hub{% endblock %}</title>
+    <meta name="description" content="{{ page_description | default('Campus Resource Hub helps students discover, book, and manage campus resources with accessible enterprise-grade tooling.') }}">
+    <meta name="theme-color" content="#111827">
+    <meta name="color-scheme" content="light dark">
+    <meta name="robots" content="index,follow">
+    <link rel="canonical" href="{{ canonical_href }}">
     
     <!-- Preconnect for performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
     
     <!-- Enterprise CSS (Vite build) -->
-    <link rel="stylesheet" href="{{ asset_url('style') }}">
+    <link rel="stylesheet" href="{{ vite_asset('src/static/scss/enterprise.scss') }}">
     
-    <!-- Bootstrap Icons (kept for icon support) -->
+    <!-- Bootstrap Icons (kept for backward compatibility) -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    {% block meta_tags %}{% endblock %}
     
     {% block extra_css %}{% endblock %}
 </head>
-<body>
+<body data-theme="light">
     <!-- Skip Link for Accessibility -->
     <a href="#main" class="skip-link">Skip to main content</a>
     
     <div class="{% if current_user.is_authenticated %}app-shell{% else %}guest-layout{% endif %}">
         {% if current_user.is_authenticated %}
-        <!-- Sidebar (Authenticated Only) -->
+        <!-- Sidebar (Authenticated Only) - Icon-Only with Hover Tooltips -->
         <aside class="app-sidebar" role="navigation" aria-label="Primary navigation">
             <div class="sidebar-header">
-                <a href="{{ url_for('resources.dashboard') }}" class="sidebar-brand">
+                <a href="{{ url_for('resources.dashboard') }}" class="sidebar-brand" title="Campus Resource Hub">
                     <span class="brand-icon">🎓</span>
                     <span class="brand-text">CRH</span>
                 </a>
             </div>
             
             <nav class="sidebar-nav">
-                <a href="{{ url_for('resources.dashboard') }}" class="sidebar-link {% if request.endpoint == 'resources.dashboard' %}active{% endif %}">
+                <a href="{{ url_for('resources.dashboard') }}" 
+                   class="sidebar-link {% if request.endpoint == 'resources.dashboard' %}active{% endif %}"
+                   title="Dashboard"
+                   aria-label="Dashboard">
                     <i class="bi bi-house-door"></i>
                     <span>Dashboard</span>
                 </a>
-                <a href="{{ url_for('resources.index') }}" class="sidebar-link {% if request.endpoint in ['resources.index', 'resources.detail'] %}active{% endif %}">
+                <a href="{{ url_for('resources.index') }}" 
+                   class="sidebar-link {% if request.endpoint in ['resources.index', 'resources.detail'] %}active{% endif %}"
+                   title="Browse Resources"
+                   aria-label="Browse Resources">
                     <i class="bi bi-grid-3x3-gap"></i>
                     <span>Browse Resources</span>
                 </a>
-                <a href="{{ url_for('resources.my_resources') }}" class="sidebar-link {% if request.endpoint == 'resources.my_resources' %}active{% endif %}">
+                <a href="{{ url_for('resources.my_resources') }}" 
+                   class="sidebar-link {% if request.endpoint == 'resources.my_resources' %}active{% endif %}"
+                   title="My Resources"
+                   aria-label="My Resources">
                     <i class="bi bi-box-seam"></i>
                     <span>My Resources</span>
                 </a>
-                <a href="{{ url_for('bookings.my_bookings') }}" class="sidebar-link {% if request.endpoint == 'bookings.my_bookings' %}active{% endif %}">
+                <a href="{{ url_for('bookings.my_bookings') }}" 
+                   class="sidebar-link {% if request.endpoint == 'bookings.my_bookings' %}active{% endif %}"
+                   title="My Bookings"
+                   aria-label="My Bookings">
                     <i class="bi bi-calendar-check"></i>
                     <span>My Bookings</span>
                 </a>
-                <a href="{{ url_for('messages.inbox') }}" class="sidebar-link {% if request.endpoint in ['messages.inbox', 'messages.conversation'] %}active{% endif %}">
+                <a href="{{ url_for('messages.inbox') }}" 
+                   class="sidebar-link {% if request.endpoint in ['messages.inbox', 'messages.conversation'] %}active{% endif %}"
+                   title="Messages"
+                   aria-label="Messages">
                     <i class="bi bi-envelope"></i>
                     <span>Messages</span>
                     <span class="badge badge-error" id="msgBadge" style="display: none;">0</span>
                 </a>
-                <a href="{{ url_for('concierge.index') }}" class="sidebar-link {% if request.endpoint == 'concierge.index' %}active{% endif %}">
+                <a href="{{ url_for('concierge.index') }}" 
+                   class="sidebar-link {% if request.endpoint == 'concierge.index' %}active{% endif %}"
+                   title="AI Concierge"
+                   aria-label="AI Concierge">
                     <i class="bi bi-robot"></i>
                     <span>AI Concierge</span>
                 </a>
                 
                 {% if current_user.role == 'admin' %}
-                <div class="sidebar-divider"></div>
+                <div class="sidebar-divider" role="separator"></div>
                 <div class="sidebar-section-title">Administration</div>
-                <a href="{{ url_for('admin.dashboard') }}" class="sidebar-link {% if request.endpoint == 'admin.dashboard' %}active{% endif %}">
+                <a href="{{ url_for('admin.dashboard') }}" 
+                   class="sidebar-link {% if request.endpoint == 'admin.dashboard' %}active{% endif %}"
+                   title="Admin Dashboard"
+                   aria-label="Admin Dashboard">
                     <i class="bi bi-speedometer2"></i>
                     <span>Admin Dashboard</span>
                 </a>
-                <a href="{{ url_for('admin.users') }}" class="sidebar-link {% if request.endpoint in ['admin.users', 'admin.user_detail'] %}active{% endif %}">
+                <a href="{{ url_for('admin.users') }}" 
+                   class="sidebar-link {% if request.endpoint in ['admin.users', 'admin.user_detail'] %}active{% endif %}"
+                   title="Manage Users"
+                   aria-label="Manage Users">
                     <i class="bi bi-people"></i>
                     <span>Users</span>
                 </a>
-                <a href="{{ url_for('admin.analytics') }}" class="sidebar-link {% if request.endpoint == 'admin.analytics' %}active{% endif %}">
+                <a href="{{ url_for('admin.analytics') }}" 
+                   class="sidebar-link {% if request.endpoint == 'admin.analytics' %}active{% endif %}"
+                   title="Analytics"
+                   aria-label="Analytics">
                     <i class="bi bi-graph-up"></i>
                     <span>Analytics</span>
                 </a>
@@ -78,7 +115,11 @@
             </nav>
             
             <div class="sidebar-footer">
-                <a href="{{ url_for('auth.profile') }}" class="sidebar-user">
+                <a href="{{ url_for('auth.profile') }}" 
+                   class="sidebar-user"
+                   data-username="{{ current_user.name }} ({{ current_user.role|title }})"
+                   title="View Profile"
+                   aria-label="View your profile">
                     <div class="user-avatar">{{ current_user.name[0].upper() }}</div>
                     <div class="user-info">
                         <div class="user-name">{{ current_user.name }}</div>
@@ -101,22 +142,30 @@
             </div>
             
             <div class="topbar-actions">
-                <button class="topbar-action" data-theme-toggle aria-label="Toggle theme">
-                    <span class="theme-icon">🌙</span>
+                <button class="topbar-action theme-toggle" 
+                        data-theme-toggle 
+                        aria-label="Toggle dark mode"
+                        title="Toggle theme">
+                    <i class="bi bi-moon-fill theme-icon"></i>
                 </button>
                 
                 <div class="topbar-user-menu">
-                    <button class="topbar-action" data-modal-open="userMenu">
+                    <button class="topbar-action" 
+                            data-dropdown-toggle="userMenu"
+                            aria-label="User menu"
+                            aria-expanded="false"
+                            aria-haspopup="true"
+                            title="User menu">
                         <i class="bi bi-person-circle"></i>
                     </button>
-                    <div class="dropdown-menu" id="userMenu">
-                        <a href="{{ url_for('auth.profile') }}" class="dropdown-item">
+                    <div class="dropdown-menu" id="userMenu" role="menu">
+                        <a href="{{ url_for('auth.profile') }}" class="dropdown-item" role="menuitem">
                             <i class="bi bi-person"></i> Profile
                         </a>
-                        <div class="dropdown-divider"></div>
+                        <div class="dropdown-divider" role="separator"></div>
                         <form method="POST" action="{{ url_for('auth.logout') }}">
                             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                            <button type="submit" class="dropdown-item">
+                            <button type="submit" class="dropdown-item" role="menuitem">
                                 <i class="bi bi-box-arrow-right"></i> Logout
                             </button>
                         </form>
@@ -131,8 +180,11 @@
                         <span class="brand-text">Campus Resource Hub</span>
                     </a>
                     <div class="guest-actions">
-                        <button class="topbar-action" data-theme-toggle aria-label="Toggle theme">
-                            <span class="theme-icon">🌙</span>
+                        <button class="topbar-action theme-toggle" 
+                                data-theme-toggle 
+                                aria-label="Toggle dark mode"
+                                title="Toggle theme">
+                            <i class="bi bi-moon-fill theme-icon"></i>
                         </button>
                         <a href="{{ url_for('auth.login') }}" class="btn btn-outline">Login</a>
                         <a href="{{ url_for('auth.register') }}" class="btn btn-primary">Register</a>
@@ -172,10 +224,16 @@
                 {% endwith %}
                 
                 <!-- Main Content (SINGLE BLOCK) -->
-                {% block main_content %}{% endblock %}
+                {% block main_content %}
+                  {% block content %}{% endblock %}
+                {% endblock %}
             </div>
         </main>
         
+        {% if current_user.is_authenticated %}
+        {% include "components/booking_drawer.html" %}
+        {% endif %}
+
         {% if current_user.is_authenticated %}
         <!-- Mobile Overlay -->
         <div class="sidebar-overlay"></div>
@@ -190,7 +248,14 @@
     </div>
     
     <!-- Enterprise JS (Vite build) -->
-    <script defer src="{{ asset_url('enterpriseJs') }}"></script>
+    <script type="module" src="{{ vite_asset('src/static/js/enterprise.js') }}"></script>
+    <script type="module" src="{{ vite_asset('src/static/js/booking-drawer.js') }}"></script>
+    
+    <!-- Lucide Icons (Optional - uncomment if preferred over Bootstrap Icons) -->
+    <!-- <script type="module">
+      import { createIcons, Home, Grid, Package, Calendar, Mail, Bot, Gauge, Users, TrendingUp, Moon, Sun, User, LogOut } from 'https://cdn.jsdelivr.net/npm/lucide@latest/dist/esm/lucide.js';
+      createIcons();
+    </script> -->
     
     {% block extra_js %}{% endblock %}
 </body>

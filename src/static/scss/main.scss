@@ -38,7 +38,7 @@
 // @use 'compat/bootstrap-bridge';
 
 // -----------------------------------------------------------------------------
-// COMPONENTS - All 15 Enterprise Components
+// COMPONENTS - All Enterprise Components
 // -----------------------------------------------------------------------------
 @use 'components/button';
 @use 'components/form';
@@ -51,8 +51,12 @@
 @use 'components/pagination';
 @use 'components/skeleton';
 @use 'components/sidebar';
+@use 'components/app-sidebar';  // CRITICAL: Icon-only sidebar with tooltips
+@use 'components/topbar';       // NEW: Topbar/header component
+@use 'components/drawer';       // NEW: Slide-out drawer component
 @use 'components/navbar';
 @use 'components/filter-drawer';
+@use 'components/carousel';     // NEW: Image carousel for resource detail pages
 @use 'components/kpi-tile';
 @use 'components/activity-feed';
 

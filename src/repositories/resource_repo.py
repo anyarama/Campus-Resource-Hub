@@ -5,10 +5,10 @@ Data Access Layer for Resource model.
 Per .clinerules: All database operations encapsulated in repositories.
 """
 
-from typing import List, Optional, Dict
-from sqlalchemy import or_
+from typing import List, Optional, Dict, Sequence
+from sqlalchemy import or_, func
 from datetime import datetime
-from src.models import db, Resource
+from src.models import db, Resource, Booking
 
 
 class ResourceRepository:
@@ -74,6 +74,14 @@ class ResourceRepository:
         category: Optional[str] = None,
         location: Optional[str] = None,
         status: Optional[str] = None,
+        categories: Optional[Sequence[str]] = None,
+        locations: Optional[Sequence[str]] = None,
+        statuses: Optional[Sequence[str]] = None,
+        capacity_min: Optional[int] = None,
+        capacity_max: Optional[int] = None,
+        availability_start: Optional[datetime] = None,
+        availability_end: Optional[datetime] = None,
+        sort: Optional[str] = None,
     ) -> List[Resource]:
         """
         Search resources by title, description, or location.
@@ -83,7 +91,9 @@ class ResourceRepository:
         query = Resource.query
         
         # Apply status filter (default to published if not specified)
-        if status:
+        if statuses:
+            query = query.filter(Resource.status.in_(statuses))
+        elif status:
             query = query.filter_by(status=status)
         else:
             query = query.filter(Resource.status == "published")
@@ -97,16 +107,63 @@ class ResourceRepository:
             )
             query = query.filter(search_filter)
 
-        # Apply category filter
-        if category:
+        # Apply category filter (single or multiple)
+        if categories:
+            query = query.filter(Resource.category.in_(categories))
+        elif category:
             query = query.filter_by(category=category)
             
-        # Apply location filter
-        if location:
+        # Apply location filter (single or multiple, partial match)
+        if locations:
+            location_filters = [
+                Resource.location.ilike(f"%{loc}%") for loc in locations if loc
+            ]
+            if location_filters:
+                query = query.filter(or_(*location_filters))
+        elif location:
             query = query.filter(Resource.location.ilike(f"%{location}%"))
 
-        # Return all matching resources (simple list for now)
-        return query.order_by(Resource.created_at.desc()).all()
+        # Capacity range filters
+        if capacity_min is not None:
+            query = query.filter(Resource.capacity >= capacity_min)
+        if capacity_max is not None:
+            query = query.filter(Resource.capacity <= capacity_max)
+
+        # Availability window filter (exclude resources with approved bookings overlapping window)
+        if availability_start or availability_end:
+            start = availability_start or availability_end
+            end = availability_end or availability_start
+            if start and end and end < start:
+                start, end = end, start
+
+            if start and end:
+                conflicts = (
+                    db.session.query(Booking.resource_id)
+                    .filter(Booking.status == "approved")
+                    .filter(Booking.start_datetime < end)
+                    .filter(Booking.end_datetime > start)
+                )
+                query = query.filter(~Resource.resource_id.in_(conflicts))
+
+        # Base ordering (defaults to newest first)
+        if sort == "created_asc":
+            query = query.order_by(Resource.created_at.asc())
+        elif sort == "title_asc":
+            query = query.order_by(Resource.title.asc())
+        elif sort == "title_desc":
+            query = query.order_by(Resource.title.desc())
+        else:
+            query = query.order_by(Resource.created_at.desc())
+
+        results = query.all()
+
+        # Derived sorting (rating/popularity) happens in Python since it depends on relationships
+        if sort == "rating_desc":
+            results.sort(key=lambda r: (r.get_average_rating() or 0, r.get_review_count()), reverse=True)
+        elif sort == "popular":
+            results.sort(key=lambda r: r.get_booking_count(), reverse=True)
+
+        return results
 
     @staticmethod
     def update(resource_id: int, **kwargs) -> Optional[Resource]:
@@ -159,3 +216,37 @@ class ResourceRepository:
     def count_by_status(status: str) -> int:
         """Get count of resources by status."""
         return Resource.query.filter_by(status=status).count()
+
+    @staticmethod
+    def get_location_facets(status: Optional[str] = "published") -> List[Dict[str, object]]:
+        """
+        Return distinct locations with counts for filter drawer.
+
+        Args:
+            status: Filter resources by status (default: published)
+        """
+        query = (
+            db.session.query(
+                Resource.location,
+                func.count(Resource.resource_id).label("count"),
+            )
+            .filter(Resource.location.isnot(None))
+            .filter(Resource.location != "")
+        )
+
+        if status:
+            query = query.filter(Resource.status == status)
+
+        rows = (
+            query.group_by(Resource.location)
+            .order_by(func.count(Resource.resource_id).desc())
+            .all()
+        )
+
+        return [
+            {
+                "label": location,
+                "count": count,
+            }
+            for location, count in rows
+        ]

@@ -1,276 +1,803 @@
 // =============================================================================
-// RESOURCES PAGE STYLES
+// RESOURCES MODULE STYLES
 // =============================================================================
-// Resource browsing, detail views, create/edit forms
-// Grid layouts, filters, image galleries
+// List filters, responsive cards, detail hero, multistep form wizard
+// =============================================================================
 
 @use '../tokens' as *;
 
 // -----------------------------------------------------------------------------
-// Resource Browse/List Layout
+// Browse / List View
 // -----------------------------------------------------------------------------
-.resources-page {
-  display: grid;
-  grid-template-columns: 320px 1fr;
-  gap: $spacing-8;
-  padding: $spacing-8;
-  max-width: 1800px;
-  margin: 0 auto;
-  align-items: start;
-  
-  @media (max-width: 1024px) {
-    grid-template-columns: 1fr;
-    padding: $spacing-6;
-  }
-  
-  @media (max-width: 768px) {
-    padding: $spacing-4;
-  }
-}
-
-// Filter sidebar (uses filter-drawer component on mobile)
-.resources-page__filters {
-  position: sticky;
-  top: 80px;
-  
-  @media (max-width: 1024px) {
-    display: none; // Hidden, shown as drawer on mobile
-  }
-}
-
-// Main content area
-.resources-page__content {
+.resources-browse-page {
   display: flex;
   flex-direction: column;
   gap: $spacing-6;
+  padding: $spacing-6;
+
+  @media (max-width: 768px) {
+    padding: $spacing-4;
+  }
 }
 
-// -----------------------------------------------------------------------------
-// Resource Grid
-// -----------------------------------------------------------------------------
-.resource-grid {
+.resources-toolbar {
+  display: flex;
+  justify-content: space-between;
+  gap: $spacing-4;
+  flex-wrap: wrap;
+  align-items: center;
+  background: var(--color-surface-elevated);
+  border: 1px solid var(--color-border-default);
+  border-radius: $border-radius-lg;
+  padding: $spacing-4;
+}
+
+.resources-content {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  grid-template-columns: repeat(12, minmax(0, 1fr));
   gap: $spacing-6;
-  
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
+
+  @media (max-width: 1024px) {
     gap: $spacing-4;
   }
 }
 
-// -----------------------------------------------------------------------------
-// Resource Detail Page
-// -----------------------------------------------------------------------------
-.resource-detail {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: $spacing-8;
-  
-  @media (max-width: 768px) {
-    padding: $spacing-4;
-  }
-  
-  &__breadcrumbs {
-    margin-bottom: $spacing-6;
-  }
-  
-  &__header {
-    display: grid;
-    grid-template-columns: 1fr 300px;
-    gap: $spacing-8;
-    margin-bottom: $spacing-8;
-    
-    @media (max-width: 1024px) {
-      grid-template-columns: 1fr;
-      gap: $spacing-6;
-    }
-  }
-  
-  &__gallery {
-    position: relative;
-  }
-  
-  &__main-image {
-    width: 100%;
-    height: 500px;
-    object-fit: cover;
-    border-radius: $border-radius-lg;
-    margin-bottom: $spacing-4;
-    
-    @media (max-width: 768px) {
-      height: 300px;
-    }
-  }
-  
-  &__thumbnails {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: $spacing-2;
-    
-    img {
-      width: 100%;
-      height: 80px;
-      object-fit: cover;
-      border-radius: $border-radius-md;
-      cursor: pointer;
-      border: 2px solid transparent;
-      
-      &:hover, &.is-active {
-        border-color: var(--color-primary);
+.resources-main {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-4;
+}
+
+.resources-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: $spacing-4;
+
+  [data-view-mode='grid'] &,
+  & {
+    .resource-card {
+      grid-column: span 4;
+
+      @media (max-width: 1200px) {
+        grid-column: span 6;
+      }
+
+      @media (max-width: 768px) {
+        grid-column: span 12;
       }
     }
   }
-  
-  &__info {
-    display: flex;
-    flex-direction: column;
-    gap: $spacing-4;
-  }
-  
-  &__title {
-    font-size: $font-size-4xl;
-    font-weight: $font-weight-bold;
-    color: var(--color-gray-900);
-    margin-bottom: $spacing-2;
-  }
-  
-  &__meta {
-    display: flex;
-    align-items: center;
-    gap: $spacing-4;
-    flex-wrap: wrap;
-    padding-bottom: $spacing-4;
-    border-bottom: 1px solid var(--color-gray-200);
-  }
-  
-  &__owner {
-    display: flex;
-    align-items: center;
-    gap: $spacing-2;
-    
-    img {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
+
+  &[data-view-mode='list'] {
+    .resource-card {
+      grid-column: span 12;
+      flex-direction: row;
+      align-items: stretch;
+      gap: $spacing-4;
+
+      @media (max-width: 768px) {
+        flex-direction: column;
+      }
+
+      .resource-card__image {
+        flex: 0 0 320px;
+
+        @media (max-width: 768px) {
+          flex: initial;
+        }
+      }
+
+      .resource-card__content {
+        flex: 1;
+      }
     }
-  }
-  
-  &__rating {
-    display: flex;
-    align-items: center;
-    gap: $spacing-1;
-  }
-  
-  &__description {
-    line-height: 1.7;
-    color: var(--color-gray-700);
-  }
-  
-  &__features {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: $spacing-3;
-    padding: $spacing-4;
-    background-color: var(--color-gray-50);
-    border-radius: $border-radius-md;
-  }
-  
-  &__feature {
-    display: flex;
-    align-items: center;
-    gap: $spacing-2;
-    font-size: $font-size-sm;
-    
-    svg {
-      width: 20px;
-      height: 20px;
-      color: var(--color-primary);
-    }
-  }
-  
-  &__booking-card {
-    position: sticky;
-    top: 80px;
-    background-color: white;
-    border: 1px solid var(--color-gray-200);
-    border-radius: $border-radius-lg;
-    padding: $spacing-6;
-    box-shadow: $shadow-lg;
   }
 }
 
-// -----------------------------------------------------------------------------
-// Resource Form (Create/Edit)
-// -----------------------------------------------------------------------------
-.resource-form {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: $spacing-8;
-  
-  @media (max-width: 768px) {
-    padding: $spacing-4;
-  }
-  
-  &__section {
-    background-color: white;
-    border: 1px solid var(--color-gray-200);
-    border-radius: $border-radius-lg;
-    padding: $spacing-6;
-    margin-bottom: $spacing-6;
-    
-    &-title {
-      font-size: $font-size-xl;
-      font-weight: $font-weight-semibold;
-      color: var(--color-gray-900);
-      margin-bottom: $spacing-4;
-      padding-bottom: $spacing-3;
-      border-bottom: 1px solid var(--color-gray-200);
-    }
-  }
-  
-  &__image-upload {
-    display: flex;
-    flex-direction: column;
-    gap: $spacing-4;
-  }
-  
-  &__image-preview-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: $spacing-3;
-  }
-  
-  &__image-preview {
+.resource-card {
+  display: flex;
+  flex-direction: column;
+  background: var(--color-surface-elevated);
+  border: 1px solid var(--color-border-default);
+  border-radius: $border-radius-lg;
+  overflow: hidden;
+  min-height: 100%;
+
+  &__image {
     position: relative;
-    aspect-ratio: 1;
-    border-radius: $border-radius-md;
-    overflow: hidden;
-    
+    aspect-ratio: 16 / 9;
+    background: var(--color-gray-100);
+
     img {
       width: 100%;
       height: 100%;
       object-fit: cover;
     }
-    
-    &-remove {
-      position: absolute;
-      top: $spacing-2;
-      right: $spacing-2;
-      width: 28px;
-      height: 28px;
-      background-color: var(--color-error-500);
-      color: white;
-      border: none;
-      border-radius: 50%;
-      cursor: pointer;
-      display: flex;
+  }
+
+  &__placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: $spacing-2;
+    color: var(--color-text-secondary);
+  }
+
+  &__badge {
+    position: absolute;
+    top: $spacing-3;
+    left: $spacing-3;
+  }
+
+  &__content {
+    padding: $spacing-4;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-3;
+    flex: 1;
+  }
+
+  &__description {
+    color: var(--color-text-muted);
+  }
+
+  &__meta {
+    display: flex;
+    gap: $spacing-3;
+    flex-wrap: wrap;
+    font-size: $font-size-sm;
+    color: var(--color-text-muted);
+
+    .meta-item {
+      display: inline-flex;
+      gap: $spacing-1;
       align-items: center;
-      justify-content: center;
-      
-      &:hover {
-        background-color: var(--color-error-600);
+    }
+  }
+
+  &__actions {
+    display: flex;
+    gap: $spacing-2;
+    padding: $spacing-4;
+    border-top: 1px solid var(--color-border-default);
+  }
+}
+
+.resources-skeleton {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: $spacing-4;
+}
+
+// -----------------------------------------------------------------------------
+// Detail Page
+// -----------------------------------------------------------------------------
+.resource-detail {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: $spacing-6;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-6;
+
+  @media (max-width: 768px) {
+    padding: $spacing-4;
+  }
+
+  &__hero {
+    gap: $spacing-6;
+  }
+
+  &__rail {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-4;
+  }
+
+  &__body {
+    gap: $spacing-6;
+  }
+}
+
+.resource-carousel {
+  background: var(--color-gray-900);
+  border-radius: $border-radius-lg;
+  overflow: hidden;
+
+  &--empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: $spacing-10;
+
+    .resource-carousel__placeholder {
+      text-align: center;
+      color: var(--color-text-muted);
+
+      i {
+        font-size: 48px;
       }
     }
+  }
+}
+
+.resource-header {
+  margin-top: $spacing-5;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-3;
+
+  &__labels {
+    display: flex;
+    gap: $spacing-2;
+    flex-wrap: wrap;
+  }
+}
+
+.resource-title {
+  font-size: clamp(2rem, 3vw, 2.75rem);
+  font-weight: $font-weight-semibold;
+  color: var(--color-text-primary);
+}
+
+.resource-meta {
+  display: flex;
+  gap: $spacing-4;
+  flex-wrap: wrap;
+
+  &__item {
+    display: inline-flex;
+    align-items: center;
+    gap: $spacing-1-5;
+    font-weight: $font-weight-medium;
+  }
+}
+
+.resource-quick-facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: $spacing-3;
+  margin-top: $spacing-4;
+
+  .quick-fact {
+    padding: $spacing-3;
+    border-radius: $border-radius-md;
+    border: 1px dashed var(--color-border-default);
+
+    &__label {
+      display: block;
+      font-size: $font-size-xs;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--color-text-muted);
+    }
+
+    &__value {
+      font-weight: $font-weight-semibold;
+      color: var(--color-text-primary);
+    }
+  }
+}
+
+.resource-card {
+  &--availability {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-4;
+  }
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
+.availability-calendar {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: $spacing-2;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+  }
+
+  .availability-day {
+    border-radius: $border-radius-md;
+    padding: $spacing-2;
+    text-align: center;
+    border: 1px solid var(--color-border-default);
+
+    &__dow {
+      font-size: $font-size-xs;
+      text-transform: uppercase;
+      color: var(--color-text-muted);
+    }
+
+    &__date {
+      font-weight: $font-weight-semibold;
+    }
+
+    &--booked {
+      background: var(--color-gray-100);
+      color: var(--color-text-muted);
+    }
+
+    &--available {
+      background: var(--color-success-50);
+      border-color: var(--color-success-200);
+      color: var(--color-success-700);
+    }
+  }
+}
+
+.resource-owner {
+  display: flex;
+  align-items: center;
+  gap: $spacing-3;
+  margin-bottom: $spacing-3;
+
+  &__avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--color-primary-100);
+    color: var(--color-primary-700);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__name {
+    font-weight: $font-weight-semibold;
+  }
+}
+
+.resource-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-2;
+
+  li {
+    display: inline-flex;
+    gap: $spacing-2;
+    align-items: center;
+    color: var(--color-text-muted);
+  }
+}
+
+.resource-panel {
+  background: var(--color-surface-elevated);
+  border: 1px solid var(--color-border-default);
+  border-radius: $border-radius-lg;
+  padding: $spacing-5;
+}
+
+.resource-availability {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: $spacing-3;
+  margin-top: $spacing-4;
+}
+
+.resource-reviews {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-4;
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: $spacing-3;
+    margin-bottom: $spacing-3;
+  }
+}
+
+.review-card {
+  border: 1px solid var(--color-border-subtle);
+  border-radius: $border-radius-lg;
+  padding: $spacing-4;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-3;
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    gap: $spacing-3;
+    flex-wrap: wrap;
+  }
+
+  &__name {
+    font-weight: $font-weight-semibold;
+  }
+
+  &__meta {
+    color: var(--color-text-muted);
+    font-size: $font-size-sm;
+    display: inline-flex;
+    gap: $spacing-1;
+    align-items: center;
+  }
+
+  &__rating {
+    display: inline-flex;
+    gap: $spacing-1;
+
+    .icon-filled {
+      color: var(--color-warning);
+      fill: var(--color-warning);
+    }
+  }
+
+  &--hidden {
+    background: var(--color-warning-50);
+    border-color: var(--color-warning-200);
+  }
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-1;
+  border-radius: 999px;
+  padding: 0 $spacing-2;
+  font-size: $font-size-xs;
+  text-transform: uppercase;
+
+  &--success {
+    background: var(--color-success-50);
+    color: var(--color-success-700);
+  }
+
+  &--info {
+    background: var(--color-primary-50);
+    color: var(--color-primary-700);
+  }
+
+  &--selectable {
+    border: 1px solid var(--color-border-default);
+    cursor: pointer;
+
+    input {
+      display: none;
+    }
+
+    &:has(input:checked) {
+      background: var(--color-primary-50);
+      border-color: var(--color-primary-300);
+    }
+  }
+}
+
+.chip-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-2;
+}
+
+.btn--full {
+  width: 100%;
+}
+
+// -----------------------------------------------------------------------------
+// Form Wizard
+// -----------------------------------------------------------------------------
+.resource-form {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-4;
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: $spacing-4;
+  }
+
+  &__content {
+    border: 1px solid var(--color-border-default);
+    border-radius: $border-radius-xl;
+    padding: $spacing-5;
+    background: var(--color-surface-elevated);
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-4;
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: $spacing-3;
+    margin-top: $spacing-4;
+  }
+}
+
+.form-stepper {
+  display: flex;
+  gap: $spacing-3;
+  flex-wrap: wrap;
+
+  &__tab {
+    flex: 1;
+    min-width: 160px;
+    border: 1px solid var(--color-border-default);
+    border-radius: $border-radius-lg;
+    padding: $spacing-3;
+    background: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: $spacing-2;
+    font-weight: $font-weight-medium;
+    color: var(--color-text-muted);
+
+    span {
+      display: inline-flex;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid currentColor;
+    }
+
+    &.active {
+      border-color: var(--color-primary);
+      color: var(--color-primary);
+      background: var(--color-primary-50);
+    }
+  }
+}
+
+.form-step {
+  border: 1px solid var(--color-border-subtle);
+  border-radius: $border-radius-lg;
+  padding: $spacing-4;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: $spacing-4;
+
+  .form-group--full {
+    grid-column: 1 / -1;
+  }
+}
+
+.form-fieldset {
+  margin-top: $spacing-4;
+  border: 1px solid var(--color-border-default);
+  border-radius: $border-radius-md;
+  padding: $spacing-4;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-3;
+}
+
+.form-option {
+  display: flex;
+  gap: $spacing-3;
+  border: 1px solid var(--color-border-subtle);
+  border-radius: $border-radius-md;
+  padding: $spacing-3;
+  background: var(--color-surface-default);
+
+  input {
+    margin-top: $spacing-1;
+  }
+
+  &--inline {
+    align-items: center;
+  }
+}
+
+.media-preview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: $spacing-3;
+}
+
+.media-preview {
+  border: 1px solid var(--color-border-default);
+  border-radius: $border-radius-md;
+  overflow: hidden;
+  text-align: center;
+
+  img {
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+  }
+
+  figcaption {
+    padding: $spacing-2;
+    font-size: $font-size-xs;
+    color: var(--color-text-muted);
+  }
+}
+
+.empty-state--inline {
+  border: 1px dashed var(--color-border-default);
+  border-radius: $border-radius-lg;
+  padding: $spacing-5;
+  background: var(--color-surface-default);
+}
+
+// -----------------------------------------------------------------------------
+// Booking Drawer
+// -----------------------------------------------------------------------------
+.booking-drawer {
+  max-width: 480px;
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-4;
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: space-between;
+    gap: $spacing-3;
+  }
+
+  &__message {
+    border-radius: $border-radius-md;
+    padding: $spacing-2 $spacing-3;
+    font-size: $font-size-sm;
+    border: 1px solid transparent;
+    display: none;
+
+    &[data-state] {
+      display: block;
+    }
+
+    &[data-state='error'] {
+      background: var(--color-error-50);
+      border-color: var(--color-error-200);
+      color: var(--color-error-800);
+    }
+
+    &[data-state='info'] {
+      background: var(--color-primary-50);
+      border-color: var(--color-primary-200);
+      color: var(--color-primary-800);
+    }
+
+    &[data-state='success'] {
+      background: var(--color-success-50);
+      border-color: var(--color-success-200);
+      color: var(--color-success-800);
+    }
+  }
+}
+
+.time-slotter {
+  border: 1px solid var(--color-border-default);
+  border-radius: $border-radius-lg;
+  padding: $spacing-4;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-3;
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    gap: $spacing-3;
+    flex-wrap: wrap;
+  }
+
+  &__legend {
+    display: flex;
+    gap: $spacing-4;
+    font-size: $font-size-xs;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-text-muted);
+  }
+}
+
+.legend-dot {
+  display: inline-flex;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: $spacing-1;
+
+  &--available {
+    background: var(--color-success-400);
+  }
+
+  &--selected {
+    background: var(--color-primary);
+  }
+
+  &--blocked {
+    background: var(--color-error-300);
+  }
+}
+
+.time-slot-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: $spacing-2;
+
+  @media (max-width: 480px) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  &.is-loading {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+}
+
+.time-slot {
+  border: 1px solid var(--color-border-default);
+  border-radius: $border-radius-md;
+  padding: $spacing-2;
+  text-align: center;
+  font-size: $font-size-sm;
+  background: var(--color-surface-default);
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+
+  &:hover:not(:disabled) {
+    border-color: var(--color-primary);
+  }
+
+  &.is-selected {
+    background: var(--color-primary);
+    color: var(--color-white);
+    border-color: var(--color-primary);
+  }
+
+  &.is-blocked {
+    background: var(--color-gray-100);
+    color: var(--color-text-muted);
+    cursor: not-allowed;
+    border-style: dashed;
+  }
+}
+
+.booking-confirmation {
+  border: 1px solid var(--color-border-default);
+  border-radius: $border-radius-lg;
+  padding: $spacing-4;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-3;
+
+  &__header h3 {
+    margin: 0;
+  }
+}
+
+.booking-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: $spacing-3;
+  margin: 0;
+
+  dt {
+    font-size: $font-size-xs;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-text-muted);
+  }
+
+  dd {
+    margin: 0;
+    font-weight: $font-weight-semibold;
   }
 }

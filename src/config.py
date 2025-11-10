@@ -67,8 +67,8 @@ class DevelopmentConfig(Config):
     SQLALCHEMY_DATABASE_URI: str = f'sqlite:///{BASE_DIR / "instance" / "dev_campus_hub.db"}'
     SQLALCHEMY_ECHO: bool = False  # Reduce log noise
 
-    # Temporarily disable CSRF for debugging UI loading issues
-    WTF_CSRF_ENABLED: bool = False  # RE-ENABLE after confirming UI loads
+    # CSRF Protection (RE-ENABLED after asset pipeline fixed - 2025-11-09)
+    WTF_CSRF_ENABLED: bool = True  # ✅ Asset loading working - CSRF re-enabled
 
     # Flask-DebugToolbar
     DEBUG_TB_ENABLED: bool = False  # Disable to reduce noise

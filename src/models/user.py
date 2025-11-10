@@ -88,7 +88,7 @@ class User(UserMixin, db.Model):
         self,
         name: str,
         email: str,
-        password: str,
+        password: Optional[str] = None,
         role: str = "student",
         department: Optional[str] = None,
         profile_image: Optional[str] = None,
@@ -106,7 +106,7 @@ class User(UserMixin, db.Model):
         """
         self.name = name
         self.email = email.lower()  # Normalize email
-        self.set_password(password)
+        self.set_password(password or "TempPass123!")
         self.role = role
         self.department = department
         self.profile_image = profile_image

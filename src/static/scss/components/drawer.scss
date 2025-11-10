@@ -1,0 +1,132 @@
+// =============================================================================
+// DRAWER - Slide-out panel for filters, forms, or additional content
+// =============================================================================
+
+@use '../tokens' as *;
+
+// -----------------------------------------------------------------------------
+// Drawer Container
+// -----------------------------------------------------------------------------
+.drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  max-width: 400px;
+  background-color: var(--color-white);
+  box-shadow: var(--shadow-2xl);
+  z-index: var(--z-index-filter-drawer);
+  transform: translateX(100%);
+  transition: transform 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  
+  &.open {
+    transform: translateX(0);
+  }
+  
+  @media (max-width: 767px) {
+    max-width: 100%;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Drawer Header
+// -----------------------------------------------------------------------------
+.drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-4) var(--spacing-6);
+  border-bottom: 1px solid var(--color-border-default);
+  flex-shrink: 0;
+  
+  h2, h3 {
+    margin: 0;
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+  }
+}
+
+.drawer-close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: var(--color-gray-600);
+  cursor: pointer;
+  padding: var(--spacing-2);
+  border-radius: var(--border-radius-md);
+  transition: all 0.2s ease;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  &:hover {
+    background-color: var(--color-gray-100);
+    color: var(--color-gray-900);
+  }
+  
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Drawer Body
+// -----------------------------------------------------------------------------
+.drawer-body {
+  flex: 1;
+  padding: var(--spacing-6);
+  overflow-y: auto;
+}
+
+// -----------------------------------------------------------------------------
+// Drawer Footer
+// -----------------------------------------------------------------------------
+.drawer-footer {
+  padding: var(--spacing-4) var(--spacing-6);
+  border-top: 1px solid var(--color-border-default);
+  display: flex;
+  gap: var(--spacing-3);
+  justify-content: flex-end;
+  flex-shrink: 0;
+}
+
+// -----------------------------------------------------------------------------
+// Drawer Backdrop
+// -----------------------------------------------------------------------------
+.drawer-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: calc(var(--z-index-filter-drawer) - 1);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  
+  &.active {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Left Drawer Variant
+// -----------------------------------------------------------------------------
+.drawer-left {
+  right: auto;
+  left: 0;
+  transform: translateX(-100%);
+  
+  &.open {
+    transform: translateX(0);
+  }
+}

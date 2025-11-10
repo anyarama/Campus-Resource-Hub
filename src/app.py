@@ -20,6 +20,7 @@ from typing import Optional
 
 from src.config import get_config
 from src.util.assets import asset_url
+from src.utils.vite import vite_asset
 
 
 # Initialize Flask extensions (created here, initialized in create_app)
@@ -86,15 +87,80 @@ def create_app(config_name: Optional[str] = None) -> Flask:
 
     # Register Vite asset helper for manifest-aware URLs
     app.jinja_env.globals['asset_url'] = asset_url
+    app.jinja_env.globals['vite_asset'] = vite_asset
+
+    # Add Cache-Control headers for development (per Task A requirement)
+    @app.before_request
+    def add_cache_headers():
+        """Prevent caching of assets during development to avoid stale manifest issues."""
+        from flask import request
+        if app.debug and request.path.startswith('/static/dist/'):
+            # Will be applied in after_request
+            pass
+
+    @app.after_request
+    def apply_cache_headers(response):
+        """Apply Cache-Control headers to static assets in development mode."""
+        from flask import request
+        if app.debug and request.path.startswith('/static/dist/'):
+            response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
+            response.headers['Pragma'] = 'no-cache'
+            response.headers['Expires'] = '0'
+        return response
 
     @app.route('/_debug/assets')
     def _debug_assets():
-        css = asset_url('style')
-        js = asset_url('enterpriseJs')
-        exists = os.path.exists(os.path.join(app.root_path, 'static', 'dist', 'manifest.json'))
-        return f"<pre>/static/dist/manifest.json exists: {exists}\\nCSS: {css}\\nJS:  {js}</pre>"
+        """
+        Debug endpoint to diagnose asset resolution issues.
+        Shows manifest location, resolved URLs, and file existence.
+        """
+        from src.util.assets import _manifest_path
+        
+        # Get resolved asset URLs
+        css_url = asset_url('style')
+        js_url = asset_url('enterpriseJs')
+        
+        # Check manifest existence
+        manifest_path = _manifest_path()
+        manifest_vite = os.path.join(app.root_path, 'static', 'dist', '.vite', 'manifest.json')
+        manifest_root = os.path.join(app.root_path, 'static', 'dist', 'manifest.json')
+        
+        manifest_vite_exists = os.path.exists(manifest_vite)
+        manifest_root_exists = os.path.exists(manifest_root)
+        
+        # Check if resolved files exist
+        # Extract filename from URL (remove /static/ prefix)
+        css_file = css_url.replace('/static/', '') if css_url.startswith('/static/') else css_url
+        js_file = js_url.replace('/static/', '') if js_url.startswith('/static/') else js_url
+        
+        css_path = os.path.join(app.root_path, 'static', css_file)
+        js_path = os.path.join(app.root_path, 'static', js_file)
+        
+        css_exists = os.path.exists(css_path)
+        js_exists = os.path.exists(js_path)
+        
+        return f"""<pre>
+=== Asset Resolution Debug ===
+
+Manifest Locations:
+  .vite/manifest.json: {manifest_vite_exists} ({manifest_vite})
+  root manifest.json:  {manifest_root_exists} ({manifest_root})
+  Using: {manifest_path}
+
+Resolved URLs:
+  CSS: {css_url}
+  JS:  {js_url}
+
+File Existence:
+  CSS file exists: {css_exists} ({css_path})
+  JS file exists:  {js_exists} ({js_path})
+
+Status:
+  {'✅ All assets resolved correctly' if (css_exists and js_exists) else '❌ Some assets missing - check build'}
+</pre>"""
 
     return app
+
 
 
 def initialize_extensions(app: Flask) -> None:

@@ -27,7 +27,6 @@ sys.path.insert(0, str(project_root))
 
 from src.app import create_app, db
 from src.models.user import User
-from src.models.resource import Resource
 from src.repositories.user_repo import UserRepository
 from src.repositories.resource_repo import ResourceRepository
 
@@ -124,66 +123,66 @@ def seed_demo_resources():
             {
                 "title": "Main Library Study Room A",
                 "description": "Quiet study room perfect for group work. Seats 6 people comfortably. Equipped with whiteboard, markers, and power outlets at every seat.",
-                "category": "Study Space",
+                "category": "study_room",
                 "location": "Main Library, 2nd Floor, Room 201",
                 "capacity": 6,
-                "status": "published"
+                "status": "published",
             },
             {
                 "title": "Innovation Lab - 3D Printing Station",
                 "description": "Access to professional-grade 3D printers including Prusa i3 MK3S+ and Ultimaker S5. Perfect for prototyping and course projects. Safety training required.",
-                "category": "Lab",
+                "category": "lab",
                 "location": "Engineering Building, Room 105",
                 "capacity": 4,
-                "status": "published"
+                "status": "published",
             },
             {
                 "title": "MacBook Pro 16\" (M2 Max, 2023)",
                 "description": "Latest MacBook Pro available for 7-day checkout. Includes charger and carrying case. Pre-loaded with Adobe Creative Suite, Final Cut Pro, and Xcode.",
-                "category": "Technology",
+                "category": "equipment",
                 "location": "IT Services Desk, Student Center",
                 "capacity": 1,
-                "status": "published"
+                "status": "published",
             },
             {
                 "title": "Conference Room B - Skylight Hall",
                 "description": "Premium conference room for large events and presentations. Capacity 50 people theater-style. Includes projector, wireless presentation system, and professional audio setup.",
-                "category": "Event Space",
+                "category": "space",
                 "location": "Student Center, 3rd Floor",
                 "capacity": 50,
-                "status": "published"
+                "status": "published",
             },
             {
                 "title": "Photography Equipment Bundle",
                 "description": "Professional photography kit including Canon EOS R6 mirrorless camera, 24-70mm f/2.8 lens, tripod, and lighting equipment. Perfect for student journalism and projects.",
-                "category": "Equipment",
+                "category": "equipment",
                 "location": "Media Lab, Basement Level",
                 "capacity": 1,
-                "status": "published"
+                "status": "published",
             },
             {
                 "title": "Seminar Room 305",
                 "description": "Mid-sized classroom ideal for workshops and seminars. Flexible seating for up to 25 people. Smartboard, projector, and video conferencing capabilities.",
-                "category": "Event Space",
+                "category": "space",
                 "location": "Academic Building, 3rd Floor",
                 "capacity": 25,
-                "status": "published"
+                "status": "published",
             },
             {
                 "title": "Podcast Recording Studio",
                 "description": "Professional podcast recording setup with Shure SM7B microphones, mixing board, and soundproofing. Free training session included with first booking.",
-                "category": "Lab",
+                "category": "lab",
                 "location": "Media Center, Room B12",
                 "capacity": 4,
-                "status": "published"
+                "status": "published",
             },
             {
                 "title": "VR Development Lab",
                 "description": "Virtual reality development space with Meta Quest 3, HTC Vive Pro 2, and high-performance gaming PCs. Ideal for XR development courses and research.",
-                "category": "Lab",
+                "category": "lab",
                 "location": "Computer Science Building, Room 220",
                 "capacity": 8,
-                "status": "published"
+                "status": "published",
             },
         ]
 
@@ -198,19 +197,21 @@ def seed_demo_resources():
                 skipped_count += 1
                 continue
 
-            # Create new resource
-            resource = Resource(
-                owner_id=staff_user.user_id,
-                title=resource_data["title"],
-                description=resource_data["description"],
-                category=resource_data["category"],
-                location=resource_data["location"],
-                capacity=resource_data["capacity"],
-                status=resource_data["status"]
-            )
-
             try:
-                ResourceRepository.create(resource)
+                ResourceRepository.create(
+                    owner_id=staff_user.user_id,
+                    title=resource_data["title"],
+                    category=resource_data["category"],
+                    description=resource_data["description"],
+                    location=resource_data["location"],
+                    capacity=resource_data["capacity"],
+                    status=resource_data["status"],
+                    availability_rules={
+                        "requires_approval": False,
+                        "days": ["monday", "tuesday", "wednesday", "thursday", "friday"],
+                        "hours": {"start": "08:00", "end": "20:00"},
+                    },
+                )
                 print(f"✅ Created: {resource_data['title']}")
                 created_count += 1
             except Exception as e:

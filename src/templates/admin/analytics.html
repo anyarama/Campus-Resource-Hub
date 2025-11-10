@@ -1,281 +1,79 @@
-{% extends"base.html" %}{% block title %}Platform Analytics - Campus Resource Hub{% endblock %}{% block extra_css %}{% endblock %}{% block content %}<div class="layout-grid">
-  <div class="layout-col" data-col="12">
-    <h1 class="h2"><i class="bi bi-bar-chart"></i> Platform Analytics</h1>
-    <p class="text-dim">Insights and trends across the platform</p>
+{% extends "base.html" %}
+{% block title %}Platform Analytics{% endblock %}
+
+{% block main_content %}
+<section class="admin-page__header">
+  <div>
+    <p class="eyebrow">Analytics</p>
+    <h1>Usage Insights</h1>
+    <p>Track bookings, category demand, and resource utilization.</p>
   </div>
-  <div class="layout-col" data-col="12">
-    </div></div>{{ url_for('admin.dashboard') }}" class="btn btn-secondary">
-      <i class="bi bi-arrow-left"></i> Back to Dashboard
-    
-  
+  <form method="get" class="analytics-period" aria-label="Select reporting window">
+    <select name="period" onchange="this.form.submit()">
+      {% for option in [7, 30, 90] %}
+        <option value="{{ option }}" {% if period == option %}selected{% endif %}>Last {{ option }} days</option>
+      {% endfor %}
+    </select>
+  </form>
+</section>
 
+<section class="admin-analytics__grid">
+  <article class="card admin-analytics__card admin-analytics__card--wide">
+    <header class="card__header">
+      <h2><i data-lucide="trending-up"></i> Bookings per day</h2>
+      <small class="text-muted">Rolling window of {{ period }} days</small>
+    </header>
+    <canvas id="bookingsLineChart" role="img" aria-label="Bookings per day line chart"></canvas>
+  </article>
 
- Time Period Selector 
-<div class="card">
-  <div class="card-body">
-    <div class="flex">
-      <h5 class="space-b-0">Select Time Period:</h5>
-      <div class="period-selector">
-        </div></div></div></div>{{ url_for('admin.analytics', period='7') }}" 
-          class="period-btn {{ 'active' if period == 7 else '' }}">
-          Last 7 Days
-        
-        {{ url_for('admin.analytics', period='30') }}" 
-          class="period-btn {{ 'active' if period == 30 else '' }}">
-          Last 30 Days
-        
-        {{ url_for('admin.analytics', period='90') }}" 
-          class="period-btn {{ 'active' if period == 90 else '' }}">
-          Last 90 Days
-        
-      
-    
-  
+  <article class="card admin-analytics__card">
+    <header class="card__header">
+      <h2><i data-lucide="bar-chart-3"></i> Popular categories</h2>
+      <small class="text-muted">Bookings by resource type</small>
+    </header>
+    <canvas id="categoriesBarChart" role="img" aria-label="Popular categories bar chart"></canvas>
+  </article>
 
+  <article class="card admin-analytics__card">
+    <header class="card__header">
+      <h2><i data-lucide="pie-chart"></i> Utilization rate</h2>
+      <small class="text-muted">Resources booked vs. available</small>
+    </header>
+    <canvas id="utilizationDoughnutChart" role="img" aria-label="Resource utilization chart"></canvas>
+  </article>
+</section>
+{% endblock %}
 
- Key Metrics Overview 
-<div class="layout-grid g-3">
-  <div class="layout-col" data-col="12">
-    <div class="metric-card">
-      <div class="metric-value text-primary"></div></div></div></div>{{ stats.total_users }}<div class="metric-label">Total Users</div>
-      <div class="small">
-        <span class="badge badge-success"></span></div>{{ stats.role_distribution.admin }}Admin
-        <span class="badge badge-primary"></span>{{ stats.role_distribution.staff }}Staff
-        <span class="badge badge-secondary"></span>{{ stats.role_distribution.student }}Student
-      
-    
-  
-  <div class="layout-col" data-col="12">
-    <div class="metric-card">
-      <div class="metric-value"></div></div></div>{{ stats.total_resources }}<div class="metric-label">Total Resources</div>
-      <div class="small"></div>{{ stats.published_resources }}published
-    
-  
-  <div class="layout-col" data-col="12">
-    <div class="metric-card">
-      <div class="metric-value text-info"></div></div></div>{{ stats.total_bookings }}<div class="metric-label">Total Bookings</div>
-      <div class="small">
-        <span class="badge badge-warning"></span></div>{{ stats.pending_bookings }}pending
-      
-    
-  
-  <div class="layout-col" data-col="12">
-    <div class="metric-card">
-      <div class="metric-value"></div></div></div>{{ stats.total_reviews }}<div class="metric-label">Total Reviews</div>
-      <div class="small">User feedback</div>
-    
-  
+{% block extra_js %}
+  <script type="module">
+    import { createLineChart, createDoughnutChart, createBarChart, IU_COLORS } from '{{ vite_asset("src/static/js/charts.js") }}';
 
+    const analyticsData = {{ analytics_data|tojson }};
 
- Booking Trends 
-{% if trends %}<div class="layout-grid g-3">
-  <div class="" data-col="2">
-    <div class="card">
-      <div class="card-header">
-        <h5 class="space-b-0"><i class="bi bi-graph-up-arrow"></i> Booking Trends (Last </h5></div></div></div></div>{{ period }}Days)
-      
-      <div class="card-body">
-        <div class="layout-grid">
-          <div class="layout-col" data-col="12">
-            <div class="metric-card">
-              <div class="metric-value text-primary"></div></div></div></div></div>{{ trends.total_bookings }}<div class="metric-label">Total Bookings</div>
-            
-          
-          <div class="layout-col" data-col="12">
-            <div class="metric-card">
-              <div class="metric-value"></div></div></div>{{ trends.approved_bookings }}<div class="metric-label">Approved</div>
-              <small class="text-dim">
-                </small>{{ (trends.approved_bookings / trends.total_bookings * 100)|round(1) if trends.total_bookings > 0 else 0 }}%
-              
-            
-          
-          <div class="layout-col" data-col="12">
-            <div class="metric-card">
-              <div class="metric-value"></div></div></div>{{ trends.pending_bookings }}<div class="metric-label">Pending</div>
-              <small class="text-dim">
-                </small>{{ (trends.pending_bookings / trends.total_bookings * 100)|round(1) if trends.total_bookings > 0 else 0 }}%
-              
-            
-          
-          <div class="layout-col" data-col="12">
-            <div class="metric-card">
-              <div class="metric-value text-info"></div></div></div>{{ trends.completed_bookings }}<div class="metric-label">Completed</div>
-              <small class="text-dim">
-                </small>{{ (trends.completed_bookings / trends.total_bookings * 100)|round(1) if trends.total_bookings > 0 else 0 }}%
-              
-            
-          
-        
-        
-         Booking Status Breakdown 
-        <div class="layout-grid">
-          <div class="" data-col="2">
-            <h6 class="space-b-3">Booking Status Distribution</h6>
-            <div class="space-b-3">
-              <div class="flex">
-                <span><i class="bi bi-check-circle"></i> Approved</span>
-                <strong></strong></div></div></div></div>{{ trends.approved_bookings }}<div class="progress" style="height: 25px;">
-                </div>{{ (trends.approved_bookings / trends.total_bookings * 100) if trends.total_bookings > 0 else 0 }}%">
-                  {{ (trends.approved_bookings / trends.total_bookings * 100)|round(1) if trends.total_bookings > 0 else 0 }}%
-                
-              
-            
-            <div class="space-b-3">
-              <div class="flex">
-                <span><i class="bi bi-hourglass-split"></i> Pending</span>
-                <strong></strong></div></div>{{ trends.pending_bookings }}<div class="progress" style="height: 25px;">
-                </div>{{ (trends.pending_bookings / trends.total_bookings * 100) if trends.total_bookings > 0 else 0 }}%">
-                  {{ (trends.pending_bookings / trends.total_bookings * 100)|round(1) if trends.total_bookings > 0 else 0 }}%
-                
-              
-            
-            <div class="space-b-3">
-              <div class="flex">
-                <span><i class="bi bi-check-all text-info"></i> Completed</span>
-                <strong></strong></div></div>{{ trends.completed_bookings }}<div class="progress" style="height: 25px;">
-                </div>{{ (trends.completed_bookings / trends.total_bookings * 100) if trends.total_bookings > 0 else 0 }}%">
-                  {{ (trends.completed_bookings / trends.total_bookings * 100)|round(1) if trends.total_bookings > 0 else 0 }}%
-                
-              
-            
-            <div>
-              <div class="flex">
-                <span><i class="bi bi-x-circle"></i> Cancelled/Rejected</span>
-                <strong></strong></div></div>{{ trends.cancelled_bookings + trends.rejected_bookings }}<div class="progress" style="height: 25px;">
-                </div>{{ ((trends.cancelled_bookings + trends.rejected_bookings) / trends.total_bookings * 100) if trends.total_bookings > 0 else 0 }}%">
-                  {{ ((trends.cancelled_bookings + trends.rejected_bookings) / trends.total_bookings * 100)|round(1) if trends.total_bookings > 0 else 0 }}%
-                
-              
-            
-          
-        
-      
-    
-  
+    const lineCanvas = document.getElementById('bookingsLineChart');
+    const barCanvas = document.getElementById('categoriesBarChart');
+    const doughnutCanvas = document.getElementById('utilizationDoughnutChart');
 
-{% endif %}{% if popular_resources %}<div class="layout-grid g-3">
-  <div class="" data-col="2">
-    <div class="card">
-      <div class="card-header">
-        <h5 class="space-b-0"><i class="bi bi-trophy"></i> Most Popular Resources</h5>
-        <span class="badge badge-primary">Top 10</span>
-      </div>
-      <div class="card-body">
-        <div class="table-responsive">
-          <table class="table table-hover">
-            <thead class="table-light">
-              <tr>
-                <th>Rank</th>
-                <th>Resource</th>
-                <th>Category</th>
-                <th>Location</th>
-                <th>Owner</th>
-                <th class="text-center">Total Bookings</th>
-                <th class="text-center">Avg Rating</th>
-              </tr>
-            </thead>
-            <tbody>
-              </tbody></table></div></div></div></div></div>{% for resource in popular_resources %}
-                <strong class="text-primary">#</strong>{{ loop.index }}
-                  {{ url_for('resources.detail', resource_id=resource.resource_id) }}" 
-                    class="text-decoration-none">
-                    <strong></strong>{{ resource.title }}
-                  <span class="badge badge-secondary"></span>{{ resource.category or 'General' }}{{ resource.location or '-' }}{{ resource.owner_name }}
-                  <span class="badge badge-info"></span>{{ resource.booking_count }}
-                  {% if resource.avg_rating %}<span class="text-warning">
-                      <i class="bi bi-star-fill"></i> </span>{{ resource.avg_rating|round(1) }}{% else %}<span class="text-dim">No reviews</span>
-                  {% endif %}{% endfor %}{% endif %}<div class="layout-grid g-3">
-  <!-- User Role Distribution -->
-  <div class="layout-col" data-col="12">
-    <div class="card">
-      <div class="card-header">
-        <h5 class="space-b-0"><i class="bi bi-people"></i> User Distribution</h5>
-      </div>
-      <div class="card-body">
-        <div class="space-b-3">
-          <div class="flex">
-            <span><span class="badge badge-danger">Admin</span></span>
-            <strong></strong></div></div></div></div></div></div>{{ stats.role_distribution.admin }}users
-          
-          <div class="progress" style="height: 30px;">
-            </div>{{ (stats.role_distribution.admin / stats.total_users * 100) if stats.total_users > 0 else 0 }}%">
-              {{ (stats.role_distribution.admin / stats.total_users * 100)|round(1) if stats.total_users > 0 else 0 }}%
-            
-          
-        
-        <div class="space-b-3">
-          <div class="flex">
-            <span><span class="badge badge-primary">Staff</span></span>
-            <strong></strong></div></div>{{ stats.role_distribution.staff }}users
-          
-          <div class="progress" style="height: 30px;">
-            </div>{{ (stats.role_distribution.staff / stats.total_users * 100) if stats.total_users > 0 else 0 }}%">
-              {{ (stats.role_distribution.staff / stats.total_users * 100)|round(1) if stats.total_users > 0 else 0 }}%
-            
-          
-        
-        <div>
-          <div class="flex">
-            <span><span class="badge badge-secondary">Student</span></span>
-            <strong></strong></div></div>{{ stats.role_distribution.student }}users
-          
-          <div class="progress" style="height: 30px;">
-            </div>{{ (stats.role_distribution.student / stats.total_users * 100) if stats.total_users > 0 else 0 }}%">
-              {{ (stats.role_distribution.student / stats.total_users * 100)|round(1) if stats.total_users > 0 else 0 }}%
-            
-          
-        
-      
-    
-  
-  
-   Platform Health Indicators 
-  <div class="layout-col" data-col="12">
-    <div class="card">
-      <div class="card-header">
-        <h5 class="space-b-0"><i class="bi bi-heart-pulse"></i> Platform Health</h5>
-      </div>
-      <div class="card-body">
-        <div class="flex rounded">
-          <div>
-            <div class="fw-bold">Active Users</div>
-            <small class="text-dim">Currently active accounts</small>
-          </div>
-          <h3 class="space-b-0"></h3></div></div></div></div>{{ stats.total_users }}<div class="flex rounded">
-          <div>
-            <div class="fw-bold">Published Resources</div>
-            <small class="text-dim">Available for booking</small>
-          </div>
-          <h3 class="space-b-0 text-primary"></h3></div>{{ stats.published_resources }}<div class="flex rounded">
-          <div>
-            <div class="fw-bold">Pending Approvals</div>
-            <small class="text-dim">Bookings awaiting approval</small>
-          </div>
-          </div>{{ 'text-warning' if stats.pending_bookings > 0 else 'text-success' }}">
-            {{ stats.pending_bookings }}<div class="flex rounded">
-          <div>
-            <div class="fw-bold">Platform Messages</div>
-            <small class="text-dim">Total communications</small>
-          </div>
-          <h3 class="space-b-0 text-info"></h3></div>{{ stats.total_messages }}<div class="layout-grid">
-  <div class="" data-col="2">
-    <div class="card">
-      <div class="card-body">
-        <h5 class="space-b-3">Analytics Actions</h5>
-        <div class="flex gap-2">
-          <button class="btn btn-secondary" onclick="window.print()">
-            <i class="bi bi-printer"></i> Print Report
-          </button>
-          </div></div></div></div></div>{{ url_for('admin.users') }}" class="btn btn-secondary">
-            <i class="bi bi-people"></i> Manage Users
-          
-          {{ url_for('admin.dashboard') }}" class="btn btn-secondary">
-            <i class="bi bi-speedometer2"></i> Back to Dashboard
-          
-        
-      
-    
-  
+    const lineChart = createLineChart(lineCanvas, analyticsData.bookingsPerDay);
+    const barChart = createBarChart(barCanvas, {
+      labels: analyticsData.popularCategories.labels,
+      datasets: [
+        {
+          label: 'Bookings',
+          data: analyticsData.popularCategories.datasets[0].data,
+          backgroundColor: IU_COLORS.crimson,
+        },
+      ],
+    });
 
+    const doughnutChart = createDoughnutChart(doughnutCanvas, analyticsData.utilization);
 
+    window.addEventListener('beforeunload', () => {
+      [lineChart, barChart, doughnutChart].forEach(chart => chart && chart.destroy());
+    });
+
+    if (typeof lucide !== 'undefined') {
+      lucide.createIcons();
+    }
+  </script>
 {% endblock %}

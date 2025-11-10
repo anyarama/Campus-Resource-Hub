@@ -26,9 +26,17 @@ class ThemeManager {
     document.querySelectorAll('[data-theme-toggle]').forEach(btn => {
       const icon = btn.querySelector('.theme-icon');
       if (icon) {
-        icon.textContent = this.theme === 'light' ? '🌙' : '☀️';
+        // Update Bootstrap icon classes or text
+        if (icon.classList.contains('bi')) {
+          icon.className = this.theme === 'light' ? 'bi bi-moon-fill theme-icon' : 'bi bi-sun-fill theme-icon';
+        } else {
+          icon.textContent = this.theme === 'light' ? '🌙' : '☀️';
+        }
       }
     });
+    
+    // Update body theme attribute
+    document.body.dataset.theme = this.theme;
   }
   
   attachListeners() {
@@ -38,42 +46,45 @@ class ThemeManager {
   }
 }
 
-// --- SIDEBAR TOGGLE ---
+// --- SIDEBAR MANAGER (Icon-Only with Mobile Toggle) ---
 class SidebarManager {
   constructor() {
     this.sidebar = document.querySelector('.app-sidebar');
     this.overlay = document.querySelector('.sidebar-overlay');
     this.toggleBtn = document.querySelector('[data-sidebar-toggle]');
-    this.collapsed = localStorage.getItem('sidebar-collapsed') === 'true';
+    this.expanded = false;  // Desktop: icon-only by default
     this.init();
   }
   
   init() {
     if (!this.sidebar) return;
     
-    if (window.innerWidth >= 1024 && this.collapsed) {
-      this.sidebar.classList.add('sidebar-collapsed');
+    // Desktop: always start icon-only (collapsed)
+    // Mobile: hidden by default
+    if (window.innerWidth < 768) {
+      this.sidebar.classList.remove('open');
     }
     
     this.attachListeners();
   }
   
   toggle() {
-    if (window.innerWidth < 1024) {
-      // Mobile: slide in/out
-      this.sidebar.classList.toggle('sidebar-collapsed');
+    if (window.innerWidth < 768) {
+      // Mobile: slide in/out overlay
+      this.sidebar.classList.toggle('open');
       this.overlay?.classList.toggle('active');
+      document.body.style.overflow = this.sidebar.classList.contains('open') ? 'hidden' : '';
     } else {
-      // Desktop: collapse/expand
-      this.collapsed = !this.collapsed;
-      this.sidebar.classList.toggle('sidebar-collapsed');
-      localStorage.setItem('sidebar-collapsed', this.collapsed);
+      // Desktop: optional expand (keep icon-only as default)
+      this.expanded = !this.expanded;
+      this.sidebar.classList.toggle('expanded');
     }
   }
   
   close() {
-    this.sidebar?.classList.add('sidebar-collapsed');
+    this.sidebar?.classList.remove('open');
     this.overlay?.classList.remove('active');
+    document.body.style.overflow = '';
   }
   
   attachListeners() {
@@ -81,11 +92,18 @@ class SidebarManager {
     this.overlay?.addEventListener('click', () => this.close());
     
     // Close on mobile nav link click
-    if (window.innerWidth < 1024) {
+    if (window.innerWidth < 768) {
       document.querySelectorAll('.app-sidebar a').forEach(link => {
         link.addEventListener('click', () => this.close());
       });
     }
+    
+    // Handle window resize
+    window.addEventListener('resize', () => {
+      if (window.innerWidth >= 768) {
+        this.close();
+      }
+    });
   }
 }
 
@@ -298,7 +316,78 @@ class TabsManager {
   }
 }
 
-// --- FILTER DRAWER ---
+// --- DRAWER MANAGER (Generic slide-out drawer) ---
+class DrawerManager {
+  constructor() {
+    this.activeDrawer = null;
+    this.backdrop = null;
+    this.attachListeners();
+  }
+  
+  open(drawerId) {
+    const drawer = document.getElementById(drawerId);
+    if (!drawer) return;
+
+    this.activeDrawer = drawer;
+    drawer.classList.add('open');
+    drawer.setAttribute('aria-hidden', 'false');
+
+    // Create backdrop
+    if (!this.backdrop) {
+      this.backdrop = document.createElement('div');
+      this.backdrop.className = 'drawer-backdrop';
+      this.backdrop.addEventListener('click', () => this.close());
+      document.body.appendChild(this.backdrop);
+    }
+    
+    this.backdrop.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    
+    // Focus first focusable element
+    const focusable = drawer.querySelector('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+    focusable?.focus();
+  }
+  
+  close(drawer = this.activeDrawer) {
+    if (!drawer) return;
+
+    drawer.classList.remove('open');
+    drawer.setAttribute('aria-hidden', 'true');
+    this.backdrop?.classList.remove('active');
+    document.body.style.overflow = '';
+    this.activeDrawer = null;
+  }
+  
+  attachListeners() {
+    // Open drawer triggers
+    document.addEventListener('click', (e) => {
+      const trigger = e.target.closest('[data-drawer-open]');
+      if (trigger) {
+        e.preventDefault();
+        this.open(trigger.dataset.drawerOpen);
+      }
+    });
+    
+    // Close drawer triggers
+    document.addEventListener('click', (e) => {
+      const closer = e.target.closest('[data-drawer-close], .drawer-close');
+      if (closer) {
+        e.preventDefault();
+        const drawer = closer.closest('.drawer');
+        this.close(drawer);
+      }
+    });
+    
+    // Close on Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && this.activeDrawer) {
+        this.close();
+      }
+    });
+  }
+}
+
+// --- FILTER DRAWER (Legacy support) ---
 class FilterDrawerManager {
   constructor() {
     this.drawer = document.querySelector('.filter-drawer');
@@ -325,6 +414,73 @@ class FilterDrawerManager {
       if (closer) {
         e.preventDefault();
         this.close();
+      }
+    });
+  }
+}
+
+// --- DROPDOWN MENU MANAGER ---
+class DropdownManager {
+  constructor() {
+    this.activeDropdown = null;
+    this.attachListeners();
+  }
+  
+  toggle(triggerId) {
+    const trigger = document.querySelector(`[data-dropdown-toggle="${triggerId}"]`);
+    const dropdown = document.getElementById(triggerId);
+    
+    if (!dropdown) return;
+    
+    const isOpen = dropdown.classList.contains('active');
+    
+    // Close any open dropdowns
+    this.closeAll();
+    
+    if (!isOpen) {
+      dropdown.classList.add('active');
+      trigger?.setAttribute('aria-expanded', 'true');
+      this.activeDropdown = dropdown;
+    }
+  }
+  
+  close(dropdown = this.activeDropdown) {
+    if (!dropdown) return;
+    
+    dropdown.classList.remove('active');
+    const trigger = document.querySelector(`[data-dropdown-toggle="${dropdown.id}"]`);
+    trigger?.setAttribute('aria-expanded', 'false');
+    this.activeDropdown = null;
+  }
+  
+  closeAll() {
+    document.querySelectorAll('.dropdown-menu.active').forEach(dd => {
+      this.close(dd);
+    });
+  }
+  
+  attachListeners() {
+    // Toggle dropdown
+    document.addEventListener('click', (e) => {
+      const trigger = e.target.closest('[data-dropdown-toggle]');
+      if (trigger) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.toggle(trigger.dataset.dropdownToggle);
+      }
+    });
+    
+    // Close on outside click
+    document.addEventListener('click', (e) => {
+      if (this.activeDropdown && !e.target.closest('.dropdown-menu')) {
+        this.closeAll();
+      }
+    });
+    
+    // Close on Escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && this.activeDropdown) {
+        this.closeAll();
       }
     });
   }
@@ -421,6 +577,8 @@ document.addEventListener('DOMContentLoaded', () => {
   window.modal = new ModalManager();
   window.toast = new ToastManager();
   window.tabs = new TabsManager();
+  window.drawer = new DrawerManager();
+  window.dropdown = new DropdownManager();
   window.filterDrawer = new FilterDrawerManager();
   window.formValidator = new FormValidator();
   
@@ -428,9 +586,13 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.flash-message').forEach(flash => {
     const type = flash.dataset.type || 'info';
     const message = flash.textContent.trim();
-    window.toast.show(message, type);
+    if (message) {
+      window.toast.show(message, type);
+    }
     flash.remove();
   });
+  
+  console.log('✅ Enterprise UI initialized');
 });
 
 // Global utility functions

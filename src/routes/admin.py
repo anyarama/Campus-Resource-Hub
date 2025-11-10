@@ -10,9 +10,12 @@ Reviewed and extended by developer on 2025-11-06
 
 from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
 from flask_login import login_required, current_user
+from sqlalchemy import or_
+
 from src.security.rbac import require_admin
 from src.services.admin_service import AdminService, AdminServiceError
 from src.repositories.user_repo import UserRepository
+from src.models.user import User
 
 # Create admin blueprint
 admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
@@ -77,12 +80,17 @@ def dashboard():
             'rejected_bookings': raw_trends['by_status'].get('rejected', 0)
         }
         
+        approvals = AdminService.get_approvals_queue(limit=8)
+        flagged_reviews = AdminService.get_flagged_reviews(limit=5)
+
         return render_template(
             'admin/dashboard.html',
             stats=stats,
             activity=activity,
             popular_resources=popular_resources,
-            trends=trends
+            trends=trends,
+            approvals=approvals,
+            flagged_reviews=flagged_reviews,
         )
         
     except AdminServiceError as e:
@@ -112,7 +120,9 @@ def dashboard():
             stats=empty_stats,
             activity={'bookings': [], 'users': []},
             popular_resources=[],
-            trends=empty_trends
+            trends=empty_trends,
+            approvals=[],
+            flagged_reviews=[],
         )
 
 
@@ -145,39 +155,106 @@ def users():
         per_page = 20
         
         # Get all users (with pagination in future)
-        users = UserRepository.get_all(role=role_filter if role_filter else None)
-        
-        # Apply search filter
-        if search_term:
-            search_lower = search_term.lower()
-            users = [u for u in users if search_lower in u.name.lower() or search_lower in u.email.lower()]
-        
-        # Apply status filter
+        query = User.query
+
+        if role_filter:
+            query = query.filter(User.role == role_filter)
+
         if status_filter == 'active':
-            users = [u for u in users if u.is_active]
+            query = query.filter(User.is_active.is_(True))
         elif status_filter == 'suspended':
-            users = [u for u in users if not u.is_active]
-        
-        # Get user stats
-        total_users = len(users)
-        active_count = sum(1 for u in users if u.is_active)
-        suspended_count = total_users - active_count
-        
+            query = query.filter(User.is_active.is_(False))
+
+        if search_term:
+            search_filter = or_(User.name.ilike(f"%{search_term}%"), User.email.ilike(f"%{search_term}%"))
+            query = query.filter(search_filter)
+
+        per_page = 20
+        pagination = query.order_by(User.created_at.desc()).paginate(page=page, per_page=per_page, error_out=False)
+        users = pagination.items
+
+        active_count = User.query.filter(User.is_active.is_(True)).count()
+        suspended_count = User.query.filter(User.is_active.is_(False)).count()
+
         return render_template(
             'admin/users.html',
             users=users,
             search_term=search_term,
             role_filter=role_filter,
             status_filter=status_filter,
-            total_users=total_users,
+            total_users=pagination.total,
             active_count=active_count,
             suspended_count=suspended_count,
-            page=page
+            pagination=pagination,
         )
         
     except Exception as e:
         flash(f"Error loading users: {e}", "danger")
         return render_template('admin/users.html', users=[])
+
+
+@admin_bp.route('/approvals/bulk', methods=['POST'])
+@login_required
+@require_admin
+def bulk_booking_approvals():
+    """Bulk approve or reject pending bookings."""
+    booking_ids = request.form.getlist('booking_ids')
+    action = request.form.get('action')
+    try:
+        booking_ids = [int(bid) for bid in booking_ids if bid]
+    except ValueError:
+        booking_ids = []
+
+    try:
+        result = AdminService.process_booking_approvals(booking_ids, action, current_user.user_id)
+        flash(f"{result['processed']} bookings updated. {result['skipped']} skipped.", "success")
+    except AdminServiceError as e:
+        flash(str(e), "danger")
+
+    if request.is_json or request.headers.get("X-Requested-With") == "XMLHttpRequest":
+        return jsonify({'message': 'Processed bulk approvals'}), 200
+
+    return redirect(url_for('admin.dashboard'))
+
+
+@admin_bp.route('/users/bulk', methods=['POST'])
+@login_required
+@require_admin
+def bulk_update_users():
+    """Bulk suspend or activate users."""
+    user_ids = request.form.getlist('user_ids')
+    action = request.form.get('action')
+    try:
+        user_ids = [int(uid) for uid in user_ids if uid]
+    except ValueError:
+        user_ids = []
+
+    try:
+        result = AdminService.bulk_update_users(user_ids, action, current_user.user_id)
+        flash(f"{result['updated']} users updated. {result['skipped']} skipped.", "success")
+    except AdminServiceError as e:
+        flash(str(e), "danger")
+
+    return redirect(url_for('admin.users', **request.args))
+
+
+@admin_bp.route('/analytics')
+@login_required
+@require_admin
+def analytics():
+    """Platform analytics view with interactive charts."""
+    period = request.args.get('period', 30, type=int)
+    period = max(7, min(period, 90))
+
+    stats = AdminService.get_platform_stats()
+    analytics_data = AdminService.get_analytics_snapshot(period)
+
+    return render_template(
+        'admin/analytics.html',
+        stats=stats,
+        analytics_data=analytics_data,
+        period=period,
+    )
 
 
 @admin_bp.route('/users/<int:user_id>')
@@ -295,77 +372,6 @@ def delete_user(user_id):
     except AdminServiceError as e:
         flash(f"Error deleting user: {e}", "danger")
         return redirect(request.referrer or url_for('admin.users'))
-
-
-@admin_bp.route('/analytics')
-@login_required
-@require_admin
-def analytics():
-    """
-    Platform analytics and insights.
-    
-    GET /admin/analytics?period=<days>
-    
-    Query Parameters:
-        period: Time period in days (7, 30, or 90, default 30)
-    
-    Security: Admin only
-    
-    Returns:
-        HTML: Analytics dashboard with charts and trends
-    """
-    try:
-        # Get period parameter (default 30 days)
-        period = request.args.get('period', 30, type=int)
-        if period not in [7, 30, 90]:
-            period = 30
-        
-        # Get platform stats
-        raw_stats = AdminService.get_platform_stats()
-        
-        # Restructure stats for template
-        stats = {
-            'total_users': raw_stats['total_users'],
-            'total_resources': raw_stats['total_resources'],
-            'published_resources': raw_stats['published_resources'],
-            'total_bookings': raw_stats['total_bookings'],
-            'pending_bookings': raw_stats['pending_bookings'],
-            'total_messages': raw_stats['total_messages'],
-            'total_reviews': raw_stats['total_reviews'],
-            'role_distribution': {
-                'admin': raw_stats['admins'],
-                'staff': raw_stats['staff'],
-                'student': raw_stats['students']
-            }
-        }
-        
-        # Get popular resources
-        popular_resources = AdminService.get_popular_resources(limit=10)
-        
-        # Get booking trends for selected period
-        raw_trends = AdminService.get_booking_trends(days=period)
-        
-        # Restructure trends for template
-        trends = {
-            'total_bookings': raw_trends['total_bookings'],
-            'approved_bookings': raw_trends['by_status'].get('approved', 0),
-            'pending_bookings': raw_trends['by_status'].get('pending', 0),
-            'completed_bookings': raw_trends['by_status'].get('completed', 0),
-            'cancelled_bookings': raw_trends['by_status'].get('cancelled', 0) + raw_trends['by_status'].get('rejected', 0),
-            'rejected_bookings': raw_trends['by_status'].get('rejected', 0)
-        }
-        
-        return render_template(
-            'admin/analytics.html',
-            stats=stats,
-            popular_resources=popular_resources,
-            trends=trends,
-            period=period
-        )
-        
-    except AdminServiceError as e:
-        flash(f"Error loading analytics: {e}", "danger")
-        return render_template('admin/analytics.html', stats={}, period=30)
 
 
 @admin_bp.route('/stats')

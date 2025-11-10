@@ -6,8 +6,8 @@ Per .clinerules: All database operations encapsulated in repositories.
 Includes conflict detection queries.
 """
 
-from typing import List, Optional, Dict
-from datetime import datetime
+from typing import List, Optional, Dict, Sequence
+from datetime import datetime, date, time
 from src.models import db, Booking
 
 
@@ -198,6 +198,34 @@ class BookingRepository:
         if status:
             query = query.filter_by(status=status)
         return query.order_by(Booking.start_datetime.desc()).all()
+
+    @staticmethod
+    def get_for_day(
+        resource_id: int,
+        day: date,
+        statuses: Optional[Sequence[str]] = None,
+    ) -> List[Booking]:
+        """
+        Get bookings for a resource within a specific day.
+
+        Args:
+            resource_id: Resource identifier
+            day: Date to inspect
+            statuses: Optional list of statuses to include
+        """
+        start_dt = datetime.combine(day, time.min)
+        end_dt = datetime.combine(day, time.max)
+
+        query = Booking.query.filter(
+            Booking.resource_id == resource_id,
+            Booking.start_datetime < end_dt,
+            Booking.end_datetime > start_dt,
+        )
+
+        if statuses:
+            query = query.filter(Booking.status.in_(statuses))
+
+        return query.order_by(Booking.start_datetime.asc()).all()
 
     @staticmethod
     def get_by_requester(requester_id: int, status: Optional[str] = None) -> List[Booking]:

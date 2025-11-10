@@ -1,0 +1,175 @@
+ * Serving Flask app 'src/app.py'
+ * Debug mode: off
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5001
+[33mPress CTRL+C to quit[0m
+[2025-11-09 16:46:15,642] ERROR in app: Exception on /resources [GET]
+Traceback (most recent call last):
+  File "/Users/aneeshyaramati/Documents/GitHub/Campus-Resource-Hub/venv/lib/python3.12/site-packages/flask/app.py", line 1455, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/aneeshyaramati/Documents/GitHub/Campus-Resource-Hub/venv/lib/python3.12/site-packages/flask/app.py", line 869, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/aneeshyaramati/Documents/GitHub/Campus-Resource-Hub/venv/lib/python3.12/site-packages/flask/app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/aneeshyaramati/Documents/GitHub/Campus-Resource-Hub/venv/lib/python3.12/site-packages/flask/app.py", line 852, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/aneeshyaramati/Documents/GitHub/Campus-Resource-Hub/src/routes/resources.py", line 88, in index
+    return render_template(
+           ^^^^^^^^^^^^^^^^
+  File "/Users/aneeshyaramati/Documents/GitHub/Campus-Resource-Hub/venv/lib/python3.12/site-packages/flask/templating.py", line 151, in render_template
+    template = app.jinja_env.get_or_select_template(template_name_or_list)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/aneeshyaramati/Documents/GitHub/Campus-Resource-Hub/venv/lib/python3.12/site-packages/jinja2/environment.py", line 1087, in get_or_select_template
+    return self.get_template(template_name_or_list, parent, globals)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/aneeshyaramati/Documents/GitHub/Campus-Resource-Hub/venv/lib/python3.12/site-packages/jinja2/environment.py", line 1016, in get_template
+    return self._load_template(name, globals)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/aneeshyaramati/Documents/GitHub/Campus-Resource-Hub/venv/lib/python3.12/site-packages/jinja2/environment.py", line 975, in _load_template
+    template = self.loader.load(self, name, self.make_globals(globals))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/aneeshyaramati/Documents/GitHub/Campus-Resource-Hub/venv/lib/python3.12/site-packages/jinja2/loaders.py", line 138, in load
+    code = environment.compile(source, name, filename)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/aneeshyaramati/Documents/GitHub/Campus-Resource-Hub/venv/lib/python3.12/site-packages/jinja2/environment.py", line 771, in compile
+    self.handle_exception(source=source_hint)
+  File "/Users/aneeshyaramati/Documents/GitHub/Campus-Resource-Hub/venv/lib/python3.12/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/Users/aneeshyaramati/Documents/GitHub/Campus-Resource-Hub/src/templates/resources/list.html", line 254, in template
+    min="{{ 'now'|date('%Y-%m-%d') }}"
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+jinja2.exceptions.TemplateAssertionError: No filter named 'date'.
+[2025-11-09 16:46:15,647] ERROR in app: Internal error: 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+127.0.0.1 - - [09/Nov/2025 16:46:15] "[35m[1mGET /resources HTTP/1.1[0m" 500 -
+127.0.0.1 - - [09/Nov/2025 16:47:25] "GET /resources HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:05:35] "[32mGET / HTTP/1.1[0m" 302 -
+127.0.0.1 - - [09/Nov/2025 19:05:35] "GET /auth/login HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:05:35] "[32mGET / HTTP/1.1[0m" 302 -
+127.0.0.1 - - [09/Nov/2025 19:05:36] "GET /auth/login HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:08:17] "[32mGET / HTTP/1.1[0m" 302 -
+127.0.0.1 - - [09/Nov/2025 19:08:17] "GET /auth/login HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:08:17] "[32mGET / HTTP/1.1[0m" 302 -
+127.0.0.1 - - [09/Nov/2025 19:08:17] "GET /auth/login HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:08:23] "GET /auth/login HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:08:23] "GET /resources HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:08:23] "GET /auth/login HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:08:23] "GET /resources HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:08:23] "GET /static/dist/assets/enterprise-DfFvlJHv.css HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:08:23] "GET /static/dist/assets/enterprise-DfFvlJHv.css HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:08:23] "GET /static/dist/assets/app-C2Gaf5fh.js HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:08:23] "GET /static/dist/assets/app-C2Gaf5fh.js HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:08:23] "GET /static/dist/assets/enterprise-DfFvlJHv.css HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:08:23] "GET /static/dist/assets/app-C2Gaf5fh.js HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:08:23] "GET /static/dist/assets/app-C2Gaf5fh.js HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:08:23] "GET /static/dist/assets/enterprise-DfFvlJHv.css HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:08:24] "[32mPOST /auth/login HTTP/1.1[0m" 302 -
+127.0.0.1 - - [09/Nov/2025 19:08:24] "GET /dashboard HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:08:24] "[36mGET /static/dist/assets/enterprise-DfFvlJHv.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [09/Nov/2025 19:08:24] "GET /static/dist/assets/charts-DHLVqNi8.js HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:08:24] "[36mGET /static/dist/assets/app-C2Gaf5fh.js HTTP/1.1[0m" 304 -
+127.0.0.1 - - [09/Nov/2025 19:08:24] "GET /static/dist/assets/dashboardData-l0sNRNKZ.js HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:09:25] "[32mGET / HTTP/1.1[0m" 302 -
+127.0.0.1 - - [09/Nov/2025 19:09:25] "GET /auth/login HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:09:25] "[32mGET / HTTP/1.1[0m" 302 -
+127.0.0.1 - - [09/Nov/2025 19:09:25] "GET /auth/login HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:09:27] "GET /auth/login HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:09:27] "GET /resources HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:09:27] "GET /resources HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:09:27] "GET /auth/login HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:09:27] "GET /static/dist/assets/enterprise-DfFvlJHv.css HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:09:27] "GET /static/dist/assets/app-C2Gaf5fh.js HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:09:27] "GET /static/dist/assets/enterprise-DfFvlJHv.css HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:09:27] "GET /static/dist/assets/enterprise-DfFvlJHv.css HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:09:27] "GET /static/dist/assets/enterprise-DfFvlJHv.css HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:09:27] "GET /static/dist/assets/app-C2Gaf5fh.js HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:09:27] "GET /static/dist/assets/app-C2Gaf5fh.js HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:09:27] "GET /static/dist/assets/app-C2Gaf5fh.js HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:09:28] "[32mPOST /auth/login HTTP/1.1[0m" 302 -
+127.0.0.1 - - [09/Nov/2025 19:09:28] "GET /dashboard HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:09:28] "[36mGET /static/dist/assets/enterprise-DfFvlJHv.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [09/Nov/2025 19:09:28] "[36mGET /static/dist/assets/app-C2Gaf5fh.js HTTP/1.1[0m" 304 -
+127.0.0.1 - - [09/Nov/2025 19:09:28] "GET /static/dist/assets/charts-DHLVqNi8.js HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:09:28] "GET /static/dist/assets/dashboardData-l0sNRNKZ.js HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:10:43] "[32mGET / HTTP/1.1[0m" 302 -
+127.0.0.1 - - [09/Nov/2025 19:10:43] "GET /auth/login HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:10:43] "[32mGET / HTTP/1.1[0m" 302 -
+127.0.0.1 - - [09/Nov/2025 19:10:43] "GET /auth/login HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:10:45] "GET /auth/login HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:10:45] "GET /auth/login HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:10:45] "GET /resources HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:10:45] "GET /resources HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:10:45] "GET /static/dist/assets/enterprise-DfFvlJHv.css HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:10:45] "GET /static/dist/assets/enterprise-DfFvlJHv.css HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:10:45] "GET /static/dist/assets/enterprise-DfFvlJHv.css HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:10:45] "GET /static/dist/assets/app-C2Gaf5fh.js HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:10:45] "GET /static/dist/assets/app-C2Gaf5fh.js HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:10:45] "GET /static/dist/assets/enterprise-DfFvlJHv.css HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:10:45] "GET /static/dist/assets/app-C2Gaf5fh.js HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:10:45] "GET /static/dist/assets/app-C2Gaf5fh.js HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:10:45] "[32mPOST /auth/login HTTP/1.1[0m" 302 -
+127.0.0.1 - - [09/Nov/2025 19:10:45] "GET /dashboard HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:10:45] "[36mGET /static/dist/assets/enterprise-DfFvlJHv.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [09/Nov/2025 19:10:45] "[36mGET /static/dist/assets/app-C2Gaf5fh.js HTTP/1.1[0m" 304 -
+127.0.0.1 - - [09/Nov/2025 19:10:45] "GET /static/dist/assets/dashboardData-l0sNRNKZ.js HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:10:45] "GET /static/dist/assets/charts-DHLVqNi8.js HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:11:41] "[32mGET / HTTP/1.1[0m" 302 -
+127.0.0.1 - - [09/Nov/2025 19:11:41] "GET /auth/login HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:11:41] "[32mGET / HTTP/1.1[0m" 302 -
+127.0.0.1 - - [09/Nov/2025 19:11:41] "GET /auth/login HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:11:43] "GET /resources HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:11:43] "GET /auth/login HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:11:43] "GET /auth/login HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:11:43] "GET /resources HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:11:43] "GET /static/dist/assets/enterprise-DfFvlJHv.css HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:11:43] "GET /static/dist/assets/enterprise-DfFvlJHv.css HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:11:43] "GET /static/dist/assets/enterprise-DfFvlJHv.css HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:11:43] "GET /static/dist/assets/app-C2Gaf5fh.js HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:11:43] "GET /static/dist/assets/app-C2Gaf5fh.js HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:11:43] "GET /static/dist/assets/enterprise-DfFvlJHv.css HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:11:43] "GET /static/dist/assets/app-C2Gaf5fh.js HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:11:43] "GET /static/dist/assets/app-C2Gaf5fh.js HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:11:43] "[32mPOST /auth/login HTTP/1.1[0m" 302 -
+127.0.0.1 - - [09/Nov/2025 19:11:43] "GET /dashboard HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:11:43] "[36mGET /static/dist/assets/enterprise-DfFvlJHv.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [09/Nov/2025 19:11:43] "[36mGET /static/dist/assets/app-C2Gaf5fh.js HTTP/1.1[0m" 304 -
+127.0.0.1 - - [09/Nov/2025 19:11:43] "GET /static/dist/assets/charts-DHLVqNi8.js HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:11:43] "GET /static/dist/assets/dashboardData-l0sNRNKZ.js HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:13:35] "[32mGET / HTTP/1.1[0m" 302 -
+127.0.0.1 - - [09/Nov/2025 19:13:35] "GET /auth/login HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:13:35] "[32mGET / HTTP/1.1[0m" 302 -
+127.0.0.1 - - [09/Nov/2025 19:13:35] "GET /auth/login HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:13:37] "GET /resources HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:13:37] "GET /static/dist/assets/app-C2Gaf5fh.js HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:13:37] "GET /static/dist/assets/enterprise-DfFvlJHv.css HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:15:00] "[32mGET / HTTP/1.1[0m" 302 -
+127.0.0.1 - - [09/Nov/2025 19:15:00] "GET /auth/login HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:15:00] "[32mGET / HTTP/1.1[0m" 302 -
+127.0.0.1 - - [09/Nov/2025 19:15:00] "GET /auth/login HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:15:02] "GET /resources HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:15:02] "GET /static/dist/assets/enterprise-DfFvlJHv.css HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:15:02] "GET /static/dist/assets/app-C2Gaf5fh.js HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:15:33] "[32mGET / HTTP/1.1[0m" 302 -
+127.0.0.1 - - [09/Nov/2025 19:15:33] "GET /auth/login HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:15:33] "[32mGET / HTTP/1.1[0m" 302 -
+127.0.0.1 - - [09/Nov/2025 19:15:33] "GET /auth/login HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:15:34] "GET /resources HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:15:34] "GET /static/dist/assets/app-C2Gaf5fh.js HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:15:34] "GET /static/dist/assets/enterprise-DfFvlJHv.css HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:15:52] "[32mGET / HTTP/1.1[0m" 302 -
+127.0.0.1 - - [09/Nov/2025 19:15:52] "GET /auth/login HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:15:52] "[32mGET / HTTP/1.1[0m" 302 -
+127.0.0.1 - - [09/Nov/2025 19:15:52] "GET /auth/login HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:15:54] "GET /resources HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:15:54] "GET /static/dist/assets/enterprise-DfFvlJHv.css HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:15:54] "GET /static/dist/assets/app-C2Gaf5fh.js HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:16:13] "[32mGET / HTTP/1.1[0m" 302 -
+127.0.0.1 - - [09/Nov/2025 19:16:13] "GET /auth/login HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:16:13] "[32mGET / HTTP/1.1[0m" 302 -
+127.0.0.1 - - [09/Nov/2025 19:16:13] "GET /auth/login HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:16:14] "GET /resources HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:16:14] "GET /static/dist/assets/enterprise-DfFvlJHv.css HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 19:16:14] "GET /static/dist/assets/app-C2Gaf5fh.js HTTP/1.1" 200 -

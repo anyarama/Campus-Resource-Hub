@@ -1,0 +1,91 @@
+<div id="bookingDrawer" class="drawer booking-drawer" role="dialog" aria-modal="true" aria-labelledby="booking-drawer-title" aria-hidden="true">
+  <div class="drawer-header">
+    <div>
+      <p class="eyebrow">Quick booking</p>
+      <h2 id="booking-drawer-title" data-booking-title>Book resource</h2>
+    </div>
+    <button type="button" class="drawer-close" data-drawer-close aria-label="Close booking drawer">
+      <i data-lucide="x"></i>
+    </button>
+  </div>
+  <div class="drawer-body booking-drawer__body">
+    <form data-booking-form novalidate>
+      <input type="hidden" data-booking-resource-id>
+      <input type="hidden" data-booking-url>
+      <input type="hidden" data-availability-url>
+      <div class="form-group">
+        <label for="booking-date">Select date</label>
+        <input type="date" id="booking-date" name="date" data-booking-date required>
+      </div>
+
+      <div class="time-slotter">
+        <div class="time-slotter__header">
+          <div>
+            <label>Time</label>
+            <p class="text-muted">Tap to pick a start time. Duration adjusts selection.</p>
+          </div>
+          <div class="form-group">
+            <label for="booking-duration" class="sr-only">Duration</label>
+            <select id="booking-duration" data-duration-select>
+              <option value="30">30 min</option>
+              <option value="60" selected>1 hour</option>
+              <option value="90">1.5 hours</option>
+              <option value="120">2 hours</option>
+            </select>
+          </div>
+        </div>
+        <div class="time-slot-grid" data-time-slot-grid role="grid" aria-label="Available time slots"></div>
+        <div class="time-slotter__legend">
+          <span><span class="legend-dot legend-dot--available"></span>Available</span>
+          <span><span class="legend-dot legend-dot--selected"></span>Selected</span>
+          <span><span class="legend-dot legend-dot--blocked"></span>Booked</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="booking-purpose">Purpose</label>
+        <textarea id="booking-purpose" name="purpose" rows="3" placeholder="e.g., Weekly study group, camera checkout..." data-booking-purpose required></textarea>
+      </div>
+
+      <div class="booking-drawer__message" role="status" aria-live="polite" data-booking-message hidden></div>
+
+      <div class="booking-drawer__actions">
+        <button type="button" class="btn btn--ghost" data-booking-reset>Reset</button>
+        <button type="submit" class="btn btn--primary">Review request</button>
+      </div>
+    </form>
+
+    <section class="booking-confirmation" data-booking-confirmation hidden aria-live="polite">
+      <div class="booking-confirmation__header">
+        <h3>Ready to book?</h3>
+        <p>Review details before continuing to the full booking form.</p>
+      </div>
+      <dl class="booking-summary">
+        <div>
+          <dt>Date</dt>
+          <dd data-summary-date>—</dd>
+        </div>
+        <div>
+          <dt>Time</dt>
+          <dd data-summary-time>—</dd>
+        </div>
+        <div>
+          <dt>Duration</dt>
+          <dd data-summary-duration>—</dd>
+        </div>
+        <div>
+          <dt>Purpose</dt>
+          <dd data-summary-purpose>—</dd>
+        </div>
+        <div>
+          <dt>Notes</dt>
+          <dd data-summary-note>—</dd>
+        </div>
+      </dl>
+      <div class="booking-drawer__actions">
+        <button type="button" class="btn btn--ghost" data-booking-edit>Edit</button>
+        <button type="button" class="btn btn--primary" data-booking-complete>Complete booking</button>
+      </div>
+    </section>
+  </div>
+</div>

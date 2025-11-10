@@ -4,7 +4,7 @@
 # Per .clinerules: Commands for fmt (format), lint (type check), test, and run
 # All commands should pass before committing code
 
-.PHONY: help install fmt lint test test-cov run clean init-db seed-db shell check all
+.PHONY: help install fmt lint test test-cov run clean init-db seed-db shell check all web-assets
 
 # Default target - show help
 help:
@@ -21,6 +21,9 @@ help:
 	@echo "  make test-cov     Run tests with coverage report"
 	@echo "  make check        Run fmt + lint + test (full quality check)"
 	@echo "  make all          Same as 'make check'"
+	@echo ""
+	@echo "Frontend Assets:"
+	@echo "  make web-assets   Build Vite assets and verify manifest (Task B)"
 	@echo ""
 	@echo "Development:"
 	@echo "  make run          Run Flask development server"
@@ -72,6 +75,39 @@ check: fmt lint test
 
 # Alias for check
 all: check
+
+# Build and verify Vite assets (Task B: MAKE IT WORK IN RUNTIME)
+web-assets:
+	@echo "🏗️  Building Vite assets..."
+	npm run build
+	@echo ""
+	@echo "✅ Vite build complete"
+	@echo ""
+	@echo "🔍 Verifying manifest..."
+	@if [ -f "src/static/dist/.vite/manifest.json" ]; then \
+		echo "✅ Manifest found: src/static/dist/.vite/manifest.json"; \
+		echo ""; \
+		echo "📄 Manifest contents:"; \
+		cat src/static/dist/.vite/manifest.json | python -m json.tool | head -20; \
+		echo ""; \
+		echo "✅ Build verification complete"; \
+	elif [ -f "src/static/dist/manifest.json" ]; then \
+		echo "✅ Manifest found: src/static/dist/manifest.json"; \
+		echo ""; \
+		echo "📄 Manifest contents:"; \
+		cat src/static/dist/manifest.json | python -m json.tool | head -20; \
+		echo ""; \
+		echo "✅ Build verification complete"; \
+	else \
+		echo "❌ ERROR: No manifest.json found!"; \
+		echo "Expected locations:"; \
+		echo "  - src/static/dist/.vite/manifest.json"; \
+		echo "  - src/static/dist/manifest.json"; \
+		exit 1; \
+	fi
+	@echo ""
+	@echo "🧪 Testing asset resolution..."
+	@echo "Run 'make run' and visit http://localhost:5001/_debug/assets to verify"
 
 # Run Flask development server
 run:

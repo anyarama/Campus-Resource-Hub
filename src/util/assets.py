@@ -1,6 +1,11 @@
 from __future__ import annotations
-import json, os, threading
+import json
+import logging
+import os
+import threading
 from flask import current_app, url_for
+
+logger = logging.getLogger(__name__)
 
 _manifest_cache = None
 _manifest_mtime = 0
@@ -51,8 +56,13 @@ def asset_url(entry: str) -> str:
     # Strategy 3: Special mappings for common entry names
     # Map logical names to manifest source file paths
     special_mappings = {
-        'style': 'src/static/scss/main.scss',
-        'main': 'src/static/scss/main.scss',
+        'style': 'src/static/scss/enterprise.scss',
+        'main': 'src/static/scss/enterprise.scss',
+        'enterprise': 'src/static/scss/enterprise.scss',
+        'enterpriseJs': 'src/static/js/enterprise.js',
+        'app': 'src/static/js/enterprise.js',
+        'charts': 'src/static/js/charts.js',
+        'dashboardData': 'src/static/js/adapters/dashboardData.js',
     }
     
     if entry in special_mappings:
@@ -66,13 +76,44 @@ def asset_url(entry: str) -> str:
             return url_for('static', filename=f"dist/{v['file']}")
     
     # Fallback for development (no manifest or entry not found)
+    # Only return fallback if file actually exists on disk
     fallback_map = {
         'style': 'dist/assets/style.css',
         'enterpriseJs': 'dist/assets/enterprise.js',
     }
     
     if entry in fallback_map:
-        return url_for('static', filename=fallback_map[entry])
+        fallback_path = fallback_map[entry]
+        full_path = os.path.join(current_app.root_path, 'static', fallback_path)
+        
+        if os.path.exists(full_path):
+            logger.warning(
+                f"asset_url('{entry}'): Using fallback '{fallback_path}' "
+                f"(manifest lookup failed, but file exists)"
+            )
+            return url_for('static', filename=fallback_path)
+        else:
+            logger.warning(
+                f"asset_url('{entry}'): Fallback '{fallback_path}' does not exist on disk. "
+                f"Manifest may be stale or build incomplete."
+            )
     
-    # Last resort: pass through as-is
-    return url_for('static', filename=f'dist/{entry}')
+    # Last resort: check if generic path exists
+    generic_path = f'dist/{entry}'
+    full_generic_path = os.path.join(current_app.root_path, 'static', generic_path)
+    
+    if os.path.exists(full_generic_path):
+        logger.warning(
+            f"asset_url('{entry}'): Using generic path '{generic_path}' "
+            f"(no manifest entry found)"
+        )
+        return url_for('static', filename=generic_path)
+    
+    # Absolute last resort: log error and return a safe non-404 path
+    # Return path to static root to avoid 404, but log the issue
+    logger.error(
+        f"asset_url('{entry}'): FAILED to resolve asset. "
+        f"Manifest lookup failed and no file found. Returning safe fallback."
+    )
+    # Return empty path or a known placeholder to avoid 404
+    return url_for('static', filename='dist/.placeholder')

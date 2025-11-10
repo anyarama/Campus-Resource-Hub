@@ -1,240 +1,243 @@
-{% extends"base.html" %}{% block title %}Admin Dashboard - Campus Resource Hub{% endblock %}{% block extra_css %}{% endblock %}{% block content %}<div class="layout-grid">
-  <div class="" data-col="2">
-    <h1 class="h2"><i class="bi bi-speedometer2"></i> Admin Dashboard</h1>
-    <p class="text-dim">Platform overview and management tools</p>
+{% extends "base.html" %}
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block main_content %}
+<section class="admin-page__header">
+  <div>
+    <p class="eyebrow">Administration</p>
+    <h1>Platform Overview</h1>
+    <p>Monitor approvals, review flagged content, and keep bookings moving.</p>
   </div>
-</div>
+  <div class="admin-page__actions">
+    <a href="{{ url_for('admin.analytics') }}" class="btn btn--ghost">
+      <i data-lucide="bar-chart-3"></i>
+      <span>View Analytics</span>
+    </a>
+    <a href="{{ url_for('admin.users') }}" class="btn btn--primary">
+      <i data-lucide="users"></i>
+      <span>Manage Users</span>
+    </a>
+  </div>
+</section>
 
- Platform Statistics Cards 
-<div class="layout-grid g-3">
-  <!-- Total Users -->
-  <div class="layout-col" data-col="12">
-    <div class="card stat-card primary">
-      <div class="card-body">
-        <div class="flex items-start">
-          <div>
-            <div class="stat-number"></div></div></div></div></div></div></div>{{ stats.total_users }}<div class="stat-label">Total Users</div>
-          
-          <i class="bi bi-people fs-1 text-primary opacity-25"></i>
-        
-        <div class="space-t-2">
-          <small class="text-success"><i class="bi bi-arrow-up"></i> Active platform</small>
+<section class="admin-dashboard__kpi-grid">
+  <article class="kpi-tile">
+    <div class="kpi-tile__icon kpi-tile__icon--primary">
+      <i data-lucide="users"></i>
+    </div>
+    <div class="kpi-tile__content">
+      <p class="kpi-tile__label">Total Users</p>
+      <p class="kpi-tile__value">{{ stats.total_users }}</p>
+      <p class="kpi-tile__meta">{{ stats.active_users }} active · {{ stats.suspended_users }} suspended</p>
+    </div>
+  </article>
+  <article class="kpi-tile">
+    <div class="kpi-tile__icon kpi-tile__icon--success">
+      <i data-lucide="box"></i>
+    </div>
+    <div class="kpi-tile__content">
+      <p class="kpi-tile__label">Resources</p>
+      <p class="kpi-tile__value">{{ stats.total_resources }}</p>
+      <p class="kpi-tile__meta">{{ stats.published_resources }} published · {{ stats.archived_resources }} archived</p>
+    </div>
+  </article>
+  <article class="kpi-tile">
+    <div class="kpi-tile__icon kpi-tile__icon--info">
+      <i data-lucide="calendar-check"></i>
+    </div>
+    <div class="kpi-tile__content">
+      <p class="kpi-tile__label">Bookings</p>
+      <p class="kpi-tile__value">{{ stats.total_bookings }}</p>
+      <p class="kpi-tile__meta">{{ stats.pending_bookings }} pending approvals</p>
+    </div>
+  </article>
+  <article class="kpi-tile">
+    <div class="kpi-tile__icon kpi-tile__icon--warning">
+      <i data-lucide="message-square"></i>
+    </div>
+    <div class="kpi-tile__content">
+      <p class="kpi-tile__label">Messages</p>
+      <p class="kpi-tile__value">{{ stats.total_messages }}</p>
+      <p class="kpi-tile__meta">{{ stats.total_reviews }} reviews logged</p>
+    </div>
+  </article>
+</section>
+
+<section class="admin-dashboard__panels">
+  <article class="card approvals-card">
+    <header class="card__header">
+      <div>
+        <p class="eyebrow">Approvals</p>
+        <h2>Pending bookings</h2>
+      </div>
+      <span class="badge badge--warning">{{ approvals|length }}</span>
+    </header>
+    {% if approvals %}
+    <form method="POST" action="{{ url_for('admin.bulk_booking_approvals') }}" data-bulk-form>
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <input type="hidden" name="action" value="" data-bulk-action-input>
+      <div class="bulk-toolbar">
+        <span data-bulk-count>0 selected</span>
+        <div class="bulk-toolbar__actions">
+          <button type="submit" class="btn btn--ghost" data-bulk-action value="reject" disabled>
+            <i data-lucide="x"></i>
+            <span>Reject</span>
+          </button>
+          <button type="submit" class="btn btn--primary" data-bulk-action value="approve" disabled>
+            <i data-lucide="check"></i>
+            <span>Approve</span>
+          </button>
         </div>
-      
-    
-  
-  
-   Total Resources 
-  <div class="layout-col" data-col="12">
-    <div class="card stat-card success">
-      <div class="card-body">
-        <div class="flex items-start">
+      </div>
+      <div class="table-scroll table-scroll--sticky" role="region" aria-live="polite">
+        <table class="table table--interactive" role="table">
+          <thead>
+            <tr>
+              <th scope="col">
+                <label class="checkbox">
+                  <input type="checkbox" data-bulk-master aria-label="Select all approvals">
+                  <span></span>
+                </label>
+              </th>
+              <th scope="col">Resource</th>
+              <th scope="col">Requester</th>
+              <th scope="col">Slot</th>
+              <th scope="col">Requested</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in approvals %}
+            <tr tabindex="0">
+              <td data-label="Select">
+                <label class="checkbox">
+                  <input type="checkbox" name="booking_ids" value="{{ item.booking_id }}" data-bulk-checkbox aria-label="Select booking {{ item.booking_id }}">
+                  <span></span>
+                </label>
+              </td>
+              <td data-label="Resource">
+                <strong>{{ item.resource_title }}</strong>
+                <p class="text-muted">{{ item.resource_category|replace('_', ' ')|title }}</p>
+              </td>
+              <td data-label="Requester">
+                <strong>{{ item.requester_name }}</strong>
+                <p class="text-muted">{{ item.requester_email }}</p>
+              </td>
+              <td data-label="Slot">
+                <p>{{ item.start_datetime.strftime('%b %d, %I:%M %p') }} — {{ item.end_datetime.strftime('%I:%M %p') }}</p>
+              </td>
+              <td data-label="Requested">
+                <p>{{ item.created_at.strftime('%b %d, %I:%M %p') }}</p>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </form>
+    {% else %}
+      <div class="empty-state empty-state--inline">
+        <i data-lucide="inbox"></i>
+        <h3>No pending approvals</h3>
+        <p>You're all caught up. New booking requests will appear here.</p>
+      </div>
+    {% endif %}
+  </article>
+
+  <article class="card flagged-card">
+    <header class="card__header">
+      <div>
+        <p class="eyebrow">Moderation</p>
+        <h2>Flagged reviews</h2>
+      </div>
+      <span class="badge badge--ghost">{{ flagged_reviews|length }}</span>
+    </header>
+    {% if flagged_reviews %}
+      <ul class="flagged-list">
+        {% for review in flagged_reviews %}
+        <li class="flagged-list__item">
           <div>
-            <div class="stat-number"></div></div></div></div></div></div>{{ stats.total_resources }}<div class="stat-label">Resources</div>
-          
-          <i class="bi bi-box-seam fs-1 opacity-25"></i>
-        
-        <div class="space-t-2">
-          <small class="text-dim"></small></div>{{ stats.published_resources }}published
-        
-      
-    
-  
-  
-   Total Bookings 
-  <div class="layout-col" data-col="12">
-    <div class="card stat-card info">
-      <div class="card-body">
-        <div class="flex items-start">
-          <div>
-            <div class="stat-number"></div></div></div></div></div></div>{{ stats.total_bookings }}<div class="stat-label">Bookings</div>
-          
-          <i class="bi bi-calendar-check fs-1 text-info opacity-25"></i>
-        
-        <div class="space-t-2">
-          <small class="text-warning"></small></div>{{ stats.pending_bookings }}pending
-        
-      
-    
-  
-  
-   Total Messages 
-  <div class="layout-col" data-col="12">
-    <div class="card stat-card warning">
-      <div class="card-body">
-        <div class="flex items-start">
-          <div>
-            <div class="stat-number"></div></div></div></div></div></div>{{ stats.total_messages }}<div class="stat-label">Messages</div>
-          
-          <i class="bi bi-envelope fs-1 opacity-25"></i>
-        
-        <div class="space-t-2">
-          <small class="text-dim">Platform communication</small>
-        </div>
-      
-    
-  
-
-
- User Role Distribution 
-<div class="layout-grid g-3">
-  <div class="layout-col" data-col="12">
-    <div class="card">
-      <div class="card-header">
-        <h5 class="space-b-0"><i class="bi bi-pie-chart"></i> User Roles</h5>
-      </div>
-      <div class="card-body">
-        <div class="space-b-3">
-          <div class="flex">
-            <span><span class="badge badge-danger badge-role">Admin</span></span>
-            <strong></strong></div></div></div></div></div></div>{{ stats.role_distribution.admin }}<div class="progress" style="height: 8px;">
-            </div>{{ (stats.role_distribution.admin / stats.total_users * 100) if stats.total_users > 0 else 0 }}%">
-          
-        
-        <div class="space-b-3">
-          <div class="flex">
-            <span><span class="badge badge-primary badge-role">Staff</span></span>
-            <strong></strong></div></div>{{ stats.role_distribution.staff }}<div class="progress" style="height: 8px;">
-            </div>{{ (stats.role_distribution.staff / stats.total_users * 100) if stats.total_users > 0 else 0 }}%">
-          
-        
-        <div>
-          <div class="flex">
-            <span><span class="badge badge-secondary badge-role">Student</span></span>
-            <strong></strong></div></div>{{ stats.role_distribution.student }}<div class="progress" style="height: 8px;">
-            </div>{{ (stats.role_distribution.student / stats.total_users * 100) if stats.total_users > 0 else 0 }}%">
-          
-        
-      
-    
-  
-  
-   Booking Status Distribution 
-  <div class="layout-col" data-col="12">
-    <div class="card">
-      <div class="card-header">
-        <h5 class="space-b-0"><i class="bi bi-graph-up"></i> Booking Status</h5>
-      </div>
-      <div class="card-body">
-        <div class="space-b-3">
-          <div class="flex">
-            <span>Pending</span>
-            <strong class="text-warning"></strong></div></div></div></div></div>{{ stats.booking_status.pending }}<div class="progress" style="height: 8px;">
-            </div>{{ (stats.booking_status.pending / stats.total_bookings * 100) if stats.total_bookings > 0 else 0 }}%">
-          
-        
-        <div class="space-b-3">
-          <div class="flex">
-            <span>Approved</span>
-            <strong class="text-success"></strong></div></div>{{ stats.booking_status.approved }}<div class="progress" style="height: 8px;">
-            </div>{{ (stats.booking_status.approved / stats.total_bookings * 100) if stats.total_bookings > 0 else 0 }}%">
-          
-        
-        <div>
-          <div class="flex">
-            <span>Completed</span>
-            <strong class="text-info"></strong></div></div>{{ stats.booking_status.completed }}<div class="progress" style="height: 8px;">
-            </div>{{ (stats.booking_status.completed / stats.total_bookings * 100) if stats.total_bookings > 0 else 0 }}%">
-          
-        
-      
-    
-  
-  
-   Quick Actions 
-  <div class="layout-col" data-col="12">
-    <div class="card">
-      <div class="card-header">
-        <h5 class="space-b-0"><i class="bi bi-lightning"></i> Quick Actions</h5>
-      </div>
-      <div class="card-body flex-column gap-2">
-        </div></div></div>{{ url_for('admin.users') }}" class="btn btn-outline">
-          <i class="bi bi-people"></i> Manage Users
-        
-        {{ url_for('admin.analytics') }}" class="btn btn-ghost">
-          <i class="bi bi-bar-chart"></i> View Analytics
-        
-        {{ url_for('bookings.my_bookings') }}" class="btn btn-secondary">
-          <i class="bi bi-calendar-check"></i> Review Bookings
-        
-        {{ url_for('resources.index') }}" class="btn btn-success">
-          <i class="bi bi-box-seam"></i> Browse Resources
-        
-      
-    
-  
-
-
- Popular Resources & Recent Activity 
-<div class="layout-grid g-3">
-  <!-- Popular Resources -->
-  <div class="layout-col" data-col="12">
-    <div class="card">
-      <div class="card-header">
-        <h5 class="space-b-0"><i class="bi bi-star"></i> Popular Resources</h5>
-        <small class="text-dim">By bookings</small>
-      </div>
-      <div class="card-body">
-        </div></div></div></div>{% if popular_resources %}{% for resource in popular_resources %}<div class="popular-resource">
-              <div class="flex-1">
-                </div></div>{{ url_for('resources.detail', resource_id=resource.resource_id) }}" class="text-decoration-none">
-                  <strong></strong>{{ resource.title }}<div class="small">
-                  <i class="bi bi-calendar-check"></i> </div>{{ resource.booking_count }}bookings
-                
-              
-              <span class="badge badge-primary"></span>{{ resource.category or 'General' }}{% endfor %}{% else %}<div class="pad-3">
-            <i class="bi bi-inbox fs-1"></i>
-            No bookings yet
+            <p class="flagged-list__resource">{{ review.resource_title }}</p>
+            <p class="flagged-list__meta">{{ review.reviewer_name }} · {{ review.hidden_at.strftime('%b %d, %I:%M %p') if review.hidden_at else 'Recently flagged' }}</p>
+            <p class="flagged-list__reason">{{ review.hidden_reason or 'Flagged by admin' }}</p>
+            <p class="flagged-list__comment">{{ review.comment or 'No comment supplied.' }}</p>
           </div>
-        {% endif %}<div class="layout-col" data-col="12">
-    <div class="card">
-      <div class="card-header">
-        <h5 class="space-b-0"><i class="bi bi-activity"></i> Recent Activity</h5>
-      </div>
-      <div class="card-body" style="max-height: 400px; overflow-y: auto;">
-        </div></div></div>{% if activity.bookings %}<h6 class="text-dim small">Recent Bookings</h6>
-          {% for booking in activity.bookings[:5] %}<div class="activity-item">
-              <div class="small">
-                <strong></strong></div></div>{{ booking.requester_name }}booked 
-                {{ url_for('resources.detail', resource_id=booking.resource_id) }}">
-                  {{ booking.resource_title }}<div class="small">
-                <i class="bi bi-clock"></i> </div>{{ booking.created_at.strftime('%b %d, %Y %I:%M %p') }}{% endfor %}{% endif %}{% if activity.users %}<h6 class="text-dim small">New Users</h6>
-          {% for user in activity.users[:3] %}<div class="activity-item">
-              <div class="small">
-                <strong></strong></div></div>{{ user.name }}joined as 
-                <span class="badge badge-secondary badge-role"></span>{{ user.role }}<div class="small">
-                <i class="bi bi-clock"></i> </div>{{ user.created_at.strftime('%b %d, %Y') }}{% endfor %}{% endif %}{% if not activity.bookings and not activity.users %}<div class="text-center">
-            <i class="bi bi-inbox fs-1"></i>
-            No recent activity
+          <div class="flagged-list__actions">
+            <form method="POST" action="{{ url_for('reviews.unhide', review_id=review.review_id) }}">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <button type="submit" class="btn btn--ghost btn--sm">
+                <i data-lucide="eye"></i>
+                <span>Unhide</span>
+              </button>
+            </form>
+            <a class="btn btn--ghost btn--sm" href="{{ url_for('resources.detail', resource_id=review.resource_id) }}" target="_blank" rel="noopener">
+              <i data-lucide="external-link"></i>
+              <span>View</span>
+            </a>
           </div>
-        {% endif %}{% if trends %}<div class="layout-grid">
-  <div class="" data-col="2">
-    <div class="card">
-      <div class="card-header">
-        <h5 class="space-b-0"><i class="bi bi-graph-up-arrow"></i> Booking Trends (Last 30 Days)</h5>
+        </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <div class="empty-state empty-state--inline">
+        <i data-lucide="shield"></i>
+        <h3>No flagged content</h3>
+        <p>Reviews will appear here when hidden for moderation.</p>
       </div>
-      <div class="card-body">
-        <div class="layout-grid">
-          <div class="layout-col" data-col="12">
-            <h3 class="text-primary"></h3></div></div></div></div></div></div>{{ trends.total_bookings }}<p class="text-dim small">Total Bookings</p>
-          
-          <div class="layout-col" data-col="12">
-            <h3 class="text-success"></h3></div>{{ trends.approved_bookings }}<p class="text-dim small">Approved</p>
-          
-          <div class="layout-col" data-col="12">
-            <h3 class="text-warning"></h3></div>{{ trends.pending_bookings }}<p class="text-dim small">Pending</p>
-          
-          <div class="layout-col" data-col="12">
-            <h3 class="text-info"></h3></div>{{ trends.completed_bookings }}<p class="text-dim small">Completed</p>
-          
-        
-        <div class="space-t-3">
-          </div>{{ url_for('admin.analytics') }}" class="btn btn-secondary">
-            <i class="bi bi-bar-chart"></i> View Detailed Analytics
-          
-        
-      
-    
-  
+    {% endif %}
+  </article>
+</section>
 
-{% endif %}{% endblock %}
+<section class="admin-dashboard__content-grid">
+  <article class="card">
+    <header class="card__header">
+      <h2><i data-lucide="star"></i> Popular resources</h2>
+      <small class="text-muted">By booking volume</small>
+    </header>
+    {% if popular_resources %}
+      <ul class="resource-rankings">
+        {% for resource in popular_resources %}
+        <li>
+          <div>
+            <p class="resource-rankings__title">{{ loop.index }}. {{ resource.title }}</p>
+            <p class="text-muted">{{ resource.category|replace('_', ' ')|title }} · {{ resource.owner_name }}</p>
+          </div>
+          <span class="badge badge--ghost">{{ resource.booking_count }} bookings</span>
+        </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="text-muted">No resource data yet.</p>
+    {% endif %}
+  </article>
+
+  <article class="card">
+    <header class="card__header">
+      <h2><i data-lucide="activity"></i> Recent activity</h2>
+    </header>
+    <div class="activity-feed">
+      {% if activity.bookings %}
+        {% for booking in activity.bookings[:5] %}
+          <div class="activity-feed__item">
+            <div>
+              <p><strong>{{ booking.requester_name }}</strong> booked {{ booking.resource_title }}</p>
+              <p class="text-muted">{{ booking.timestamp.strftime('%b %d, %I:%M %p') }}</p>
+            </div>
+            <span class="badge badge--primary">{{ booking.status|title }}</span>
+          </div>
+        {% endfor %}
+      {% else %}
+        <p class="text-muted">No booking activity yet.</p>
+      {% endif %}
+    </div>
+  </article>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+  <script type="module" src="{{ vite_asset('src/static/js/admin-dashboard.js') }}"></script>
+  <script type="module">
+    if (typeof lucide !== 'undefined') {
+      lucide.createIcons();
+    }
+  </script>
+{% endblock %}
