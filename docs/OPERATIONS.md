@@ -65,6 +65,7 @@ The Vite dev server injects hot-reloaded JS/CSS; `vite_asset()` handles the prox
 
 - Backend/unit/integration tests: `make test`
 - UI smoke + axe scans (Playwright): `make ui-smoke`
+- UI lint guardrails (bootstrap/grid/tokens): `make ui-lint`
 - Formatting & linting: `make fmt`, `make lint`
 - Full gate (fmt + lint + pytest + Playwright + build): `make all`
 

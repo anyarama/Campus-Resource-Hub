@@ -1,3 +1,5 @@
+import Chart from 'chart.js/auto';
+
 // ============================================
 // ENTERPRISE UI - Main JavaScript Bundle
 // ============================================
@@ -13,6 +15,7 @@ class ThemeManager {
     document.documentElement.setAttribute('data-theme', this.theme);
     this.updateToggleButtons();
     this.attachListeners();
+    this.emitThemeChange();
   }
   
   toggle() {
@@ -20,6 +23,7 @@ class ThemeManager {
     localStorage.setItem('theme', this.theme);
     document.documentElement.setAttribute('data-theme', this.theme);
     this.updateToggleButtons();
+    this.emitThemeChange();
   }
   
   updateToggleButtons() {
@@ -43,6 +47,12 @@ class ThemeManager {
     document.querySelectorAll('[data-theme-toggle]').forEach(btn => {
       btn.addEventListener('click', () => this.toggle());
     });
+  }
+
+  emitThemeChange() {
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('crh-theme-change', { detail: { theme: this.theme } }));
+    }
   }
 }
 
@@ -568,6 +578,161 @@ class FormValidator {
       }
     });
   }
+}
+
+// --- DASHBOARD CHARTS -------------------------------------------------------
+const DASHBOARD_CHART_PALETTE = ['#990000', '#B91C1C', '#D97706', '#2563EB', '#10B981', '#9333EA'];
+const dashboardCharts = {
+  bookings: null,
+  categories: null
+};
+let dashboardChartConfig = null;
+
+function cloneConfig(config) {
+  if (!config) return null;
+  if (typeof structuredClone === 'function') {
+    return structuredClone(config);
+  }
+  return JSON.parse(JSON.stringify(config));
+}
+
+function getThemeColors() {
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  return {
+    text: isDark ? '#E5E7EB' : '#1F2937',
+    grid: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(17,24,39,0.08)',
+    border: isDark ? 'rgba(255,255,255,0.25)' : 'rgba(17,24,39,0.15)',
+    tooltipBg: isDark ? '#111827' : '#ffffff'
+  };
+}
+
+function buildLineOptions(theme) {
+  return {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: theme.tooltipBg,
+        titleColor: theme.text,
+        bodyColor: theme.text,
+        borderColor: theme.border,
+        borderWidth: 1
+      }
+    },
+    interaction: {
+      mode: 'index',
+      intersect: false
+    },
+    scales: {
+      x: {
+        ticks: { color: theme.text },
+        grid: { display: false },
+        border: { color: theme.border }
+      },
+      y: {
+        beginAtZero: true,
+        ticks: { color: theme.text },
+        grid: { color: theme.grid },
+        border: { color: theme.border }
+      }
+    }
+  };
+}
+
+function buildDoughnutOptions(theme) {
+  return {
+    responsive: true,
+    maintainAspectRatio: false,
+    cutout: '65%',
+    plugins: {
+      legend: {
+        position: 'bottom',
+        labels: { color: theme.text, usePointStyle: true }
+      },
+      tooltip: {
+        backgroundColor: theme.tooltipBg,
+        titleColor: theme.text,
+        bodyColor: theme.text,
+        borderColor: theme.border,
+        borderWidth: 1
+      }
+    }
+  };
+}
+
+function buildCategoryPalette(length) {
+  if (!length) return DASHBOARD_CHART_PALETTE;
+  const colors = [];
+  for (let i = 0; i < length; i += 1) {
+    colors.push(DASHBOARD_CHART_PALETTE[i % DASHBOARD_CHART_PALETTE.length]);
+  }
+  return colors;
+}
+
+function renderDashboardCharts() {
+  if (!dashboardChartConfig) return;
+  const theme = getThemeColors();
+
+  if (dashboardChartConfig.bookings) {
+    const canvas = document.getElementById('chart-bookings');
+    if (canvas) {
+      dashboardCharts.bookings?.destroy();
+      const lineData = cloneConfig(dashboardChartConfig.bookings);
+      if (lineData?.datasets?.length) {
+        lineData.datasets = lineData.datasets.map(dataset => ({
+          borderColor: dataset.borderColor || '#990000',
+          backgroundColor: dataset.backgroundColor || 'rgba(153, 0, 0, 0.15)',
+          borderWidth: dataset.borderWidth ?? 2,
+          tension: dataset.tension ?? 0.4,
+          fill: dataset.fill ?? true,
+          pointRadius: dataset.pointRadius ?? 4,
+          pointHoverRadius: dataset.pointHoverRadius ?? 6,
+          ...dataset
+        }));
+      }
+      dashboardCharts.bookings = new Chart(canvas, {
+        type: 'line',
+        data: lineData,
+        options: buildLineOptions(theme)
+      });
+    }
+  }
+
+  if (dashboardChartConfig.categories) {
+    const canvas = document.getElementById('chart-categories');
+    if (canvas) {
+      dashboardCharts.categories?.destroy();
+      const doughnutData = cloneConfig(dashboardChartConfig.categories);
+      if (doughnutData?.datasets?.length) {
+        doughnutData.datasets = doughnutData.datasets.map(dataset => ({
+          backgroundColor: dataset.backgroundColor || buildCategoryPalette(dataset.data?.length || 0),
+          borderWidth: dataset.borderWidth ?? 0,
+          ...dataset
+        }));
+      }
+      dashboardCharts.categories = new Chart(canvas, {
+        type: 'doughnut',
+        data: doughnutData,
+        options: buildDoughnutOptions(theme)
+      });
+    }
+  }
+}
+
+export function initDashboardCharts(config = {}) {
+  dashboardChartConfig = config;
+  renderDashboardCharts();
+}
+
+if (typeof window !== 'undefined') {
+  window.initDashboardCharts = initDashboardCharts;
+  window.addEventListener('crh-theme-change', () => {
+    if (dashboardChartConfig) {
+      renderDashboardCharts();
+    }
+  });
+  window.dispatchEvent(new Event('dashboard-charts-ready'));
 }
 
 // --- INITIALIZE ALL ---

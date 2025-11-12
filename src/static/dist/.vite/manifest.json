@@ -1,55 +1,6 @@
 {
-  "src/static/js/adapters/dashboardData.js": {
-    "file": "assets/dashboardData-l0sNRNKZ.js",
-    "name": "dashboardData",
-    "src": "src/static/js/adapters/dashboardData.js",
-    "isEntry": true
-  },
-  "src/static/js/admin-dashboard.js": {
-    "file": "assets/adminDashboard-CdDlttpW.js",
-    "name": "adminDashboard",
-    "src": "src/static/js/admin-dashboard.js",
-    "isEntry": true
-  },
-  "src/static/js/booking-drawer.js": {
-    "file": "assets/bookingDrawer-zazgwzdm.js",
-    "name": "bookingDrawer",
-    "src": "src/static/js/booking-drawer.js",
-    "isEntry": true
-  },
-  "src/static/js/charts.js": {
-    "file": "assets/charts-DHLVqNi8.js",
-    "name": "charts",
-    "src": "src/static/js/charts.js",
-    "isEntry": true
-  },
-  "src/static/js/enterprise.js": {
-    "file": "assets/app-BDo839J5.js",
-    "name": "app",
-    "src": "src/static/js/enterprise.js",
-    "isEntry": true
-  },
-  "src/static/js/image-carousel.js": {
-    "file": "assets/imageCarousel-Ad7Vs5TF.js",
-    "name": "imageCarousel",
-    "src": "src/static/js/image-carousel.js",
-    "isEntry": true
-  },
-  "src/static/js/messages.js": {
-    "file": "assets/messages-CCJ1tWaM.js",
-    "name": "messages",
-    "src": "src/static/js/messages.js",
-    "isEntry": true
-  },
-  "src/static/js/resource-filters.js": {
-    "file": "assets/resourceFilters-BAyblQ-t.js",
-    "name": "resourceFilters",
-    "src": "src/static/js/resource-filters.js",
-    "isEntry": true
-  },
-  "src/static/scss/enterprise.scss": {
-    "file": "assets/enterprise-Cykhsmpa.css",
-    "src": "src/static/scss/enterprise.scss",
-    "isEntry": true
+  "style.css": {
+    "file": "app.DfXMKRQu.css",
+    "src": "style.css"
   }
 }

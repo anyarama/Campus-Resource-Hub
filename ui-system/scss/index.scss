@@ -1,0 +1,24 @@
+@use './_tokens.scss';
+@use './base/reset.scss';
+@use './base/typography.scss';
+@use './base/layout.scss';
+
+@use './components/shell.scss';
+@use './components/button.scss';
+@use './components/input.scss';
+@use './components/card.scss';
+@use './components/navbar.scss';
+@use './components/table.scss';
+@use './components/modal.scss';
+@use './components/tabs.scss';
+@use './components/toast.scss';
+@use './components/form-group.scss';
+
+// add page-level imports as they’re created
+@use '../pages/resources-dashboard';
+@use '../pages/resources-list';
+@use '../pages/admin-users';
+@use '../pages/auth';
+@use '../pages/messages';
+@use '../pages/admin-dashboard';
+@use '../pages/ui-kit';

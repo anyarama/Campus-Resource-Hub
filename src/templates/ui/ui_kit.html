@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+
+{% block title %}UI Kit - Campus Resource Hub{% endblock %}
+
+{% block page_title %}UI System Kit{% endblock %}
+
+{% block toolbar %}
+<a class="ui-button ui-button--ghost" href="{{ url_for('resources.dashboard') }}">
+  <i data-lucide="arrow-left" class="icon icon-sm"></i>
+  Back to dashboard
+</a>
+{% endblock %}
+
+{% block main_content %}
+<section class="ui-kit">
+  <header class="ui-kit__intro ui-card">
+    <p class="resources-dashboard__eyebrow">Visual QA</p>
+    <h1>Component reference</h1>
+    <p>Every state in this gallery uses the shared UI system tokens (`ui-system/scss/_tokens.scss`). Hex/rgb values are linted, so bring new colors in through tokens first.</p>
+    <p class="ui-kit__note">Route restricted to admins. Use screenshots from here when reviewing regressions.</p>
+  </header>
+
+  <article class="ui-card">
+    <h2>Buttons</h2>
+    <div class="ui-kit__grid ui-kit__grid--buttons">
+      {% for button in button_variants %}
+        <button
+          type="button"
+          class="ui-button {{ button.class }}"
+          {% if button.disabled %}disabled{% endif %}
+          {% if button.loading %}data-loading="true"{% endif %}>
+          {% if button.loading %}<span class="spinner" aria-hidden="true"></span>{% endif %}
+          {{ button.label }}
+        </button>
+      {% endfor %}
+    </div>
+  </article>
+
+  <article class="ui-card">
+    <h2>Badges & Alerts</h2>
+    <div class="ui-kit__grid ui-kit__grid--badges">
+      {% for badge in badge_variants %}
+        <span class="{{ badge.class }}">{{ badge.label }}</span>
+      {% endfor %}
+    </div>
+    <div class="ui-kit__stack">
+      {% for alert in alert_variants %}
+        <div class="{{ alert.class }}">
+          <div class="alert__content">
+            <strong>{{ alert.title }}</strong>
+            <p>{{ alert.body }}</p>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </article>
+
+  <article class="ui-card">
+    <h2>Form fields</h2>
+    <div class="ui-kit__grid ui-kit__grid--forms">
+      {% for field in form_examples %}
+        <label class="ui-field {% if field.state %}ui-field--{{ field.state }}{% endif %}">
+          <span class="ui-field__label">{{ field.label }}</span>
+          <input
+            type="text"
+            class="ui-input"
+            value="{{ field.value }}"
+            {% if field.state == 'disabled' %}disabled{% endif %}
+            {% if field.state == 'error' %}aria-invalid="true"{% endif %}>
+          {% if field.helper %}
+            <span class="ui-field__helper">{{ field.helper }}</span>
+          {% endif %}
+        </label>
+      {% endfor %}
+    </div>
+  </article>
+
+  <article class="ui-card">
+    <h2>Cards & content blocks</h2>
+    <div class="ui-kit__grid ui-kit__grid--cards">
+      <div class="ui-card">
+        <p class="resources-dashboard__eyebrow">Inventory</p>
+        <h3>Resource overview</h3>
+        <p class="resources-dashboard__muted">Use cards for dashboard KPI panels or detail callouts.</p>
+        <div class="ui-kit__metrics">
+          <span class="ui-kit__metric">42 listings</span>
+          <span class="ui-kit__metric">18 pending</span>
+        </div>
+      </div>
+      <div class="ui-card">
+        <h3>Activity feed</h3>
+        <ul class="resources-dashboard__activity">
+          <li class="resources-dashboard__activity-item">
+            <div class="resources-dashboard__activity-icon">
+              <i class="bi bi-calendar-event" aria-hidden="true"></i>
+            </div>
+            <div>
+              <p class="resources-dashboard__activity-title">Studio B booking approved</p>
+              <p class="resources-dashboard__muted">2 minutes ago</p>
+            </div>
+          </li>
+          <li class="resources-dashboard__activity-item">
+            <div class="resources-dashboard__activity-icon">
+              <i class="bi bi-chat-dots" aria-hidden="true"></i>
+            </div>
+            <div>
+              <p class="resources-dashboard__activity-title">New review for Innovation Lab</p>
+              <p class="resources-dashboard__muted">1 hour ago</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </article>
+
+  <article class="ui-card">
+    <h2>Data table</h2>
+    <div class="ui-kit__table-wrap">
+      <table class="ui-table">
+        <thead>
+          <tr>
+            <th scope="col">Resource</th>
+            <th scope="col">Owner</th>
+            <th scope="col">Status</th>
+            <th scope="col">Inventory</th>
+            <th scope="col" class="text-end">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in table_rows %}
+          <tr>
+            <td>{{ row.resource }}</td>
+            <td>{{ row.owner }}</td>
+            <td>
+              <span class="badge badge--ghost">{{ row.status }}</span>
+            </td>
+            <td>{{ row.inventory }}</td>
+            <td class="text-end">
+              <div class="ui-kit__table-actions">
+                <button type="button" class="ui-button ui-button--ghost ui-button--sm">View</button>
+                <button type="button" class="ui-button ui-button--secondary ui-button--sm">Edit</button>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </article>
+</section>
+{% endblock %}

@@ -100,12 +100,12 @@
 
 // Info Alert (Blue)
 .alert--info {
-  background-color: #e3f2fd; // Light blue
-  border-color: #90caf9;
-  color: #0d47a1; // Dark blue
+  background-color: var(--color-accent-info-50); // Light blue
+  border-color: var(--color-accent-info-200);
+  color: var(--color-accent-info-900); // Dark blue
   
   .alert__icon {
-    color: #1976d2; // Medium blue
+    color: var(--color-accent-info-600); // Medium blue
   }
 }
 
@@ -145,8 +145,8 @@
 
 // Primary Alert (Kelley Crimson)
 .alert--primary {
-  background-color: rgba(var(--color-primary), 0.05);
-  border-color: rgba(var(--color-primary), 0.2);
+  background-color: color-mix(in srgb, var(--color-primary) 5%, transparent);
+  border-color: color-mix(in srgb, var(--color-primary) 20%, transparent);
   color: var(--color-primary-dark);
   
   .alert__icon {
@@ -164,7 +164,7 @@
   color: white;
   
   &.alert--info {
-    background-color: #1976d2;
+    background-color: var(--color-accent-info-600);
   }
   
   &.alert--success {
@@ -199,8 +199,8 @@
   border-width: 1px;
   
   &.alert--info {
-    border-color: #1976d2;
-    color: #0d47a1;
+    border-color: var(--color-accent-info-600);
+    color: var(--color-accent-info-900);
   }
   
   &.alert--success {
@@ -258,7 +258,7 @@
   padding-left: $spacing-4;
   
   &.alert--info {
-    border-left-color: #1976d2;
+    border-left-color: var(--color-accent-info-600);
   }
   
   &.alert--success {
@@ -303,7 +303,7 @@
     
     &:focus {
       outline-color: var(--color-error-500);
-      box-shadow: 0 0 0 3px rgba(var(--color-error-500), 0.1);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-error-500) 10%, transparent);
     }
   }
 }

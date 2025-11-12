@@ -32,10 +32,9 @@
 // @use 'themes/dark';
 
 // -----------------------------------------------------------------------------
-// BOOTSTRAP COMPATIBILITY LAYER (REMOVED)
+// BOOTSTRAP COMPATIBILITY
 // -----------------------------------------------------------------------------
-// Bootstrap bridge has been removed - all templates now use enterprise classes
-// @use 'compat/bootstrap-bridge';
+// Legacy bootstrap bridge removed; enterprise classes cover all templates.
 
 // -----------------------------------------------------------------------------
 // COMPONENTS - All Enterprise Components

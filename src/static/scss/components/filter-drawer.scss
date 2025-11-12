@@ -509,10 +509,10 @@
           margin-right: $spacing-1;
         }
         
-        &[data-category="study-room"]::before { color: #3b82f6; }
-        &[data-category="lab"]::before { color: #8b5cf6; }
-        &[data-category="equipment"]::before { color: #f59e0b; }
-        &[data-category="venue"]::before { color: #10b981; }
+        &[data-category="study-room"]::before { color: var(--color-accent-sky-500); }
+        &[data-category="lab"]::before { color: var(--color-accent-indigo-500); }
+        &[data-category="equipment"]::before { color: var(--color-accent-amber-500); }
+        &[data-category="venue"]::before { color: var(--color-accent-emerald-500); }
       }
     }
   }

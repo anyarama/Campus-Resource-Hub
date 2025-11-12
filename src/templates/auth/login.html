@@ -1,54 +1,72 @@
 {% extends "base.html" %}
-{% from "_components.html" import form_field, button, card %}
 
 {% block title %}Login - Campus Resource Hub{% endblock %}
 
 {% block main_content %}
-<div class="auth-container">
-    <div class="auth-card">
-        {% call card(title="Login to Campus Resource Hub") %}
-            <form method="POST" action="{{ url_for('auth.login') }}" novalidate class="form">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                
-                {{ form_field(
-                    type="email",
-                    name="email",
-                    label="Email Address",
-                    value=email or '',
-                    required=true,
-                    autofocus=true,
-                    help_text="Your registered email address"
-                ) }}
-                
-                {{ form_field(
-                    type="password",
-                    name="password",
-                    label="Password",
-                    required=true
-                ) }}
-                
-                <div class="form-group">
-                    <label class="checkbox-label">
-                        <input type="checkbox" name="remember" id="remember" class="checkbox-input">
-                        <span class="checkbox-text">Remember me</span>
-                    </label>
-                </div>
-                
-                {{ button(
-                    text="Login",
-                    type="submit",
-                    variant="primary",
-                    full_width=true
-                ) }}
-            </form>
-            
-            <div class="auth-divider"></div>
-            
-            <p class="auth-footer-text">
-                Don't have an account? 
-                <a href="{{ url_for('auth.register') }}" class="link-primary">Register here</a>
-            </p>
-        {% endcall %}
-    </div>
-</div>
+<section class="auth-page">
+  <div class="auth-page__intro">
+    <p class="auth-page__eyebrow">Welcome back</p>
+    <h1>Access your campus workspace</h1>
+    <p class="auth-page__copy">
+      Sign in to manage bookings, approve requests, and keep every conversation with resource owners in one place.
+    </p>
+    <ul class="auth-page__highlights">
+      <li>Track pending, approved, and completed reservations</li>
+      <li>Chat with owners or admins without leaving the page</li>
+      <li>Switch between student, staff, and admin roles seamlessly</li>
+    </ul>
+  </div>
+
+  <div class="auth-page__panel">
+    <article class="ui-card auth-card">
+      <header class="auth-card__header">
+        <h2>Login to Campus Resource Hub</h2>
+        <p class="auth-card__subhead">Use your registered IU email and password to continue.</p>
+      </header>
+
+      <form method="POST" action="{{ url_for('auth.login') }}" novalidate class="ui-form-group" aria-describedby="login-support-text">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+
+        <div class="ui-field">
+          <label class="ui-field__label" for="email">
+            Email address <span class="ui-field__required" aria-hidden="true">*</span>
+          </label>
+          <input class="ui-input"
+                 type="email"
+                 id="email"
+                 name="email"
+                 value="{{ email or '' }}"
+                 placeholder="you@university.edu"
+                 required
+                 autofocus>
+          <span class="ui-field__help">Enter the email you used during registration.</span>
+        </div>
+
+        <div class="ui-field">
+          <label class="ui-field__label" for="password">
+            Password <span class="ui-field__required" aria-hidden="true">*</span>
+          </label>
+          <input class="ui-input"
+                 type="password"
+                 id="password"
+                 name="password"
+                 required>
+        </div>
+
+        <div class="ui-field ui-field--checkbox">
+          <input class="ui-checkbox" type="checkbox" name="remember" id="remember">
+          <label for="remember">Remember me on this device</label>
+        </div>
+
+        <div class="ui-form-group__actions">
+          <button type="submit" class="ui-button ui-button--primary">Login</button>
+        </div>
+
+        <p class="auth-card__swap" id="login-support-text">
+          Need an account? <a href="{{ url_for('auth.register') }}">Create one instead</a>.
+        </p>
+      </form>
+    </article>
+  </div>
+</section>
 {% endblock %}

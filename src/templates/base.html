@@ -11,189 +11,39 @@
     <meta name="color-scheme" content="light dark">
     <meta name="robots" content="index,follow">
     <link rel="canonical" href="{{ canonical_href }}">
-    
-    <!-- Enterprise CSS (Vite build) -->
-    <link rel="stylesheet" href="{{ vite_asset('enterprise.css') }}">
+    <link rel="stylesheet" href="{{ asset_url('app.css') }}">
 
     {% block meta_tags %}{% endblock %}
-
     {% block extra_css %}{% endblock %}
 </head>
 <body data-theme="light">
-    <!-- Skip Link for Accessibility -->
     <a href="#main" class="skip-link">Skip to main content</a>
-    
-    <div class="{% if current_user.is_authenticated %}app-shell{% else %}guest-layout{% endif %}">
-        {% if current_user.is_authenticated %}
-        <!-- Sidebar (Authenticated Only) - Icon-Only with Hover Tooltips -->
-        <aside class="app-sidebar" role="navigation" aria-label="Primary navigation">
-            <div class="sidebar-header">
-                <a href="{{ url_for('resources.dashboard') }}" class="sidebar-brand" title="Campus Resource Hub">
-                    <span class="brand-icon">🎓</span>
-                    <span class="brand-text">CRH</span>
-                </a>
-            </div>
-            
-            <nav class="sidebar-nav">
-                <a href="{{ url_for('resources.dashboard') }}" 
-                   class="sidebar-link {% if request.endpoint == 'resources.dashboard' %}active{% endif %}"
-                   title="Dashboard"
-                   aria-label="Dashboard">
-                    <i class="bi bi-house-door"></i>
-                    <span>Dashboard</span>
-                </a>
-                <a href="{{ url_for('resources.index') }}" 
-                   class="sidebar-link {% if request.endpoint in ['resources.index', 'resources.detail'] %}active{% endif %}"
-                   title="Browse Resources"
-                   aria-label="Browse Resources">
-                    <i class="bi bi-grid-3x3-gap"></i>
-                    <span>Browse Resources</span>
-                </a>
-                <a href="{{ url_for('resources.my_resources') }}" 
-                   class="sidebar-link {% if request.endpoint == 'resources.my_resources' %}active{% endif %}"
-                   title="My Resources"
-                   aria-label="My Resources">
-                    <i class="bi bi-box-seam"></i>
-                    <span>My Resources</span>
-                </a>
-                <a href="{{ url_for('bookings.my_bookings') }}" 
-                   class="sidebar-link {% if request.endpoint == 'bookings.my_bookings' %}active{% endif %}"
-                   title="My Bookings"
-                   aria-label="My Bookings">
-                    <i class="bi bi-calendar-check"></i>
-                    <span>My Bookings</span>
-                </a>
-                <a href="{{ url_for('messages.inbox') }}" 
-                   class="sidebar-link {% if request.endpoint in ['messages.inbox', 'messages.conversation'] %}active{% endif %}"
-                   title="Messages"
-                   aria-label="Messages">
-                    <i class="bi bi-envelope"></i>
-                    <span>Messages</span>
-                    <span class="badge badge-error" id="msgBadge" style="display: none;">0</span>
-                </a>
-                <a href="{{ url_for('concierge.index') }}" 
-                   class="sidebar-link {% if request.endpoint == 'concierge.index' %}active{% endif %}"
-                   title="AI Concierge"
-                   aria-label="AI Concierge">
-                    <i class="bi bi-robot"></i>
-                    <span>AI Concierge</span>
-                </a>
-                
-                {% if current_user.role == 'admin' %}
-                <div class="sidebar-divider" role="separator"></div>
-                <div class="sidebar-section-title">Administration</div>
-                <a href="{{ url_for('admin.dashboard') }}" 
-                   class="sidebar-link {% if request.endpoint == 'admin.dashboard' %}active{% endif %}"
-                   title="Admin Dashboard"
-                   aria-label="Admin Dashboard">
-                    <i class="bi bi-speedometer2"></i>
-                    <span>Admin Dashboard</span>
-                </a>
-                <a href="{{ url_for('admin.users') }}" 
-                   class="sidebar-link {% if request.endpoint in ['admin.users', 'admin.user_detail'] %}active{% endif %}"
-                   title="Manage Users"
-                   aria-label="Manage Users">
-                    <i class="bi bi-people"></i>
-                    <span>Users</span>
-                </a>
-                <a href="{{ url_for('admin.analytics') }}" 
-                   class="sidebar-link {% if request.endpoint == 'admin.analytics' %}active{% endif %}"
-                   title="Analytics"
-                   aria-label="Analytics">
-                    <i class="bi bi-graph-up"></i>
-                    <span>Analytics</span>
-                </a>
-                {% endif %}
-            </nav>
-            
-            <div class="sidebar-footer">
-                <a href="{{ url_for('auth.profile') }}" 
-                   class="sidebar-user"
-                   data-username="{{ current_user.name }} ({{ current_user.role|title }})"
-                   title="View Profile"
-                   aria-label="View your profile">
-                    <div class="user-avatar">{{ current_user.name[0].upper() }}</div>
-                    <div class="user-info">
-                        <div class="user-name">{{ current_user.name }}</div>
-                        <div class="user-role">{{ current_user.role|title }}</div>
-                    </div>
-                </a>
-            </div>
-        </aside>
-        {% endif %}
-        
-        <!-- Header -->
-        <header class="{% if current_user.is_authenticated %}app-topbar{% else %}guest-header{% endif %}" role="banner">
+{% import 'components/shell.html' as ui_shell %}
+
+    {% if current_user.is_authenticated %}
+        {% set primary_nav = [
+            {'endpoint': 'resources.dashboard', 'icon': 'house-door', 'label': 'Dashboard', 'match': ['resources.dashboard']},
+            {'endpoint': 'resources.index', 'icon': 'grid-3x3-gap', 'label': 'Browse Resources', 'match': ['resources.index', 'resources.detail']},
+            {'endpoint': 'resources.my_resources', 'icon': 'box-seam', 'label': 'My Resources', 'match': ['resources.my_resources']},
+            {'endpoint': 'bookings.my_bookings', 'icon': 'calendar-check', 'label': 'My Bookings', 'match': ['bookings.my_bookings']},
+            {'endpoint': 'messages.inbox', 'icon': 'envelope', 'label': 'Messages', 'match': ['messages.inbox', 'messages.conversation'], 'badge_id': 'msgBadge'},
+            {'endpoint': 'concierge.index', 'icon': 'robot', 'label': 'AI Concierge', 'match': ['concierge.index']}
+        ] %}
+        {% set admin_nav = [
+            {'endpoint': 'admin.dashboard', 'icon': 'speedometer2', 'label': 'Admin Dashboard', 'match': ['admin.dashboard']},
+            {'endpoint': 'admin.users', 'icon': 'people', 'label': 'Users', 'match': ['admin.users', 'admin.user_detail']},
+            {'endpoint': 'admin.analytics', 'icon': 'graph-up', 'label': 'Analytics', 'match': ['admin.analytics']}
+        ] %}
+    {% else %}
+        {% set primary_nav = [] %}
+        {% set admin_nav = [] %}
+    {% endif %}
+
+    {% call ui_shell.render_shell(current_user=current_user, request=request, primary_nav=primary_nav, admin_nav=admin_nav) %}
+        <div class="{% if current_user.is_authenticated %}page-content{% else %}container{% endif %}">
             {% if current_user.is_authenticated %}
-            <button class="topbar-toggle" data-sidebar-toggle aria-label="Toggle sidebar">
-                <i class="bi bi-list"></i>
-            </button>
-            
-            <div class="topbar-search">
-                <!-- Optional: Global search -->
-            </div>
-            
-            <div class="topbar-actions">
-                <button class="topbar-action theme-toggle" 
-                        data-theme-toggle 
-                        aria-label="Toggle dark mode"
-                        title="Toggle theme">
-                    <i class="bi bi-moon-fill theme-icon"></i>
-                </button>
-                
-                <div class="topbar-user-menu">
-                    <button class="topbar-action" 
-                            data-dropdown-toggle="userMenu"
-                            aria-label="User menu"
-                            aria-expanded="false"
-                            aria-haspopup="true"
-                            title="User menu">
-                        <i class="bi bi-person-circle"></i>
-                    </button>
-                    <div class="dropdown-menu" id="userMenu" role="menu">
-                        <a href="{{ url_for('auth.profile') }}" class="dropdown-item" role="menuitem">
-                            <i class="bi bi-person"></i> Profile
-                        </a>
-                        <div class="dropdown-divider" role="separator"></div>
-                        <form method="POST" action="{{ url_for('auth.logout') }}">
-                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                            <button type="submit" class="dropdown-item" role="menuitem">
-                                <i class="bi bi-box-arrow-right"></i> Logout
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-            {% else %}
-            <div class="container">
-                <nav class="guest-nav">
-                    <a href="{{ url_for('auth.login') }}" class="guest-brand">
-                        <span class="brand-icon">🎓</span>
-                        <span class="brand-text">Campus Resource Hub</span>
-                    </a>
-                    <div class="guest-actions">
-                        <button class="topbar-action theme-toggle" 
-                                data-theme-toggle 
-                                aria-label="Toggle dark mode"
-                                title="Toggle theme">
-                            <i class="bi bi-moon-fill theme-icon"></i>
-                        </button>
-                        <a href="{{ url_for('auth.login') }}" class="btn btn-outline">Login</a>
-                        <a href="{{ url_for('auth.register') }}" class="btn btn-primary">Register</a>
-                    </div>
-                </nav>
-            </div>
-            {% endif %}
-        </header>
-        
-        <!-- Main Content Area (SINGLE DECLARATION) -->
-        <main id="main" class="{% if current_user.is_authenticated %}app-main{% else %}guest-main{% endif %}" role="main" tabindex="-1">
-            <div class="{% if current_user.is_authenticated %}page-content{% else %}container{% endif %}">
-                {% if current_user.is_authenticated %}
-                <!-- Breadcrumbs -->
                 {% block breadcrumbs %}{% endblock %}
-                
-                <!-- Page Header -->
+
                 {% block page_header %}
                 <div class="page-header">
                     <h1>{% block page_title %}{% endblock %}</h1>
@@ -202,46 +52,30 @@
                     </div>
                 </div>
                 {% endblock %}
+            {% endif %}
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="flash-message" data-type="{{ 'error' if category == 'error' else category }}" style="display: none;">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
                 {% endif %}
-                
-                <!-- Flash Messages -->
-                {% with messages = get_flashed_messages(with_categories=true) %}
-                    {% if messages %}
-                        {% for category, message in messages %}
-                            <div class="flash-message" data-type="{{ 'error' if category == 'error' else category }}" style="display: none;">
-                                {{ message }}
-                            </div>
-                        {% endfor %}
-                    {% endif %}
-                {% endwith %}
-                
-                <!-- Main Content (SINGLE BLOCK) -->
-                {% block main_content %}
-                  {% block content %}{% endblock %}
-                {% endblock %}
-            </div>
-        </main>
-        
-        {% if current_user.is_authenticated %}
-        {% include "components/booking_drawer.html" %}
-        {% endif %}
+            {% endwith %}
+
+            {% block main_content %}
+              {% block content %}{% endblock %}
+            {% endblock %}
+        </div>
 
         {% if current_user.is_authenticated %}
-        <!-- Mobile Overlay -->
-        <div class="sidebar-overlay"></div>
-        {% else %}
-        <!-- Guest Footer -->
-        <footer class="guest-footer">
-            <div class="container">
-                <p>&copy; 2025 Campus Resource Hub - AiDD Capstone Project</p>
-            </div>
-        </footer>
+            {% include "components/booking_drawer.html" %}
+            <div class="sidebar-overlay"></div>
         {% endif %}
-    </div>
-    
-    <!-- Enterprise JS (Vite build) -->
-    <script defer src="{{ vite_asset('app.js') }}"></script>
+    {% endcall %}
 
+    <script defer src="{{ asset_url('enterprise.js') }}"></script>
     {% block extra_js %}{% endblock %}
 </body>
 </html>

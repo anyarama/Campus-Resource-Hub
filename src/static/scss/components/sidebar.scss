@@ -437,7 +437,7 @@
     
     &.is-active,
     &[aria-current="page"] {
-      background-color: rgba(var(--color-primary), 0.2);
+      background-color: color-mix(in srgb, var(--color-primary) 20%, transparent);
       color: white;
       
       &::before {

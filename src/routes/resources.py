@@ -9,8 +9,10 @@ AI Contribution: Cline generated CRUD route structure
 Reviewed by developer on 2025-11-05
 """
 
+from collections import Counter
 from datetime import datetime, date, time, timedelta
 from typing import Optional
+from sqlalchemy import func
 from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify
 from flask_login import login_required, current_user
 from werkzeug.datastructures import ImmutableMultiDict
@@ -20,6 +22,11 @@ from src.services.resource_service import ResourceService, ResourceServiceError
 from src.repositories.resource_repo import ResourceRepository
 from src.repositories.review_repo import ReviewRepository
 from src.repositories.booking_repo import BookingRepository
+from src.repositories.message_repo import MessageRepository
+from src.app import db
+from src.models.resource import Resource
+from src.models.booking import Booking
+from src.models.review import Review
 
 
 # Create resources blueprint
@@ -130,6 +137,183 @@ def _capture_form_state(form: ImmutableMultiDict) -> dict:
     return state
 
 
+def _format_datetime(dt: datetime) -> str:
+    return dt.strftime("%b %d, %I:%M %p")
+
+
+def _status_badge_class(status: str) -> str:
+    return {
+        "pending": "badge badge-warning text-dark",
+        "approved": "badge badge-success",
+        "completed": "badge badge-primary",
+        "rejected": "badge badge-danger",
+        "cancelled": "badge badge-secondary",
+    }.get(status, "badge badge-ghost")
+
+
+def _activity_icon(status: str) -> str:
+    return {
+        "pending": "clock-history",
+        "approved": "check-circle",
+        "completed": "check-all",
+        "rejected": "slash-circle",
+        "cancelled": "x-circle",
+    }.get(status, "activity")
+
+
+def _build_dashboard_kpis(user_id: int) -> dict[str, object]:
+    my_resources = (
+        db.session.query(func.count(Resource.resource_id))
+        .filter(Resource.owner_id == user_id, Resource.status != "archived")
+        .scalar()
+        or 0
+    )
+    active_bookings = (
+        db.session.query(func.count(Booking.booking_id))
+        .filter(
+            Booking.requester_id == user_id,
+            Booking.status.in_(["pending", "approved"]),
+        )
+        .scalar()
+        or 0
+    )
+    unread_messages = MessageRepository.count_unread(user_id)
+    avg_rating = (
+        db.session.query(func.avg(Review.rating))
+        .join(Resource, Resource.resource_id == Review.resource_id)
+        .filter(Resource.owner_id == user_id, Review.is_hidden.is_(False))
+        .scalar()
+    )
+    avg_rating_value = round(float(avg_rating), 1) if avg_rating else 0.0
+    return {
+        "my_resources": my_resources,
+        "active_bookings": active_bookings,
+        "unread_messages": unread_messages,
+        "avg_rating": avg_rating_value,
+    }
+
+
+def _get_upcoming_bookings(user_id: int, limit: int = 5) -> list[dict[str, object]]:
+    now = datetime.utcnow()
+    bookings = (
+        Booking.query.filter(
+            Booking.requester_id == user_id,
+            Booking.start_datetime >= now,
+            Booking.status.in_(["pending", "approved"]),
+        )
+        .order_by(Booking.start_datetime.asc())
+        .limit(limit)
+        .all()
+    )
+    upcoming: list[dict[str, object]] = []
+    for booking in bookings:
+        resource = booking.resource
+        upcoming.append(
+            {
+                "id": booking.booking_id,
+                "resource": resource.title if resource else "Resource",
+                "status": booking.status,
+                "status_label": booking.status.replace("_", " ").title(),
+                "status_class": _status_badge_class(booking.status),
+                "start": _format_datetime(booking.start_datetime),
+                "end": _format_datetime(booking.end_datetime),
+                "location": resource.location if resource and resource.location else None,
+            }
+        )
+    return upcoming
+
+
+def _get_recent_activity(user_id: int, limit: int = 5) -> list[dict[str, str]]:
+    activities = (
+        Booking.query.filter(Booking.requester_id == user_id)
+        .order_by(Booking.created_at.desc())
+        .limit(limit)
+        .all()
+    )
+    recent: list[dict[str, str]] = []
+    for booking in activities:
+        resource = booking.resource
+        recent.append(
+            {
+                "title": resource.title if resource else "Resource",
+                "status": booking.status.replace("_", " ").title(),
+                "icon": _activity_icon(booking.status),
+                "timestamp": _format_datetime(booking.created_at),
+            }
+        )
+    return recent
+
+
+def _build_booking_timeline_config(user_id: int, days: int = 7) -> dict[str, object]:
+    today = datetime.utcnow().date()
+    start_date = today - timedelta(days=days - 1)
+    bucket_dates = [start_date + timedelta(days=i) for i in range(days)]
+    counts = {day: 0 for day in bucket_dates}
+
+    start_datetime = datetime.combine(start_date, datetime.min.time())
+    user_bookings = Booking.query.filter(
+        Booking.requester_id == user_id, Booking.created_at >= start_datetime
+    ).all()
+    for booking in user_bookings:
+        day = booking.created_at.date()
+        if day in counts:
+            counts[day] += 1
+
+    labels = [day.strftime("%b %d") for day in bucket_dates]
+    data = [counts[day] for day in bucket_dates]
+
+    return {
+        "labels": labels,
+        "datasets": [
+            {
+                "label": "Bookings",
+                "data": data,
+            }
+        ],
+    }
+
+
+def _build_category_mix_config(user_id: int) -> dict[str, object]:
+    resources = Resource.query.filter(
+        Resource.owner_id == user_id, Resource.status != "archived"
+    ).all()
+    counts = Counter((r.category or "Uncategorized").replace("_", " ").title() for r in resources)
+    if not counts:
+        return {
+            "labels": ["No Data"],
+            "datasets": [{"label": "Resources", "data": [0]}],
+        }
+
+    labels = list(counts.keys())
+    data = [counts[label] for label in labels]
+    return {
+        "labels": labels,
+        "datasets": [
+            {
+                "label": "Resources",
+                "data": data,
+            }
+        ],
+    }
+
+
+def _build_dashboard_chart_config(user_id: int) -> dict[str, object]:
+    return {
+        "bookings": _build_booking_timeline_config(user_id),
+        "categories": _build_category_mix_config(user_id),
+    }
+
+
+def _build_dashboard_context(user) -> dict[str, object]:
+    user_id = user.user_id
+    return {
+        "kpis": _build_dashboard_kpis(user_id),
+        "upcoming": _get_upcoming_bookings(user_id),
+        "activity": _get_recent_activity(user_id),
+        "chart_config": _build_dashboard_chart_config(user_id),
+    }
+
+
 @resources_bp.route("/dashboard")
 @login_required
 def dashboard():
@@ -138,7 +322,14 @@ def dashboard():
 
     Requires authentication. Accessible by all authenticated users.
     """
-    return render_template("resources/dashboard.html", user=current_user)
+    dashboard_context = _build_dashboard_context(current_user)
+    return render_template(
+        "resources/dashboard.html",
+        dashboard_kpis=dashboard_context["kpis"],
+        upcoming_bookings=dashboard_context["upcoming"],
+        recent_activity=dashboard_context["activity"],
+        dashboard_chart_config=dashboard_context["chart_config"],
+    )
 
 
 @resources_bp.route("/admin/ping")

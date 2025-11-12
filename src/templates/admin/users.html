@@ -2,171 +2,176 @@
 {% block title %}User Management{% endblock %}
 
 {% block main_content %}
-<section class="admin-page__header">
-  <div>
-    <p class="eyebrow">Administration</p>
-    <h1>User Management</h1>
-    <p>Search, filter, and take action on platform accounts.</p>
-  </div>
-  <a href="{{ url_for('admin.dashboard') }}" class="btn btn--ghost">
-    <i data-lucide="arrow-left" class="icon icon-sm"></i>
-    <span>Back to dashboard</span>
-  </a>
-</section>
-
-<form method="get" class="user-filter" aria-label="Filter users">
-  <label>
-    <span>Search</span>
-    <input type="search" name="search" value="{{ search_term }}" placeholder="Name or email" autocomplete="off" class="form-control">
-  </label>
-  <label>
-    <span>Role</span>
-    <select name="role" class="form-control">
-      <option value="">All roles</option>
-      <option value="admin" {% if role_filter == 'admin' %}selected{% endif %}>Admin</option>
-      <option value="staff" {% if role_filter == 'staff' %}selected{% endif %}>Staff</option>
-      <option value="student" {% if role_filter == 'student' %}selected{% endif %}>Student</option>
-    </select>
-  </label>
-  <label>
-    <span>Status</span>
-    <select name="status" class="form-control">
-      <option value="">All statuses</option>
-      <option value="active" {% if status_filter == 'active' %}selected{% endif %}>Active</option>
-      <option value="suspended" {% if status_filter == 'suspended' %}selected{% endif %}>Suspended</option>
-    </select>
-  </label>
-  <button type="submit" class="btn btn--primary">
-    <i data-lucide="search" class="icon icon-sm"></i>
-    <span>Apply</span>
-  </button>
-</form>
-
-<section class="user-metrics">
-  <article>
-    <p class="user-metrics__label">Total users</p>
-    <p class="user-metrics__value">{{ total_users }}</p>
-  </article>
-  <article>
-    <p class="user-metrics__label">Active</p>
-    <p class="user-metrics__value text-success">{{ active_count }}</p>
-  </article>
-  <article>
-    <p class="user-metrics__label">Suspended</p>
-    <p class="user-metrics__value text-warning">{{ suspended_count }}</p>
-  </article>
-</section>
-
-<section class="card">
-  <header class="card__header">
+<section class="admin-users">
+  <header class="admin-users__hero ui-card">
     <div>
-      <h2>Users</h2>
-      <p class="text-muted">Use the checkboxes to perform bulk actions.</p>
+      <p class="admin-users__eyebrow">Administration</p>
+      <h1>User Management</h1>
+      <p class="admin-users__muted">Search, filter, and take action on platform accounts.</p>
     </div>
+    <a href="{{ url_for('admin.dashboard') }}" class="ui-button ui-button--ghost">
+      <i data-lucide="arrow-left" class="icon icon-sm"></i>
+      Back to dashboard
+    </a>
   </header>
-  {% if users %}
-  <form method="POST" action="{{ url_for('admin.bulk_update_users') }}" data-bulk-form>
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-    <input type="hidden" name="action" value="" data-bulk-action-input>
-    <div class="bulk-toolbar">
-      <span data-bulk-count>0 selected</span>
-      <div class="bulk-toolbar__actions">
-        <button type="submit" class="btn btn--ghost btn--primary" data-bulk-action value="activate" disabled>
-          <i data-lucide="play" class="icon icon-sm"></i>
-          <span>Activate</span>
-        </button>
-        <button type="submit" class="btn btn--warning btn--primary" data-bulk-action value="suspend" disabled>
-          <i data-lucide="pause" class="icon icon-sm"></i>
-          <span>Suspend</span>
-        </button>
-      </div>
+
+  <form method="get" class="admin-users__filters ui-card" aria-label="Filter users">
+    <div class="ui-field">
+      <label class="ui-field__label" for="search">Search</label>
+      <input type="search" id="search" name="search" value="{{ search_term }}" placeholder="Name or email" autocomplete="off" class="ui-input">
     </div>
-    <div class="table-scroll table-scroll--sticky" role="region">
-      <table class="table table--sticky table--interactive" role="table">
-        <thead>
-          <tr>
-            <th scope="col">
-              <label class="checkbox">
-                <input type="checkbox" data-bulk-master aria-label="Select all users">
-                <span></span>
-              </label>
-            </th>
-            <th scope="col">User</th>
-            <th scope="col">Role</th>
-            <th scope="col">Department</th>
-            <th scope="col">Status</th>
-            <th scope="col">Joined</th>
-            <th scope="col" class="text-end">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for user in users %}
-          <tr tabindex="0">
-            <td data-label="Select">
-              <label class="checkbox">
-                <input type="checkbox" name="user_ids" value="{{ user.user_id }}" data-bulk-checkbox aria-label="Select {{ user.name }}">
-                <span></span>
-              </label>
-            </td>
-            <td data-label="User">
-              <strong>{{ user.name }}</strong>
-              <p class="text-muted">{{ user.email }}</p>
-            </td>
-            <td data-label="Role">
-              {% if user.role == 'admin' %}
-                <span class="chip chip--error">Admin</span>
-              {% elif user.role == 'staff' %}
-                <span class="chip chip--info">Staff</span>
-              {% else %}
-                <span class="chip chip--success">Student</span>
-              {% endif %}
-            </td>
-            <td data-label="Department">{{ user.department or '—' }}</td>
-            <td data-label="Status">
-              {% if user.is_active %}
-                <span class="badge badge--success">Active</span>
-              {% else %}
-                <span class="badge badge--warning">Suspended</span>
-              {% endif %}
-            </td>
-            <td data-label="Joined">{{ user.created_at.strftime('%b %d, %Y') }}</td>
-            <td class="text-end">
-              <div class="btn-group">
-                <a href="{{ url_for('admin.user_detail', user_id=user.user_id) }}" class="btn btn--ghost btn--sm" title="View details">
-                  <i data-lucide="eye" class="icon icon-sm"></i>
-                </a>
-                {% if user.role != 'admin' and user.user_id != current_user.user_id %}
-                  {% if user.is_active %}
-                    <form method="POST" action="{{ url_for('admin.suspend_user', user_id=user.user_id) }}" class="inline-form">
-                      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                      <button class="btn btn--warning btn--sm btn--primary" title="Suspend user" onclick="return confirm('Suspend {{ user.name }}?');">
-                        <i data-lucide="pause" class="icon icon-sm"></i>
-                      </button>
-                    </form>
-                  {% else %}
-                    <form method="POST" action="{{ url_for('admin.activate_user', user_id=user.user_id) }}" class="inline-form">
-                      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                      <button class="btn btn--success btn--sm btn--primary" title="Activate user">
-                        <i data-lucide="play" class="icon icon-sm"></i>
-                      </button>
-                    </form>
-                  {% endif %}
-                {% endif %}
-              </div>
-            </td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+    <div class="ui-field">
+      <label class="ui-field__label" for="role">Role</label>
+      <select name="role" id="role" class="ui-select">
+        <option value="">All roles</option>
+        <option value="admin" {% if role_filter == 'admin' %}selected{% endif %}>Admin</option>
+        <option value="staff" {% if role_filter == 'staff' %}selected{% endif %}>Staff</option>
+        <option value="student" {% if role_filter == 'student' %}selected{% endif %}>Student</option>
+      </select>
+    </div>
+    <div class="ui-field">
+      <label class="ui-field__label" for="status">Status</label>
+      <select name="status" id="status" class="ui-select">
+        <option value="">All statuses</option>
+        <option value="active" {% if status_filter == 'active' %}selected{% endif %}>Active</option>
+        <option value="suspended" {% if status_filter == 'suspended' %}selected{% endif %}>Suspended</option>
+      </select>
+    </div>
+    <div class="admin-users__filters-actions">
+      <button type="submit" class="ui-button ui-button--primary">
+        <i data-lucide="search" class="icon icon-sm"></i>
+        Apply
+      </button>
     </div>
   </form>
-  {% else %}
-    <div class="empty-state empty-state--inline">
-      <i data-lucide="users" class="icon icon-sm"></i>
-      <h3>No users match the filters</h3>
-      <p>Try adjusting the search or filters above.</p>
+
+  <div class="admin-users__metrics">
+    <article class="ui-card">
+      <p class="admin-users__metric-label">Total users</p>
+      <p class="admin-users__metric-value">{{ total_users }}</p>
+    </article>
+    <article class="ui-card">
+      <p class="admin-users__metric-label">Active</p>
+      <p class="admin-users__metric-value admin-users__metric-value--success">{{ active_count }}</p>
+    </article>
+    <article class="ui-card">
+      <p class="admin-users__metric-label">Suspended</p>
+      <p class="admin-users__metric-value admin-users__metric-value--warning">{{ suspended_count }}</p>
+    </article>
+  </div>
+
+  <section class="ui-card admin-users__table-card">
+    <div class="resources-dashboard__panel-header">
+      <div>
+        <p class="admin-users__eyebrow">Directory</p>
+        <h2>Users</h2>
+        <p class="admin-users__muted">Use the checkboxes to perform bulk actions.</p>
+      </div>
     </div>
-  {% endif %}
+    {% if users %}
+    <form method="POST" action="{{ url_for('admin.bulk_update_users') }}" data-bulk-form>
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <input type="hidden" name="action" value="" data-bulk-action-input>
+      <div class="admin-users__bulk">
+        <span data-bulk-count>0 selected</span>
+        <div class="admin-users__bulk-actions">
+          <button type="submit" class="ui-button ui-button--ghost" data-bulk-action value="activate" disabled>
+            <i data-lucide="play" class="icon icon-sm"></i>
+            Activate
+          </button>
+          <button type="submit" class="ui-button ui-button--secondary" data-bulk-action value="suspend" disabled>
+            <i data-lucide="pause" class="icon icon-sm"></i>
+            Suspend
+          </button>
+        </div>
+      </div>
+      <div class="admin-users__table-wrap">
+        <table class="ui-table" role="table">
+          <thead>
+            <tr>
+              <th scope="col">
+                <label class="checkbox">
+                  <input type="checkbox" data-bulk-master aria-label="Select all users">
+                  <span></span>
+                </label>
+              </th>
+              <th scope="col">User</th>
+              <th scope="col">Role</th>
+              <th scope="col">Department</th>
+              <th scope="col">Status</th>
+              <th scope="col">Joined</th>
+              <th scope="col" class="text-end">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for user in users %}
+            <tr>
+              <td data-label="Select">
+                <label class="checkbox">
+                  <input type="checkbox" name="user_ids" value="{{ user.user_id }}" data-bulk-checkbox aria-label="Select {{ user.name }}">
+                  <span></span>
+                </label>
+              </td>
+              <td data-label="User">
+                <strong>{{ user.name }}</strong>
+                <p class="admin-users__muted">{{ user.email }}</p>
+              </td>
+              <td data-label="Role">
+                {% if user.role == 'admin' %}
+                  <span class="chip chip--error">Admin</span>
+                {% elif user.role == 'staff' %}
+                  <span class="chip chip--info">Staff</span>
+                {% else %}
+                  <span class="chip chip--success">Student</span>
+                {% endif %}
+              </td>
+              <td data-label="Department">{{ user.department or '—' }}</td>
+              <td data-label="Status">
+                {% if user.is_active %}
+                  <span class="badge badge--success">Active</span>
+                {% else %}
+                  <span class="badge badge--warning">Suspended</span>
+                {% endif %}
+              </td>
+              <td data-label="Joined">{{ user.created_at.strftime('%b %d, %Y') }}</td>
+              <td class="text-end">
+                <div class="admin-users__row-actions">
+                  <a href="{{ url_for('admin.user_detail', user_id=user.user_id) }}" class="ui-button ui-button--ghost ui-button--sm" title="View details">
+                    <i data-lucide="eye" class="icon icon-sm"></i>
+                  </a>
+                  {% if user.role != 'admin' and user.user_id != current_user.user_id %}
+                    {% if user.is_active %}
+                      <form method="POST" action="{{ url_for('admin.suspend_user', user_id=user.user_id) }}" class="inline-form">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button class="ui-button ui-button--secondary ui-button--sm" title="Suspend user" onclick="return confirm('Suspend {{ user.name }}?');">
+                          <i data-lucide="pause" class="icon icon-sm"></i>
+                        </button>
+                      </form>
+                    {% else %}
+                      <form method="POST" action="{{ url_for('admin.activate_user', user_id=user.user_id) }}" class="inline-form">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button class="ui-button ui-button--primary ui-button--sm" title="Activate user">
+                          <i data-lucide="play" class="icon icon-sm"></i>
+                        </button>
+                      </form>
+                    {% endif %}
+                  {% endif %}
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </form>
+    {% else %}
+      <div class="resources-dashboard__empty" role="status">
+        <i data-lucide="users" class="icon icon-sm"></i>
+        <h3>No users match the filters</h3>
+        <p class="admin-users__muted">Try adjusting the search or filters above.</p>
+      </div>
+    {% endif %}
+  </section>
 </section>
 {% endblock %}
 

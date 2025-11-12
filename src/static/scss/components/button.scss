@@ -151,7 +151,7 @@
   }
   
   &:active:not(:disabled) {
-    background-color: #b91c1c;
+    background-color: var(--color-error-700);
     transform: translateY(1px);
   }
 }

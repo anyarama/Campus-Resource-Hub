@@ -1,101 +1,118 @@
 {% extends "base.html" %}
-{% block title %}Book {{ resource.title }}- Campus Resource Hub{% endblock %}{% block content %}<div class="grid">
-  <div class="layout-col mx-auto" data-col-lg="8">
-    <!-- Resource Info Card -->
+
+{% block title %}Book {{ resource.title }} - Campus Resource Hub{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <p class="eyebrow">Bookings</p>
+    <h1>Request {{ resource.title }}</h1>
+    <p class="text-dim">Fill out the form and we will check for conflicts before confirming.</p>
+  </div>
+</div>
+
+<div class="layout-grid gap-lg">
+  <div class="layout-col" data-col-lg="7">
     <div class="card">
       <div class="card-body">
-        <h4 class="card-title"></h4></div></div></div></div>{{ resource.title }}<p class="text-dim">
-          <i class="bi bi-geo-alt icon"></i> </p>{{ resource.location }}{% if resource.capacity %}| <i class="bi bi-people icon"></i> Capacity: {{ resource.capacity }}{% endif %}{% if resource.description %}<p class="card-text"></p>{{ resource.description[:200] }}...<p></p>
-        {% endif %}<div class="card">
-      <div class="card-header">
-        <h5 class="space-b-0">Create Booking</h5>
-      </div>
-      <div class="card-body">
-        </div></div>{{ url_for('bookings.create') }}">
-          {{ csrf_token() }}">
-          {{ resource.resource_id }}">
+        <div class="space-b-3">
+          <h2 class="space-b-1">Resource summary</h2>
+          <p class="text-dim">
+            <i class="bi bi-geo-alt icon"></i> {{ resource.location }}
+            {% if resource.capacity %}
+              <span class="space-x-2">|</span>
+              <i class="bi bi-people icon"></i> Capacity: {{ resource.capacity }}
+            {% endif %}
+          </p>
+          {% if resource.description %}
+            <p>{{ resource.description[:240] }}{% if resource.description|length > 240 %}...{% endif %}</p>
+          {% endif %}
+        </div>
 
-           Start Date/Time 
-          <div class="layout-grid">
-            <div class="layout-col" data-col="12">
-              <label class="form-label" for="start_date">Start Date</label>
-              </div></div>{{ today }}"
-              >
-            
-            <div class="layout-col" data-col="12">
-              <label class="form-label" for="start_time">Start Time</label>
-              <input class="form-control" id="start_time" name="start_time" required="" type="time"/>
+        <form method="POST" action="{{ url_for('bookings.create') }}" class="stack-lg">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <input type="hidden" name="resource_id" value="{{ resource.resource_id }}">
+
+          <div class="layout-grid gap-sm">
+            <div class="layout-col" data-col="6">
+              <label class="form-label" for="start_date">Start date</label>
+              <input type="date" id="start_date" name="start_date" class="form-control" required value="{{ request.form.get('start_date', '') }}">
             </div>
-          
-
-           End Date/Time 
-          <div class="layout-grid">
-            <div class="layout-col" data-col="12">
-              <label class="form-label" for="end_date">End Date</label>
-              </div></div>{{ today }}"
-              >
-            
-            <div class="layout-col" data-col="12">
-              <label class="form-label" for="end_time">End Time</label>
-              <input class="form-control" id="end_time" name="end_time" required="" type="time"/>
+            <div class="layout-col" data-col="6">
+              <label class="form-label" for="start_time">Start time</label>
+              <input type="time" id="start_time" name="start_time" class="form-control" required value="{{ request.form.get('start_time', '') }}">
             </div>
-          
-
-           Notes (Optional) 
-          <div class="space-b-3">
-            <label class="form-label" for="notes">Notes (Optional)</label>
-            <textarea class="form-control" id="notes" name="notes" placeholder="Any special requests or notes about your booking..." rows="3"></textarea>
-            <div class="form-text">Optional: Add any special requirements or notes</div>
           </div>
 
-           Info Alert 
+          <div class="layout-grid gap-sm">
+            <div class="layout-col" data-col="6">
+              <label class="form-label" for="end_date">End date</label>
+              <input type="date" id="end_date" name="end_date" class="form-control" required value="{{ request.form.get('end_date', '') }}">
+            </div>
+            <div class="layout-col" data-col="6">
+              <label class="form-label" for="end_time">End time</label>
+              <input type="time" id="end_time" name="end_time" class="form-control" required value="{{ request.form.get('end_time', '') }}">
+            </div>
+          </div>
+
+          <div class="space-b-3">
+            <label class="form-label" for="notes">Notes (optional)</label>
+            <textarea id="notes" name="notes" class="form-control" rows="3" placeholder="Any special requirements or context?">{{ request.form.get('notes', '') }}</textarea>
+            <div class="form-text">Share anything the resource owner should know.</div>
+          </div>
+
           <div class="alert alert-info">
             <i class="bi bi-info-circle icon"></i>
-            <strong>Note:</strong> Your booking will be confirmed immediately if the time slot is available.
-            We'll check for conflicts before confirming.
+            <strong>Heads up:</strong> requests must be in the future and end after they start. We'll flag conflicts automatically.
           </div>
 
-           Action Buttons 
-          <div class="flex">
-            </div>{{ url_for('resources.detail', resource_id=resource.resource_id) }}" 
-              class="btn btn-secondary">
+          <div class="flex gap-sm wrap">
+            <a href="{{ url_for('resources.detail', resource_id=resource.resource_id) }}" class="btn btn-secondary">
               <i class="bi bi-arrow-left icon"></i> Cancel
-            
-            <button class="btn btn-primary btn--primary" type="submit">
-              <i class="bi bi-calendar-check icon"></i> Request Booking
+            </a>
+            <button type="submit" class="btn btn-primary btn--primary">
+              <i class="bi bi-calendar-check icon"></i> Submit request
             </button>
-          
-        
-      
-    
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
 
-     Booking Tips 
+  <div class="layout-col" data-col-lg="5">
     <div class="card">
       <div class="card-body">
-        <h6 class="card-title">Booking Tips</h6>
+        <h3 class="space-b-2"><i class="bi bi-lightbulb icon"></i> Booking tips</h3>
         <ul class="space-b-0">
-          <li>Check resource availability before booking</li>
-          <li>Booking end time must be after start time</li>
-          <li>Cannot book resources in the past</li>
-          <li>You'll be notified if there are conflicts</li>
+          <li>Double-check availability before submitting.</li>
+          <li>Use clear, specific notes so owners can approve faster.</li>
+          <li>You will receive an email when the status changes.</li>
+          <li>Need edits later? Visit your booking in the dashboard.</li>
         </ul>
       </div>
     </div>
-  
+  </div>
+</div>
+{% endblock %}
 
-
+{% block extra_js %}
 <script>
-// Auto-set end date same as start date when start date changes
-document.getElementById('start_date').addEventListener('change', function() {
-  const endDate = document.getElementById('end_date');
-  if (!endDate.value) {
-    endDate.value = this.value;
-  }
-});
+  (function () {
+    const startDate = document.getElementById('start_date');
+    const endDate = document.getElementById('end_date');
+    if (!startDate || !endDate) return;
+    const today = new Date().toISOString().split('T')[0];
+    if (!startDate.value) startDate.value = today;
+    if (!endDate.value) endDate.value = today;
 
-// Set minimum date to today
-const today = new Date().toISOString().split('T')[0];
-document.getElementById('start_date').value = today;
-document.getElementById('end_date').value = today;
+    startDate.addEventListener('change', () => {
+      if (!endDate.value) {
+        endDate.value = startDate.value;
+      }
+      endDate.min = startDate.value;
+    });
+
+    endDate.min = startDate.value || today;
+  })();
 </script>
 {% endblock %}

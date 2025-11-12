@@ -1,0 +1,1 @@
+import{C as t,r as n}from"./auto-DaF2z4gh.js";t.register(...n);typeof window<"u"&&window.addEventListener("theme-changed",()=>{const e=new CustomEvent("charts-theme-changed");window.dispatchEvent(e)});

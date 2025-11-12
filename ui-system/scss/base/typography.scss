@@ -1,0 +1,121 @@
+/*
+ * Base typography primitives mapped to tokens
+ */
+body {
+  font-family: var(--font-family-sans);
+  font-size: var(--font-size-body);
+  line-height: var(--font-lineheight-body);
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text-primary);
+  background-color: var(--color-surface-canvas);
+}
+
+p,
+.text-body {
+  font-size: var(--font-size-body);
+  line-height: var(--font-lineheight-body);
+  font-weight: var(--font-weight-regular);
+  letter-spacing: var(--font-letterspacing-normal);
+}
+
+.text-body-strong {
+  font-size: var(--font-size-body-strong);
+  line-height: var(--font-lineheight-body-strong);
+  font-weight: var(--font-weight-semibold);
+}
+
+h1,
+.text-display {
+  font-size: var(--font-size-display);
+  line-height: var(--font-lineheight-display);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--font-letterspacing-display);
+  color: var(--color-text-primary);
+}
+
+h2,
+.text-h1 {
+  font-size: var(--font-size-h1);
+  line-height: var(--font-lineheight-h1);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--font-letterspacing-h1);
+}
+
+h3,
+.text-h2 {
+  font-size: var(--font-size-h2);
+  line-height: var(--font-lineheight-h2);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--font-letterspacing-h2);
+}
+
+h4,
+.text-h3 {
+  font-size: var(--font-size-h3);
+  line-height: var(--font-lineheight-h3);
+  font-weight: var(--font-weight-semibold);
+}
+
+h5,
+.text-h4 {
+  font-size: var(--font-size-h4);
+  line-height: var(--font-lineheight-h4);
+  font-weight: var(--font-weight-semibold);
+}
+
+label,
+.text-label {
+  font-size: var(--font-size-label);
+  line-height: var(--font-lineheight-label);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+small,
+.text-caption {
+  font-size: var(--font-size-caption);
+  line-height: var(--font-lineheight-caption);
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text-secondary);
+}
+
+.text-caption-strong {
+  font-size: var(--font-size-caption-strong);
+  line-height: var(--font-lineheight-caption-strong);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.text-micro {
+  font-size: var(--font-size-micro);
+  line-height: var(--font-lineheight-micro);
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text-secondary);
+}
+
+.text-micro-strong {
+  font-size: var(--font-size-micro);
+  line-height: var(--font-lineheight-micro);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+a {
+  color: var(--color-info-600);
+  text-decoration-color: var(--color-info-600);
+  transition: color var(--motion-duration-fast) var(--motion-ease-standard);
+}
+
+a:hover,
+a:focus-visible {
+  color: var(--color-brand-crimson-600);
+  text-decoration-thickness: 2px;
+}
+
+strong {
+  font-weight: var(--font-weight-semibold);
+}
+
+em {
+  font-style: italic;
+}

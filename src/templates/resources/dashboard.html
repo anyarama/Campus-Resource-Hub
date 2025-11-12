@@ -3,286 +3,188 @@
 {% block title %}Dashboard - Campus Resource Hub{% endblock %}
 
 {% block main_content %}
-<div class="page-container" style="padding: 2rem;">
-    <!-- Welcome Header -->
-    <div class="page-header" style="margin-bottom: 2.5rem;">
-        <h1 class="page-title">Welcome, {{ current_user.name }}!</h1>
-        <p class="page-subtitle">Manage your resources, bookings, and messages all in one place.</p>
-    </div>
+<section class="resources-dashboard">
+  <header class="resources-dashboard__hero">
+    <p class="resources-dashboard__eyebrow">Overview</p>
+    <h1>Welcome, {{ current_user.name }}!</h1>
+    <p>Track bookings, monitor resource health, and spot trends before the semester gets busy.</p>
+  </header>
 
-    <!-- KPI Tiles Row -->
-    <div class="grid-row" style="margin-bottom: 2.5rem; gap: 1.5rem;">
-        <div class="grid-col-3">
-            <div class="card" style="padding: 1.5rem; text-align: center;">
-                <div class="kpi-icon" style="font-size: 2.5rem; color: var(--color-crimson); margin-bottom: 0.75rem;">
-                    <i data-lucide="package" style="width: 48px; height: 48px;" class="icon icon-sm"></i>
-                </div>
-                <div class="kpi-value" id="kpi-my-resources" style="font-size: 2rem; font-weight: 700; color: var(--color-charcoal); margin-bottom: 0.25rem;">0</div>
-                <div class="kpi-label" style="font-size: 0.875rem; color: var(--color-slate); font-weight: 500; margin-bottom: 0.5rem;">My Resources</div>
-                <div class="kpi-change" id="kpi-my-resources-change" style="font-size: 0.75rem; color: var(--color-success);"></div>
-            </div>
+  <div class="resources-dashboard__kpis">
+    <article class="ui-card resources-dashboard__kpi">
+      <div class="resources-dashboard__kpi-icon resources-dashboard__kpi-icon--primary">
+        <i data-lucide="package"></i>
+      </div>
+      <div>
+        <p class="resources-dashboard__kpi-value">{{ dashboard_kpis.my_resources }}</p>
+        <p class="resources-dashboard__kpi-label">My resources</p>
+      </div>
+    </article>
+
+    <article class="ui-card resources-dashboard__kpi">
+      <div class="resources-dashboard__kpi-icon resources-dashboard__kpi-icon--success">
+        <i data-lucide="calendar-check"></i>
+      </div>
+      <div>
+        <p class="resources-dashboard__kpi-value">{{ dashboard_kpis.active_bookings }}</p>
+        <p class="resources-dashboard__kpi-label">Active bookings</p>
+      </div>
+    </article>
+
+    <article class="ui-card resources-dashboard__kpi">
+      <div class="resources-dashboard__kpi-icon resources-dashboard__kpi-icon--info">
+        <i data-lucide="message-circle"></i>
+      </div>
+      <div>
+        <p class="resources-dashboard__kpi-value">{{ dashboard_kpis.unread_messages }}</p>
+        <p class="resources-dashboard__kpi-label">Unread messages</p>
+      </div>
+    </article>
+
+    <article class="ui-card resources-dashboard__kpi">
+      <div class="resources-dashboard__kpi-icon resources-dashboard__kpi-icon--warning">
+        <i data-lucide="star"></i>
+      </div>
+      <div>
+        <p class="resources-dashboard__kpi-value">{{ "%.1f"|format(dashboard_kpis.avg_rating) }}</p>
+        <p class="resources-dashboard__kpi-label">Average rating</p>
+      </div>
+    </article>
+  </div>
+
+  <div class="resources-dashboard__charts">
+    <article class="ui-card resources-dashboard__chart">
+      <div class="resources-dashboard__panel-header">
+        <div>
+          <p class="resources-dashboard__eyebrow">Bookings</p>
+          <h2>Bookings over time</h2>
+          <p class="resources-dashboard__muted">Rolling 7-day view</p>
         </div>
-        
-        <div class="grid-col-3">
-            <div class="card" style="padding: 1.5rem; text-align: center;">
-                <div class="kpi-icon" style="font-size: 2.5rem; color: var(--color-success); margin-bottom: 0.75rem;">
-                    <i data-lucide="calendar-check" style="width: 48px; height: 48px;" class="icon icon-sm"></i>
-                </div>
-                <div class="kpi-value" id="kpi-active-bookings" style="font-size: 2rem; font-weight: 700; color: var(--color-charcoal); margin-bottom: 0.25rem;">0</div>
-                <div class="kpi-label" style="font-size: 0.875rem; color: var(--color-slate); font-weight: 500; margin-bottom: 0.5rem;">Active Bookings</div>
-                <div class="kpi-change" id="kpi-active-bookings-change" style="font-size: 0.75rem; color: var(--color-success);"></div>
-            </div>
+      </div>
+      {% if dashboard_chart_config.bookings %}
+        <div class="resources-dashboard__canvas-wrap">
+          <canvas id="chart-bookings" aria-label="Bookings over time" role="img"></canvas>
         </div>
-        
-        <div class="grid-col-3">
-            <div class="card" style="padding: 1.5rem; text-align: center;">
-                <div class="kpi-icon" style="font-size: 2.5rem; color: var(--color-info); margin-bottom: 0.75rem;">
-                    <i data-lucide="message-circle" style="width: 48px; height: 48px;" class="icon icon-sm"></i>
-                </div>
-                <div class="kpi-value" id="kpi-unread-messages" style="font-size: 2rem; font-weight: 700; color: var(--color-charcoal); margin-bottom: 0.25rem;">0</div>
-                <div class="kpi-label" style="font-size: 0.875rem; color: var(--color-slate); font-weight: 500; margin-bottom: 0.5rem;">Unread Messages</div>
-                <div class="kpi-change" id="kpi-unread-messages-change" style="font-size: 0.75rem; color: var(--color-success);"></div>
-            </div>
+      {% else %}
+        <div class="resources-dashboard__empty" role="status">
+          <i class="bi bi-activity"></i>
+          <p>Not enough booking data yet.</p>
         </div>
-        
-        <div class="grid-col-3">
-            <div class="card" style="padding: 1.5rem; text-align: center;">
-                <div class="kpi-icon" style="font-size: 2.5rem; color: var(--color-warning); margin-bottom: 0.75rem;">
-                    <i data-lucide="star" style="width: 48px; height: 48px;" class="icon icon-sm"></i>
-                </div>
-                <div class="kpi-value" id="kpi-avg-rating" style="font-size: 2rem; font-weight: 700; color: var(--color-charcoal); margin-bottom: 0.25rem;">0.0</div>
-                <div class="kpi-label" style="font-size: 0.875rem; color: var(--color-slate); font-weight: 500; margin-bottom: 0.5rem;">Average Rating</div>
-                <div class="kpi-change" id="kpi-avg-rating-change" style="font-size: 0.75rem; color: var(--color-success);"></div>
-            </div>
+      {% endif %}
+    </article>
+
+    <article class="ui-card resources-dashboard__chart">
+      <div class="resources-dashboard__panel-header">
+        <div>
+          <p class="resources-dashboard__eyebrow">Inventory</p>
+          <h2>Resource mix</h2>
+          <p class="resources-dashboard__muted">Breakdown by category</p>
         </div>
-    </div>
-
-    <!-- Charts Row -->
-    <div class="grid-row" style="margin-bottom: 2.5rem; gap: 1.5rem;">
-        <!-- Bookings Timeline Chart -->
-        <div class="grid-col-8">
-            <div class="card" style="padding: 1.5rem;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                    <h3 style="font-size: 1.125rem; font-weight: 600; color: var(--color-charcoal); margin: 0;">Bookings Over Time</h3>
-                    <div class="button-group" style="display: flex; gap: 0.5rem;">
-                        <button class="btn btn-sm btn-secondary btn--primary" data-period="week">Week</button>
-                        <button class="btn btn-sm btn-secondary active btn--primary" data-period="month">Month</button>
-                        <button class="btn btn-sm btn-secondary btn--primary" data-period="year">Year</button>
-                    </div>
-                </div>
-                <div style="position: relative; height: 300px;">
-                    <canvas id="bookings-timeline-chart"></canvas>
-                </div>
-            </div>
+      </div>
+      {% if dashboard_chart_config.categories %}
+        <div class="resources-dashboard__canvas-wrap">
+          <canvas id="chart-categories" aria-label="Resource category mix" role="img"></canvas>
         </div>
-        
-        <!-- Category Mix Chart -->
-        <div class="grid-col-4">
-            <div class="card" style="padding: 1.5rem;">
-                <h3 style="font-size: 1.125rem; font-weight: 600; color: var(--color-charcoal); margin: 0 0 1.5rem 0;">Category Breakdown</h3>
-                <div style="position: relative; height: 300px;">
-                    <canvas id="category-mix-chart"></canvas>
-                </div>
-            </div>
+      {% else %}
+        <div class="resources-dashboard__empty" role="status">
+          <i class="bi bi-pie-chart"></i>
+          <p>Add published listings to unlock category insights.</p>
         </div>
-    </div>
+      {% endif %}
+    </article>
+  </div>
 
-    <!-- Secondary Content Row -->
-    <div class="grid-row" style="gap: 1.5rem;">
-        <!-- Upcoming Bookings -->
-        <div class="grid-col-6">
-            <div class="card" style="padding: 1.5rem;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                    <h3 style="font-size: 1.125rem; font-weight: 600; color: var(--color-charcoal); margin: 0;">Upcoming Bookings</h3>
-                    <a href="{{ url_for('bookings.my_bookings') }}" class="btn btn-sm btn-ghost" style="display: flex; align-items: center; gap: 0.25rem;">
-                        View All
-                        <i data-lucide="arrow-right" style="width: 16px; height: 16px;" class="icon icon-sm"></i>
-                    </a>
-                </div>
-                <div id="upcoming-bookings-container">
-                    <!-- Loading skeleton -->
-                    <div class="skeleton-loader" style="height: 60px; margin-bottom: 0.75rem;"></div>
-                    <div class="skeleton-loader" style="height: 60px; margin-bottom: 0.75rem;"></div>
-                    <div class="skeleton-loader" style="height: 60px;"></div>
-                </div>
-            </div>
+  <div class="resources-dashboard__panels">
+    <article class="ui-card resources-dashboard__panel">
+      <div class="resources-dashboard__panel-header">
+        <div>
+          <p class="resources-dashboard__eyebrow">Schedule</p>
+          <h2>Upcoming bookings</h2>
+          <p class="resources-dashboard__muted">Next confirmed sessions</p>
         </div>
-        
-        <!-- Recent Activity -->
-        <div class="grid-col-6">
-            <div class="card" style="padding: 1.5rem;">
-                <h3 style="font-size: 1.125rem; font-weight: 600; color: var(--color-charcoal); margin: 0 0 1.5rem 0;">Recent Activity</h3>
-                <div id="recent-activity-container">
-                    <!-- Loading skeleton -->
-                    <div class="skeleton-loader" style="height: 50px; margin-bottom: 0.75rem;"></div>
-                    <div class="skeleton-loader" style="height: 50px; margin-bottom: 0.75rem;"></div>
-                    <div class="skeleton-loader" style="height: 50px; margin-bottom: 0.75rem;"></div>
-                    <div class="skeleton-loader" style="height: 50px;"></div>
-                </div>
-            </div>
+      </div>
+      {% if upcoming_bookings %}
+        <div class="resources-dashboard__table-wrap">
+          <table class="ui-table resources-dashboard__table">
+            <thead>
+              <tr>
+                <th scope="col">Resource</th>
+                <th scope="col">Slot</th>
+                <th scope="col">Location</th>
+                <th scope="col">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for booking in upcoming_bookings %}
+              <tr>
+                <td>{{ booking.resource }}</td>
+                <td>{{ booking.start }} – {{ booking.end }}</td>
+                <td>{{ booking.location or '—' }}</td>
+                <td>
+                  <span class="resources-dashboard__status {{ booking.status_class }}">
+                    {{ booking.status_label }}
+                  </span>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
         </div>
-    </div>
-</div>
-
-<!-- Dashboard Chart Initialization Script -->
-<script type="module">
-import { createLineChart, createDoughnutChart, updateChartData } from '{{ vite_asset("src/static/js/charts.js") }}';
-import { 
-    fetchDashboardData, 
-    formatDateTime, 
-    formatTimeRange, 
-    getStatusColor 
-} from '{{ vite_asset("src/static/js/adapters/dashboardData.js") }}';
-
-// Initialize charts
-let bookingsChart = null;
-let categoryChart = null;
-
-// Render KPIs
-function renderKPIs(kpis) {
-    // My Resources
-    document.getElementById('kpi-my-resources').textContent = kpis.myResources.value;
-    const myResourcesChange = document.getElementById('kpi-my-resources-change');
-    if (kpis.myResources.change !== 0) {
-        const sign = kpis.myResources.change > 0 ? '+' : '';
-        myResourcesChange.textContent = `${sign}${kpis.myResources.change} ${kpis.myResources.changeLabel}`;
-        myResourcesChange.style.color = kpis.myResources.change > 0 ? 'var(--color-success)' : 'var(--color-danger)';
-    }
-    
-    // Active Bookings
-    document.getElementById('kpi-active-bookings').textContent = kpis.activeBookings.value;
-    const activeBookingsChange = document.getElementById('kpi-active-bookings-change');
-    if (kpis.activeBookings.change !== 0) {
-        const sign = kpis.activeBookings.change > 0 ? '+' : '';
-        activeBookingsChange.textContent = `${sign}${kpis.activeBookings.change} ${kpis.activeBookings.changeLabel}`;
-        activeBookingsChange.style.color = kpis.activeBookings.change > 0 ? 'var(--color-success)' : 'var(--color-danger)';
-    }
-    
-    // Unread Messages
-    document.getElementById('kpi-unread-messages').textContent = kpis.unreadMessages.value;
-    const unreadMessagesChange = document.getElementById('kpi-unread-messages-change');
-    if (kpis.unreadMessages.change !== 0) {
-        const sign = kpis.unreadMessages.change > 0 ? '+' : '';
-        unreadMessagesChange.textContent = `${sign}${kpis.unreadMessages.change} ${kpis.unreadMessages.changeLabel}`;
-        unreadMessagesChange.style.color = kpis.unreadMessages.change > 0 ? 'var(--color-success)' : 'var(--color-danger)';
-    }
-    
-    // Average Rating
-    document.getElementById('kpi-avg-rating').textContent = kpis.avgRating.value.toFixed(1);
-    const avgRatingChange = document.getElementById('kpi-avg-rating-change');
-    if (kpis.avgRating.change !== 0) {
-        const sign = kpis.avgRating.change > 0 ? '+' : '';
-        avgRatingChange.textContent = `${sign}${kpis.avgRating.change.toFixed(1)} ${kpis.avgRating.changeLabel}`;
-        avgRatingChange.style.color = kpis.avgRating.change > 0 ? 'var(--color-success)' : 'var(--color-danger)';
-    }
-}
-
-// Render charts
-function renderCharts(data) {
-    // Bookings Timeline Chart
-    const bookingsCanvas = document.getElementById('bookings-timeline-chart');
-    if (bookingsCanvas && data.bookingsTimeline) {
-        if (bookingsChart) {
-            updateChartData(bookingsChart, data.bookingsTimeline);
-        } else {
-            bookingsChart = createLineChart(bookingsCanvas, data.bookingsTimeline);
-        }
-    }
-    
-    // Category Mix Chart
-    const categoryCanvas = document.getElementById('category-mix-chart');
-    if (categoryCanvas && data.categoryMix) {
-        if (categoryChart) {
-            categoryChart.destroy();
-        }
-        categoryChart = createDoughnutChart(categoryCanvas, data.categoryMix);
-    }
-}
-
-// Render upcoming bookings
-function renderUpcomingBookings(bookings) {
-    const container = document.getElementById('upcoming-bookings-container');
-    if (!bookings || bookings.length === 0) {
-        container.innerHTML = `
-            <div style="text-align: center; padding: 2rem 1rem; color: var(--color-slate);">
-                <i data-lucide="calendar-x" style="width: 48px; height: 48px; margin-bottom: 0.5rem;" class="icon icon-sm"></i>
-                <p style="margin: 0;">No upcoming bookings</p>
-            </div>
-        `;
-        if (window.lucide) window.lucide.createIcons();
-        return;
-    }
-    
-    container.innerHTML = bookings.map(booking => `
-        <div class="booking-item" style="display: flex; align-items: center; padding: 1rem; border: 1px solid var(--color-border); border-radius: 8px; margin-bottom: 0.75rem; transition: all 0.2s;">
-            <div style="flex: 1;">
-                <div style="font-weight: 600; color: var(--color-charcoal); margin-bottom: 0.25rem;">${booking.resource}</div>
-                <div style="font-size: 0.875rem; color: var(--color-slate);">${formatTimeRange(booking.startTime, booking.endTime)}</div>
-            </div>
-            <span class="badge badge-${getStatusColor(booking.status)}">${booking.status}</span>
+      {% else %}
+        <div class="resources-dashboard__empty" role="status">
+          <i class="bi bi-calendar-x"></i>
+          <p>No bookings scheduled. Promote a resource or invite students to reserve a slot.</p>
         </div>
-    `).join('');
-}
+      {% endif %}
+    </article>
 
-// Render recent activity
-function renderRecentActivity(activities) {
-    const container = document.getElementById('recent-activity-container');
-    if (!activities || activities.length === 0) {
-        container.innerHTML = `
-            <div style="text-align: center; padding: 2rem 1rem; color: var(--color-slate);">
-                <i data-lucide="activity" style="width: 48px; height: 48px; margin-bottom: 0.5rem;" class="icon icon-sm"></i>
-                <p style="margin: 0;">No recent activity</p>
-            </div>
-        `;
-        if (window.lucide) window.lucide.createIcons();
-        return;
-    }
-    
-    container.innerHTML = activities.map(activity => `
-        <div class="activity-item" style="display: flex; gap: 1rem; padding: 0.75rem 0; border-bottom: 1px solid var(--color-border-light);">
-            <div style="flex-shrink: 0; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: var(--color-bg-subtle);">
-                <i data-lucide="${activity.icon}" style="width: 18px; height: 18px; color: var(--color-crimson);" class="icon icon-sm"></i>
-            </div>
-            <div style="flex: 1;">
-                <div style="font-size: 0.875rem; color: var(--color-charcoal); margin-bottom: 0.25rem;">${activity.message}</div>
-                <div style="font-size: 0.75rem; color: var(--color-slate);">${formatDateTime(activity.timestamp)}</div>
-            </div>
+    <article class="ui-card resources-dashboard__panel">
+      <div class="resources-dashboard__panel-header">
+        <div>
+          <p class="resources-dashboard__eyebrow">Activity</p>
+          <h2>Recent updates</h2>
+          <p class="resources-dashboard__muted">Latest booking movements</p>
         </div>
-    `).join('');
-    
-    if (window.lucide) window.lucide.createIcons();
-}
+      </div>
+      {% if recent_activity %}
+        <ul class="resources-dashboard__activity">
+          {% for item in recent_activity %}
+          <li class="resources-dashboard__activity-item">
+            <div class="resources-dashboard__activity-icon">
+              <i class="bi bi-{{ item.icon }}" aria-hidden="true"></i>
+            </div>
+            <div>
+              <p class="resources-dashboard__activity-title">{{ item.title }}</p>
+              <p class="resources-dashboard__muted">{{ item.status }} · {{ item.timestamp }}</p>
+            </div>
+          </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <div class="resources-dashboard__empty" role="status">
+          <i class="bi bi-activity"></i>
+          <p>No booking activity yet. Approvals, cancellations, and reviews will appear here.</p>
+        </div>
+      {% endif %}
+    </article>
+  </div>
+</section>
+{% endblock %}
 
-// Load dashboard data
-async function loadDashboard() {
-    try {
-        // Force mock data for now (API endpoint not yet implemented)
-        const data = await fetchDashboardData(true);
-        
-        // Render all components
-        renderKPIs(data.kpis);
-        renderCharts(data);
-        renderUpcomingBookings(data.upcomingBookings);
-        renderRecentActivity(data.recentActivity);
-        
-        // Initialize Lucide icons
-        if (window.lucide) {
-            window.lucide.createIcons();
-        }
-    } catch (error) {
-        console.error('[Dashboard] Failed to load data:', error);
+{% block extra_js %}
+<script>
+  (function(config) {
+    if (!config) return;
+    function boot() {
+      if (window.initDashboardCharts) {
+        window.initDashboardCharts(config);
+      }
     }
-}
-
-// Initialize dashboard
-document.addEventListener('DOMContentLoaded', loadDashboard);
-
-// Handle theme changes
-window.addEventListener('charts-theme-changed', () => {
-    // Re-render charts on theme change
-    if (bookingsChart && categoryChart) {
-        loadDashboard();
+    if (window.initDashboardCharts) {
+      boot();
+    } else {
+      window.addEventListener('dashboard-charts-ready', boot, { once: true });
     }
-});
+  })({{ dashboard_chart_config|tojson }});
 </script>
 {% endblock %}

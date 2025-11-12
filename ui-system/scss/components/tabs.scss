@@ -1,0 +1,62 @@
+/*
+ * Tabs component with underline indicator
+ */
+.ui-tabs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.ui-tabs__list {
+  display: flex;
+  gap: var(--space-4);
+  border-bottom: 1px solid var(--color-border-muted);
+}
+
+.ui-tabs__tab {
+  position: relative;
+  padding: var(--space-3) var(--space-1);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
+  border-bottom: 2px solid transparent;
+  background: none;
+  border-radius: 0;
+  cursor: pointer;
+  transition: color var(--motion-duration-base) var(--motion-ease-standard),
+    border-color var(--motion-duration-base) var(--motion-ease-standard);
+}
+
+.ui-tabs__tab:hover {
+  color: var(--color-text-primary);
+}
+
+.ui-tabs__tab.is-active {
+  color: var(--color-brand-crimson-600);
+  border-color: var(--color-brand-crimson-600);
+}
+
+.ui-tabs__tab:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring-outer);
+}
+
+.ui-tabs__badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.5rem;
+  padding-inline: var(--space-1);
+  border-radius: var(--radius-full);
+  background-color: var(--color-surface-muted);
+  font-size: var(--font-size-micro);
+}
+
+.ui-tabs__panel {
+  animation: ui-tabs-fade var(--motion-duration-base) var(--motion-ease-standard);
+}
+
+@keyframes ui-tabs-fade {
+  from { opacity: 0; transform: translateY(var(--space-2)); }
+  to { opacity: 1; transform: translateY(0); }
+}

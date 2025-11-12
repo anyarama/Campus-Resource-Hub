@@ -154,7 +154,7 @@
   }
   
   &--message::after {
-    background-color: #3b82f6;
+    background-color: var(--color-accent-sky-500);
   }
   
   &--review::after {
@@ -166,7 +166,7 @@
   }
   
   &--resource::after {
-    background-color: #8b5cf6;
+    background-color: var(--color-accent-indigo-500);
   }
 }
 
@@ -291,8 +291,8 @@
 // Message activity
 .activity-item--message {
   .activity-item__icon--system {
-    background-color: #eff6ff;
-    color: #3b82f6;
+    background-color: var(--color-accent-sky-50);
+    color: var(--color-accent-sky-500);
   }
 }
 
@@ -319,8 +319,8 @@
 // Resource activity (created, updated, archived)
 .activity-item--resource {
   .activity-item__icon--system {
-    background-color: #faf5ff;
-    color: #9333ea;
+    background-color: var(--color-accent-purple-50);
+    color: var(--color-accent-purple-500);
   }
 }
 
@@ -335,8 +335,8 @@
 // User activity (joined, updated profile)
 .activity-item--user {
   .activity-item__icon--system {
-    background-color: #eff6ff;
-    color: #3b82f6;
+    background-color: var(--color-accent-sky-50);
+    color: var(--color-accent-sky-500);
   }
 }
 
@@ -621,7 +621,7 @@
     }
     
     &.is-unread {
-      background-color: rgba(var(--color-primary), 0.1);
+      background-color: color-mix(in srgb, var(--color-primary) 10%, transparent);
     }
   }
   

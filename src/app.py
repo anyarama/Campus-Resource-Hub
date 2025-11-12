@@ -17,9 +17,10 @@ from flask_login import LoginManager
 from flask_wtf.csrf import CSRFProtect
 from flask_migrate import Migrate
 from typing import Optional
+from jinja2 import ChoiceLoader, FileSystemLoader
 
 from src.config import get_config
-from src.util.assets import asset_url
+from src.utils.assets import get_asset_url
 from src.utils.vite import vite_asset
 
 
@@ -86,8 +87,16 @@ def create_app(config_name: Optional[str] = None) -> Flask:
     register_cli_commands(app)
 
     # Register Vite asset helper for manifest-aware URLs
-    app.jinja_env.globals["asset_url"] = asset_url
+    app.jinja_env.globals["asset_url"] = get_asset_url
     app.jinja_env.globals["vite_asset"] = vite_asset
+    # Add UI system templates to the loader search path
+    ui_templates_path = os.path.abspath(os.path.join(app.root_path, "..", "ui-system"))
+    app.jinja_loader = ChoiceLoader(
+        [
+            app.jinja_loader,
+            FileSystemLoader(ui_templates_path),
+        ]
+    )
 
     # Add Cache-Control headers for development (per Task A requirement)
     @app.before_request
@@ -116,11 +125,11 @@ def create_app(config_name: Optional[str] = None) -> Flask:
         Debug endpoint to diagnose asset resolution issues.
         Shows manifest location, resolved URLs, and file existence.
         """
-        from src.util.assets import _manifest_path
+        from src.utils.assets import _manifest_path
 
         # Get resolved asset URLs
-        css_url = asset_url("style")
-        js_url = asset_url("enterpriseJs")
+        css_url = get_asset_url("style")
+        js_url = get_asset_url("enterpriseJs")
 
         # Check manifest existence
         manifest_path = _manifest_path()
@@ -218,6 +227,7 @@ def register_blueprints(app: Flask) -> None:
     from src.routes.messages import messages_bp
     from src.routes.admin import admin_bp
     from src.routes.concierge import concierge_bp
+    from src.routes.ui import ui_bp
 
     # Register blueprints
     app.register_blueprint(auth_bp, url_prefix="/auth")
@@ -227,6 +237,7 @@ def register_blueprints(app: Flask) -> None:
     app.register_blueprint(messages_bp)  # Phase 7: Messages
     app.register_blueprint(admin_bp)  # Phase 8: Admin Dashboard
     app.register_blueprint(concierge_bp)  # Phase 9: AI Concierge
+    app.register_blueprint(ui_bp)  # UI kit / visual QA
 
     # Homepage route - redirect to appropriate page based on auth status
     @app.route("/")

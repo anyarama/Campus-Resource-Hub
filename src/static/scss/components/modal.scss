@@ -300,12 +300,12 @@
 // Info Modal
 .modal--info {
   .modal__header {
-    background-color: rgba(#1976d2, 0.05);
-    border-bottom-color: rgba(#1976d2, 0.2);
+    background-color: color-mix(in srgb, var(--color-accent-info-600) 5%, transparent);
+    border-bottom-color: color-mix(in srgb, var(--color-accent-info-600) 20%, transparent);
   }
   
   .modal__title {
-    color: #0d47a1;
+    color: var(--color-accent-info-900);
   }
 }
 

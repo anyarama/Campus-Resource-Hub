@@ -1,0 +1,26 @@
+<form class="ui-form-group" novalidate>
+  <div class="ui-form-group__field">
+    <label class="ui-field">
+      <span class="ui-field__label">Full name <span class="ui-field__required" aria-hidden="true">*</span></span>
+      <input class="ui-input" type="text" name="name" placeholder="Enter your name" required aria-required="true" />
+      <span class="ui-field__message">Shared with administrators only.</span>
+    </label>
+  </div>
+
+  <div class="ui-form-group__field ui-field ui-field--error">
+    <span class="ui-field__label">Email address</span>
+    <input class="ui-input" type="email" name="email" aria-invalid="true" />
+    <span class="ui-field__message ui-field__message--error" role="alert">Please supply a valid email.</span>
+  </div>
+
+  <div class="ui-form-group__field ui-field">
+    <span class="ui-field__label">Resource Type</span>
+    <select class="ui-select" name="resource-type" aria-describedby="resource-help">
+      <option value="">Select a type</option>
+      <option value="room">Room</option>
+      <option value="equipment">Equipment</option>
+      <option value="service">Service</option>
+    </select>
+    <span class="ui-field__help" id="resource-help">Helps applicants filter listings.</span>
+  </div>
+</form>

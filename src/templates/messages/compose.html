@@ -1,122 +1,70 @@
 {% extends "base.html" %}
 
-{% block title %}New Message to {{ recipient.name }}{% endblock %}
-
-{% block page_title %}New Message{% endblock %}
+{% block title %}Message {{ recipient.name }}{% endblock %}
 
 {% block main_content %}
-    <div class="page-width-narrow">
-            <!-- Compose Card -->
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">
-                        <i class="bi bi-pencil-square icon"></i>Compose Message
-                    </h2>
-                </div>
-                <div class="card-body">
-                    <!-- Recipient Info -->
-                    <div class="alert alert-info">
-                        <div class="recipient-info">
-                            <div class="recipient-avatar">
-                                {% if recipient.profile_image %}
-                                    <img src="{{ url_for('static', filename='uploads/' + recipient.profile_image) }}" 
-                                         alt="{{ recipient.name }}"
-                                         class="avatar avatar-lg">
-                                {% else %}
-                                    <div class="avatar avatar-lg">
-                                        {{ recipient.name[0].upper() }}
-                                    </div>
-                                {% endif %}
-                            </div>
-                            <div class="recipient-details">
-                                <div class="recipient-name">To: {{ recipient.name }}</div>
-                                <div class="recipient-email">
-                                    <i class="bi bi-envelope icon"></i>{{ recipient.email }}
-                                </div>
-                                <span class="badge badge-{{ 'error' if recipient.role == 'admin' else 'primary' if recipient.role == 'staff' else 'success' }}">
-                                    {{ recipient.role|capitalize }}
-                                </span>
-                            </div>
-                        </div>
-                    </div>
+<section class="messages-detail">
+  <article class="ui-card messages-thread__panel">
+    <header class="messages-thread__header">
+      <div class="messages-thread__user">
+        <div class="messages-thread__user-avatar">
+          {% if recipient.profile_image %}
+            <img src="{{ url_for('static', filename='uploads/' + recipient.profile_image) }}" alt="{{ recipient.name }}">
+          {% else %}
+            {{ recipient.name[0]|upper }}
+          {% endif %}
+        </div>
+        <div class="messages-thread__user-meta">
+          <p class="resources-dashboard__eyebrow">New message to</p>
+          <h2>{{ recipient.name }}</h2>
+          <p>{{ recipient.email }}</p>
+        </div>
+      </div>
+      <a href="{{ url_for('messages.inbox', user_id=recipient.user_id) }}" class="ui-button ui-button--ghost">
+        <i data-lucide="x" class="icon icon-sm"></i>
+        Cancel
+      </a>
+    </header>
 
-                    <!-- Compose Form -->
-                    <form method="POST" action="{{ url_for('messages.compose', user_id=recipient.user_id) }}">
-                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                        
-                        <div class="form-group">
-                            <label for="content" class="form-label">
-                                <i class="bi bi-chat-left-text icon"></i>Message
-                            </label>
-                            <textarea class="input form-control" 
-                                      id="content" 
-                                      name="content" 
-                                      rows="8" 
-                                      placeholder="Type your message here..."
-                                      required
-                                      maxlength="10000"></textarea>
-                            <div class="form-hint">Maximum 10,000 characters</div>
-                        </div>
+    <form method="POST" action="{{ url_for('messages.compose', user_id=recipient.user_id) }}" class="messages-thread__composer">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <label class="ui-field">
+        <span class="ui-field__label">Message</span>
+        <textarea
+          id="content"
+          name="content"
+          rows="6"
+          maxlength="10000"
+          placeholder="Introduce yourself, include booking context, or ask your question."
+          required
+          class="ui-input messages-thread__input"></textarea>
+      </label>
+      <div class="messages-thread__composer-actions">
+        <div>
+          <p class="composer-hint">
+            <i data-lucide="info" class="icon icon-xs"></i>
+            Keep it professional. Messages are plain text only.
+          </p>
+          <ul class="list--unstyled composer-guidelines">
+            <li>• Be clear about the resource or booking you’re referencing.</li>
+            <li>• Share any availability constraints or preferred times.</li>
+            <li>• Avoid sharing sensitive data; chats are archived.</li>
+          </ul>
+        </div>
+        <button type="submit" class="ui-button ui-button--primary">
+          <i data-lucide="send" class="icon icon-sm"></i>
+          Send message
+        </button>
+      </div>
+    </form>
+  </article>
 
-                        <!-- Guidelines -->
-                        <div class="alert alert-neutral">
-                            <h6 class="alert-heading">
-                                <i class="bi bi-info-circle icon"></i>Messaging Guidelines
-                            </h6>
-                            <ul class="guideline-list">
-                                <li>Be professional and respectful</li>
-                                <li>Clearly state your reason for messaging</li>
-                                <li>Include any relevant booking or resource details</li>
-                                <li>Messages are plain text only (no HTML)</li>
-                            </ul>
-                        </div>
-
-                        <!-- Action Buttons -->
-                        <div class="form-actions">
-                            <a href="{{ url_for('messages.inbox') }}" class="btn btn-secondary">
-                                <i class="bi bi-x-circle icon"></i>Cancel
-                            </a>
-                            <button type="submit" class="btn btn-primary btn--primary">
-                                <i class="bi bi-send icon"></i>Send Message
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-
-            <!-- Help Card -->
-            <div class="card card-muted">
-                <div class="card-body">
-                    <h6 class="help-heading">
-                        <i class="bi bi-question-circle icon"></i>Need Help?
-                    </h6>
-                    <p class="help-text">
-                        Use messaging to ask questions about resources, coordinate bookings, 
-                        or discuss any concerns with other users. All conversations are private 
-                        between you and the recipient.
-                    </p>
-                </div>
-            </div>
+  <article class="ui-card messages-thread__panel">
+    <div class="messages-empty">
+      <i data-lucide="lightbulb" class="icon icon-lg"></i>
+      <h3>Need help getting started?</h3>
+      <p>Use messaging to clarify booking requests, coordinate logistics, or follow up on reviews.</p>
     </div>
-{% endblock %}
-
-{% block extra_js %}
-<script>
-    // Character counter
-    const textarea = document.getElementById('content');
-    if (textarea) {
-        textarea.addEventListener('input', function() {
-            const remaining = 10000 - this.value.length;
-            const helpText = this.nextElementSibling;
-            if (helpText) {
-                helpText.textContent = `${remaining.toLocaleString()} characters remaining`;
-                if (remaining < 100) {
-                    helpText.classList.add('warning');
-                } else {
-                    helpText.classList.remove('warning');
-                }
-            }
-        });
-    }
-</script>
+  </article>
+</section>
 {% endblock %}

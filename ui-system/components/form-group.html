@@ -1,0 +1,28 @@
+<form class="ui-form-group" aria-labelledby="request-info">
+  <div>
+    <h2 id="request-info" class="ui-form-group__legend">Request details</h2>
+    <p class="ui-form-group__hint">Provide enough information for approvers to evaluate availability.</p>
+  </div>
+
+  <div class="ui-form-group__row">
+    <div class="ui-form-group__field ui-field">
+      <span class="ui-field__label">Event name <span class="ui-field__required" aria-hidden="true">*</span></span>
+      <input class="ui-input" type="text" name="event" required />
+    </div>
+    <div class="ui-form-group__field ui-field">
+      <span class="ui-field__label">Audience size</span>
+      <input class="ui-input" type="number" name="audience" min="1" />
+    </div>
+  </div>
+
+  <div class="ui-form-group__field ui-field">
+    <span class="ui-field__label">Description</span>
+    <textarea class="ui-input" rows="4" name="description"></textarea>
+    <span class="ui-field__help">Share setup needs, equipment, and staffing info.</span>
+  </div>
+
+  <div class="ui-form-group__actions">
+    <button class="ui-button ui-button--ghost" type="button">Cancel</button>
+    <button class="ui-button ui-button--primary" type="submit">Submit request</button>
+  </div>
+</form>

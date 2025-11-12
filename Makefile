@@ -4,7 +4,7 @@
 # Per .clinerules: Commands for fmt (format), lint (type check), test, and run
 # All commands should pass before committing code
 
-.PHONY: help install fmt lint test test-cov ui-smoke build run clean init-db seed-db shell check all web-assets
+.PHONY: help install fmt lint test test-cov ui-smoke ui-lint build run clean init-db seed-db shell check all web-assets
 
 # Default target - show help
 help:
@@ -19,6 +19,7 @@ help:
 	@echo "  make lint         Run type checking with mypy"
 	@echo "  make test         Run tests with pytest"
 	@echo "  make ui-smoke     Run Playwright + axe-core smoke suite"
+	@echo "  make ui-lint      Ensure templates/assets/scss follow UI guardrails"
 	@echo "  make test-cov     Run tests with coverage report"
 	@echo "  make check        Run fmt + lint + pytest"
 	@echo "  make build        Build Vite production assets"
@@ -70,6 +71,11 @@ ui-smoke:
 	npm run test:playwright
 	@echo "✅ UI smoke tests complete"
 
+ui-lint:
+	@echo "🧼 Running UI lint checks (bootstrap/tokens guardrails)..."
+	python scripts/ui_lint.py
+	@echo "✅ UI lint checks passed"
+
 build:
 	@echo "🏗️  Building production assets with Vite..."
 	npm run build
@@ -85,8 +91,8 @@ test-cov:
 check: fmt lint test
 	@echo "✅ All quality checks passed!"
 
-# Alias for full pipeline (fmt + lint + backend + UI tests + build)
-all: fmt lint test ui-smoke build
+# Alias for full pipeline (fmt + lint + backend + UI tests + UI lint + build)
+all: fmt lint test ui-smoke ui-lint build
 
 # Build and verify Vite assets (Task B: MAKE IT WORK IN RUNTIME)
 web-assets:

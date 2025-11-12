@@ -28,6 +28,18 @@ async function expectNoSeriousA11yViolations(page: Page) {
   expect(formatted).toEqual([])
 }
 
+function trackConsole(page: Page) {
+  const messages: string[] = []
+  page.on('console', (msg) => {
+    if (msg.type() === 'error' || msg.type() === 'warning') {
+      messages.push(`${msg.type()}: ${msg.text()}`)
+    }
+  })
+  return async () => {
+    expect(messages).toEqual([])
+  }
+}
+
 async function login(page: Page, creds = studentCredentials) {
   await page.goto('/auth/login')
   await page.getByLabel('Email Address').fill(creds.email)
@@ -70,10 +82,45 @@ test.describe('Public experience', () => {
 
 test.describe('Authenticated experience', () => {
   test('dashboard shows welcome state and charts', async ({ page }) => {
+    const assertConsoleClean = trackConsole(page)
     await login(page)
     await expect(page.getByRole('heading', { name: /welcome/i })).toBeVisible()
-    await expect(page.locator('#bookings-timeline-chart')).toBeVisible()
+    await expect(page.locator('#chart-bookings')).toBeVisible()
+    await expect(page.locator('#chart-categories')).toBeVisible()
     await expectNoSeriousA11yViolations(page)
+    await assertConsoleClean()
+  })
+
+  test('resources list renders without console noise and keeps sidebar tooltips', async ({ page }) => {
+    const assertConsoleClean = trackConsole(page)
+    await login(page)
+    await page.goto('/resources')
+    await expect(page.getByRole('heading', { name: /browse resources/i })).toBeVisible()
+    const sidebarLinks = page.locator('.app-sidebar .sidebar-link')
+    const linkCount = await sidebarLinks.count()
+    expect(linkCount).toBeGreaterThan(0)
+    for (let i = 0; i < linkCount; i += 1) {
+      await expect(sidebarLinks.nth(i)).toHaveAttribute('data-tooltip', /.+/)
+      await expect(sidebarLinks.nth(i)).toHaveAttribute('aria-label', /.+/)
+    }
+    await expectNoSeriousA11yViolations(page)
+    await assertConsoleClean()
+  })
+
+  test('bookings page loads cards and respects sidebar tooltips', async ({ page }) => {
+    const assertConsoleClean = trackConsole(page)
+    await login(page)
+    await page.goto('/bookings/my-bookings')
+    await expect(page.getByRole('heading', { name: /my bookings/i })).toBeVisible()
+    await expect(page.locator('.booking-card').first()).toBeVisible()
+    const sidebarLinks = page.locator('.app-sidebar .sidebar-link')
+    const linkCount = await sidebarLinks.count()
+    expect(linkCount).toBeGreaterThan(0)
+    for (let i = 0; i < linkCount; i += 1) {
+      await expect(sidebarLinks.nth(i)).toHaveAttribute('data-tooltip', /.+/)
+    }
+    await expectNoSeriousA11yViolations(page)
+    await assertConsoleClean()
   })
 })
 

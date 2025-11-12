@@ -1,0 +1,131 @@
+{# 
+  Shell layout macro inspired by the Campus_Resource_hub seed.
+  Usage:
+    {% import '../../ui-system/components/shell.html' as ui_shell %}
+    {% call ui_shell.render_shell(current_user=current_user, request=request,
+                                  primary_nav=primary_nav, admin_nav=admin_nav) %}
+        ...page content...
+    {% endcall %}
+#}
+{% macro render_shell(current_user, request, primary_nav=[], admin_nav=[]) %}
+<div class="ui-shell" data-authenticated="{{ 'true' if current_user.is_authenticated else 'false' }}">
+  {% if current_user.is_authenticated %}
+  <aside class="ui-shell__sidebar" role="navigation" aria-label="Primary">
+    <div class="ui-shell__brand">
+      <a href="{{ url_for('resources.dashboard') }}" class="ui-shell__brand-link">
+        <span class="ui-shell__logo" aria-hidden="true">🎓</span>
+        <span class="ui-shell__brand-text">Campus Hub</span>
+      </a>
+    </div>
+    <nav class="ui-shell__nav">
+      <ul>
+        {% for item in primary_nav %}
+        {% set is_active = request.endpoint in item.match %}
+        <li>
+          <a href="{{ url_for(item.endpoint) }}"
+             class="ui-shell__nav-link {{ 'is-active' if is_active else '' }}"
+             aria-current="{{ 'page' if is_active else '' }}"
+             data-tooltip="{{ item.label }}">
+            <i class="bi bi-{{ item.icon }}" aria-hidden="true"></i>
+            <span>{{ item.label }}</span>
+            {% if item.badge_id %}
+              <span class="ui-shell__badge" id="{{ item.badge_id }}" hidden>0</span>
+            {% endif %}
+          </a>
+        </li>
+        {% endfor %}
+      </ul>
+    </nav>
+    {% if current_user.is_authenticated and current_user.role == 'admin' %}
+    <div class="ui-shell__section-label">Admin</div>
+    <nav class="ui-shell__nav ui-shell__nav--secondary">
+      <ul>
+        {% for item in admin_nav %}
+        {% set is_active = request.endpoint in item.match %}
+        <li>
+          <a href="{{ url_for(item.endpoint) }}"
+             class="ui-shell__nav-link {{ 'is-active' if is_active else '' }}"
+             aria-current="{{ 'page' if is_active else '' }}">
+            <i class="bi bi-{{ item.icon }}" aria-hidden="true"></i>
+            <span>{{ item.label }}</span>
+          </a>
+        </li>
+        {% endfor %}
+      </ul>
+    </nav>
+    {% endif %}
+  </aside>
+
+  <div class="ui-shell__body">
+    <header class="ui-shell__topbar">
+      <div class="ui-shell__topbar-left">
+        <button class="ui-shell__toggle" data-sidebar-toggle aria-label="Toggle navigation">
+          <i class="bi bi-list"></i>
+        </button>
+        <div class="ui-shell__topbar-title">
+          <span class="eyebrow">Campus Resource Hub</span>
+          <strong>{{ request.endpoint.replace('.', ' ').title() }}</strong>
+        </div>
+      </div>
+      <div class="ui-shell__topbar-actions">
+        <button class="ui-shell__icon-button" data-theme-toggle aria-label="Toggle theme">
+          <i class="bi bi-moon-fill"></i>
+        </button>
+        <div class="ui-shell__user-menu" data-user-menu>
+          <button class="ui-shell__user-trigger" aria-haspopup="true" aria-expanded="false">
+            <span class="ui-shell__avatar">
+              {% if current_user.profile_image %}
+                <img src="{{ url_for('static', filename='uploads/' + current_user.profile_image) }}"
+                     alt="{{ current_user.name }}">
+              {% else %}
+                {{ current_user.name[0]|upper }}
+              {% endif %}
+            </span>
+            <span class="ui-shell__user-name">{{ current_user.name }}</span>
+            <i class="bi bi-chevron-down" aria-hidden="true"></i>
+          </button>
+          <div class="ui-shell__user-dropdown" role="menu">
+            <a href="{{ url_for('auth.profile') }}" class="ui-shell__user-link" role="menuitem">
+              <i class="bi bi-person"></i> Profile
+            </a>
+            <form method="POST" action="{{ url_for('auth.logout') }}" role="none">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+              <button type="submit" class="ui-shell__user-link">
+                <i class="bi bi-box-arrow-right"></i> Logout
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main id="main" class="ui-shell__main" role="main" tabindex="-1">
+      {{ caller() }}
+    </main>
+
+    <footer class="ui-shell__footer">
+      <p>&copy; {{ current_year|default(2025) }} Campus Resource Hub · Built by AiDD</p>
+    </footer>
+  </div>
+  {% else %}
+  <div class="ui-shell__guest">
+    <header class="ui-shell__guest-header">
+      <a href="{{ url_for('auth.login') }}" class="ui-shell__brand-link">
+        <span class="ui-shell__logo" aria-hidden="true">🎓</span>
+        <span class="ui-shell__brand-text">Campus Resource Hub</span>
+      </a>
+      <div class="ui-shell__guest-actions">
+        <a href="{{ url_for('auth.login') }}" class="btn btn-outline">Login</a>
+        <a href="{{ url_for('auth.register') }}" class="btn btn-primary">Register</a>
+      </div>
+    </header>
+    <main id="main" class="ui-shell__guest-main" role="main" tabindex="-1">
+      {{ caller() }}
+    </main>
+    <footer class="ui-shell__footer ui-shell__footer--guest">
+      <p>&copy; {{ current_year|default(2025) }} Campus Resource Hub · AiDD Capstone</p>
+    </footer>
+  </div>
+  {% endif %}
+</div>
+{% endmacro %}

@@ -1,0 +1,102 @@
+/*
+ * Layout primitives (containers, grids, application shell)
+ */
+.container,
+.layout-container {
+  width: var(--layout-content-width);
+  margin-inline: auto;
+  padding-inline: clamp(var(--layout-gutter-mobile), 4vw, var(--layout-gutter-desktop));
+}
+
+.page-shell {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--color-surface-canvas);
+}
+
+.page-shell__sidebar {
+  width: var(--layout-sidebar-expanded);
+  min-height: 100vh;
+  background-color: var(--color-surface-card);
+  border-right: 1px solid var(--color-border-default);
+}
+
+.page-shell__sidebar.is-collapsed {
+  width: var(--layout-sidebar-collapsed);
+}
+
+.page-shell__content {
+  flex: 1;
+  min-width: 0;
+  padding-inline: clamp(var(--layout-gutter-mobile), 3vw, var(--layout-gutter-desktop));
+  padding-block: var(--space-8);
+}
+
+.topbar {
+  height: var(--layout-topbar-height);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding-inline: clamp(var(--layout-gutter-mobile), 3vw, var(--layout-gutter-desktop));
+  border-bottom: 1px solid var(--color-border-default);
+  background-color: var(--color-surface-card);
+}
+
+.layout-grid {
+  display: grid;
+  grid-template-columns: repeat(var(--layout-grid-columns), minmax(0, 1fr));
+  gap: clamp(var(--layout-gutter-mobile), 2vw, var(--layout-gutter-desktop));
+}
+
+.layout-grid--halves {
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+.layout-grid--thirds {
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.section-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--section-spacing);
+}
+
+@media (max-width: 1280px) {
+  .page-shell__sidebar {
+    width: var(--layout-sidebar-collapsed);
+  }
+}
+
+@media (max-width: 1024px) {
+  .page-shell {
+    flex-direction: column;
+  }
+
+  .page-shell__sidebar {
+    position: sticky;
+    top: 0;
+    width: 100%;
+    min-height: auto;
+  }
+
+  .layout-grid {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .page-shell__content,
+  .topbar,
+  .container,
+  .layout-container {
+    padding-inline: var(--layout-gutter-mobile);
+  }
+
+  .topbar {
+    flex-direction: column;
+    height: auto;
+    padding-block: var(--space-4);
+  }
+}

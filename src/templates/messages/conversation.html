@@ -2,165 +2,105 @@
 
 {% block title %}Conversation with {{ other_user.name }}{% endblock %}
 
-{% block page_title %}Conversation{% endblock %}
-
 {% block main_content %}
-    <div class="page-width-narrow">
-        <!-- Conversation Header -->
-        <div class="card">
-            <div class="card-body">
-                <div class="conversation-header">
-                    <!-- User Avatar -->
-                    <div class="conversation-avatar">
-                        {% if other_user.profile_image %}
-                            <img src="{{ url_for('static', filename='uploads/' + other_user.profile_image) }}" 
-                                 alt="{{ other_user.name }}"
-                                 class="avatar avatar-xl">
-                        {% else %}
-                            <div class="avatar avatar-xl">
-                                {{ other_user.name[0].upper() }}
-                            </div>
-                        {% endif %}
-                    </div>
-
-                    <!-- User Info -->
-                    <div class="conversation-meta">
-                        <h2 class="conversation-name">{{ other_user.name }}</h2>
-                        <p class="conversation-email">
-                            <i class="bi bi-envelope icon"></i>{{ other_user.email }}
-                        </p>
-                        <span class="badge badge-{{ 'error' if other_user.role == 'admin' else 'primary' if other_user.role == 'staff' else 'success' }}">
-                            {{ other_user.role|capitalize }}
-                        </span>
-                    </div>
-                </div>
-            </div>
+<section class="messages-detail">
+  <article class="ui-card messages-thread__panel">
+    <header class="messages-thread__header">
+      <div class="messages-thread__user">
+        <div class="messages-thread__user-avatar">
+          {% if other_user.profile_image %}
+            <img src="{{ url_for('static', filename='uploads/' + other_user.profile_image) }}" alt="{{ other_user.name }}">
+          {% else %}
+            {{ other_user.name[0]|upper }}
+          {% endif %}
         </div>
-
-        <!-- Messages Container -->
-        <div class="card message-thread">
-            <div class="message-list" id="messagesContainer">
-                {% if messages %}
-                    {% for message in messages %}
-                        <div class="message-bubble {{ 'message-sent' if message.sender_id == current_user.user_id else 'message-received' }}">
-                            <!-- Message Card -->
-                            <div class="message-content">
-                                <div class="message-card">
-                                    <!-- Sender Name (for received messages) -->
-                                    {% if message.sender_id != current_user.user_id %}
-                                        <div class="message-sender">
-                                            {{ message.sender.name }}
-                                        </div>
-                                    {% endif %}
-
-                                    <!-- Message Content -->
-                                    <p class="message-text">{{ message.content }}</p>
-
-                                    <!-- Timestamp -->
-                                    <div class="message-timestamp">
-                                        <i class="bi bi-clock icon"></i>
-                                        {{ message.timestamp.strftime('%b %d, %Y at %I:%M %p') }}
-                                        {% if message.sender_id == current_user.user_id %}
-                                            <i class="bi bi-check2-all icon" title="Sent"></i>
-                                        {% endif %}
-                                    </div>
-                                </div>
-
-                                <!-- Delete Button (for sender only) -->
-                                {% if message.sender_id == current_user.user_id %}
-                                    <form method="POST" action="{{ url_for('messages.delete', message_id=message.message_id) }}" 
-                                          class="message-delete" 
-                                          onsubmit="return confirm('Delete this message?');">
-                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                                        <button type="submit" class="btn-icon btn-danger btn btn--primary" title="Delete message">
-                                            <i class="bi bi-trash icon"></i>
-                                        </button>
-                                    </form>
-                                {% endif %}
-                            </div>
-                        </div>
-                    {% endfor %}
-                {% else %}
-                    <!-- No Messages Yet -->
-                    <div class="empty-state">
-                        <i class="bi bi-chat-dots empty-state-icon icon"></i>
-                        <p class="empty-state-text">No messages yet. Start the conversation below!</p>
-                    </div>
-                {% endif %}
-            </div>
+        <div class="messages-thread__user-meta">
+          <h2>{{ other_user.name }}</h2>
+          <p>{{ other_user.email }}</p>
         </div>
+      </div>
+      <div class="messages-thread__actions">
+        <a href="{{ url_for('messages.inbox', user_id=other_user.user_id) }}" class="ui-button ui-button--ghost">
+          <i data-lucide="arrow-left" class="icon icon-sm"></i>
+          Back to inbox
+        </a>
+      </div>
+    </header>
 
-        <!-- Reply Form -->
-        <div class="card message-composer">
-            <div class="card-body">
-                <form method="POST" action="{{ url_for('messages.send') }}" id="replyForm">
-                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                    <input type="hidden" name="receiver_id" value="{{ other_user.user_id }}">
-                    
-                    <div class="form-group">
-                        <label for="content" class="form-label">
-                            <i class="bi bi-pencil icon"></i>Your Message
-                        </label>
-                        <textarea class="input form-control" 
-                                  id="content" 
-                                  name="content" 
-                                  rows="4" 
-                                  placeholder="Type your message here..."
-                                  required
-                                  maxlength="10000"></textarea>
-                        <div class="form-hint">Maximum 10,000 characters</div>
-                    </div>
-
-                    <div class="form-actions">
-                        <small class="form-note">
-                            <i class="bi bi-info-circle icon"></i>Messages cannot contain HTML
-                        </small>
-                        <button type="submit" class="btn btn-primary btn--primary">
-                            <i class="bi bi-send icon"></i>Send Message
-                        </button>
-                    </div>
+    <div class="messages-thread__messages" id="messagesContainer">
+      {% if messages %}
+        {% for message in messages %}
+          {% set is_sender = message.sender_id == current_user.user_id %}
+          <article class="message-bubble {{ 'message-bubble--sent' if is_sender else 'message-bubble--received' }}">
+            <div class="message-bubble__body">
+              {% if not is_sender %}
+                <strong>{{ message.sender.name }} · </strong>
+              {% endif %}
+              {{ message.content | replace('\n', '<br>') | safe }}
+            </div>
+            <div class="message-bubble__meta">
+              <time>{{ message.timestamp.strftime('%b %d, %Y · %I:%M %p') }}</time>
+              {% if is_sender %}
+                <span>
+                  <i data-lucide="check" class="icon icon-xs"></i>
+                  Sent
+                </span>
+              {% endif %}
+              {% if is_sender %}
+                <form method="POST" action="{{ url_for('messages.delete', message_id=message.message_id) }}" class="inline-form" onsubmit="return confirm('Delete this message?');">
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                  <button type="submit" class="ui-button ui-button--ghost ui-button--sm" title="Delete message">
+                    <i data-lucide="trash" class="icon icon-sm"></i>
+                  </button>
                 </form>
+              {% endif %}
             </div>
+          </article>
+        {% endfor %}
+      {% else %}
+        <div class="messages-empty">
+          <i data-lucide="message-square" class="icon icon-lg"></i>
+          <p>No messages yet. Start the conversation below.</p>
         </div>
-
-        <!-- Tips -->
-        <div class="card card-muted">
-            <div class="card-body">
-                <small class="tip-text">
-                    <i class="bi bi-lightbulb icon"></i>
-                    <strong>Tip:</strong> Keep conversations professional and respectful. 
-                    Messages are plain text only for security.
-                </small>
-            </div>
-        </div>
+      {% endif %}
     </div>
+
+    <form method="POST" action="{{ url_for('messages.send') }}" class="messages-thread__composer" id="replyForm">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <input type="hidden" name="receiver_id" value="{{ other_user.user_id }}">
+      <label class="ui-field">
+        <span class="ui-field__label">Your message</span>
+        <textarea
+          class="ui-input messages-thread__input"
+          id="content"
+          name="content"
+          rows="4"
+          placeholder="Type your message here..."
+          maxlength="10000"
+          required></textarea>
+      </label>
+      <div class="messages-thread__composer-actions">
+        <span class="composer-hint">
+          <i data-lucide="info" class="icon icon-xs"></i>
+          Messages are plain text only.
+        </span>
+        <button type="submit" class="ui-button ui-button--primary">
+          <i data-lucide="send" class="icon icon-sm"></i>
+          Send
+        </button>
+      </div>
+    </form>
+  </article>
+</section>
 {% endblock %}
 
 {% block extra_js %}
 <script>
-    // Auto-scroll to bottom of messages on page load
-    document.addEventListener('DOMContentLoaded', function() {
-        const container = document.getElementById('messagesContainer');
-        if (container) {
-            container.scrollTop = container.scrollHeight;
-        }
-    });
-
-    // Character counter for textarea
-    const textarea = document.getElementById('content');
-    if (textarea) {
-        textarea.addEventListener('input', function() {
-            const remaining = 10000 - this.value.length;
-            const helpText = this.nextElementSibling;
-            if (helpText) {
-                helpText.textContent = `${remaining.toLocaleString()} characters remaining`;
-                if (remaining < 100) {
-                    helpText.classList.add('warning');
-                } else {
-                    helpText.classList.remove('warning');
-                }
-            }
-        });
+  document.addEventListener('DOMContentLoaded', function() {
+    const container = document.getElementById('messagesContainer');
+    if (container) {
+      container.scrollTop = container.scrollHeight;
     }
+  });
 </script>
 {% endblock %}

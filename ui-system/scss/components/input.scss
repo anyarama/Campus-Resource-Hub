@@ -1,0 +1,92 @@
+/*
+ * Form controls covering text inputs and selects
+ */
+.ui-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.ui-field__label {
+  font-size: var(--font-size-label);
+  line-height: var(--font-lineheight-label);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  display: inline-flex;
+  gap: var(--space-1);
+  align-items: center;
+}
+
+.ui-field__required {
+  color: var(--color-danger-600);
+}
+
+.ui-input,
+.ui-select {
+  width: 100%;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border-default);
+  background-color: var(--color-surface-card);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-body);
+  line-height: var(--font-lineheight-body);
+  min-height: var(--control-height-md);
+  padding-inline: var(--space-3);
+  padding-block: calc(var(--space-2) - 2px);
+  transition: border-color var(--motion-duration-base) var(--motion-ease-standard),
+    box-shadow var(--motion-duration-base) var(--motion-ease-standard);
+}
+
+.ui-input::placeholder {
+  color: var(--color-text-tertiary);
+}
+
+.ui-input:focus-visible,
+.ui-select:focus-visible {
+  outline: none;
+  border-color: var(--color-brand-crimson-600);
+  box-shadow: var(--focus-ring-outer);
+}
+
+.ui-field--error .ui-input,
+.ui-field--error .ui-select {
+  border-color: var(--color-danger-600);
+}
+
+.ui-field--error .ui-input:focus-visible,
+.ui-field--error .ui-select:focus-visible {
+  box-shadow: 0 0 0 var(--focus-ring-width) var(--focus-ring-destructive);
+}
+
+.ui-input:disabled,
+.ui-select:disabled {
+  cursor: not-allowed;
+  background-color: var(--color-surface-muted);
+  color: var(--color-text-secondary);
+}
+
+.ui-field__message {
+  font-size: var(--font-size-caption);
+  line-height: var(--font-lineheight-caption);
+  color: var(--color-text-secondary);
+}
+
+.ui-field__message--error {
+  color: var(--color-danger-600);
+}
+
+.ui-select {
+  appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, var(--color-text-secondary) 50%),
+    linear-gradient(135deg, var(--color-text-secondary) 50%, transparent 50%);
+  background-position: calc(100% - var(--space-3)) center, calc(100% - var(--space-2)) center;
+  background-size: var(--space-2) var(--space-2);
+  background-repeat: no-repeat;
+  padding-right: var(--space-6);
+}
+
+.ui-field__help {
+  font-size: var(--font-size-caption);
+  line-height: var(--font-lineheight-caption);
+  color: var(--color-text-secondary);
+}

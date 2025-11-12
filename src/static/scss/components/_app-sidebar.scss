@@ -14,7 +14,7 @@
   position: fixed;
   top: 0;
   left: 0;
-  width: 72px;  // Compact icon-only width
+  width: 56px;  // Compact icon-only width
   height: 100vh;
   background-color: var(--color-white);
   border-right: 1px solid var(--color-gray-200);
@@ -28,10 +28,6 @@
   // Expanded state (optional for larger screens)
   &.expanded {
     width: 260px;
-    
-    .sidebar-link span:not(.badge) {
-      display: inline;
-    }
     
     .brand-text {
       display: inline;
@@ -91,6 +87,15 @@
   padding: var(--spacing-3) 0;
   overflow-y: auto;
   overflow-x: visible;
+  
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-1);
+  }
 }
 
 .sidebar-link {
@@ -99,7 +104,7 @@
   justify-content: center;
   gap: var(--spacing-2);
   padding: var(--spacing-3);
-  margin: var(--spacing-1) var(--spacing-2);
+  margin: 0 var(--spacing-2);
   color: var(--color-gray-700);
   text-decoration: none;
   font-size: var(--font-size-sm);
@@ -118,12 +123,6 @@
     justify-content: center;
     flex-shrink: 0;
   }
-  
-  // Hide text labels in compact mode
-  span:not(.badge) {
-    display: none;
-  }
-  
   // Badge positioning for compact mode
   .badge {
     position: absolute;
@@ -140,7 +139,7 @@
   
   // Hover tooltip
   &::after {
-    content: attr(title);
+    content: attr(data-tooltip);
     position: absolute;
     left: 100%;
     top: 50%;
@@ -154,18 +153,21 @@
     white-space: nowrap;
     border-radius: var(--border-radius-md);
     opacity: 0;
+    visibility: hidden;
     pointer-events: none;
     transition: opacity 0.2s ease;
     z-index: 1000;
     box-shadow: var(--shadow-lg);
   }
   
-  &:hover {
+  &:hover,
+  &:focus-visible {
     background-color: var(--color-gray-100);
     color: var(--color-gray-900);
     
     &::after {
       opacity: 1;
+      visibility: visible;
     }
   }
   
@@ -186,6 +188,11 @@
       border-radius: 0 2px 2px 0;
     }
   }
+}
+
+.sidebar-link:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: -2px;
 }
 
 // -----------------------------------------------------------------------------
@@ -209,55 +216,47 @@
 }
 
 // -----------------------------------------------------------------------------
-// Sidebar Footer (User Profile) - Compact Mode
+// Sidebar Footer (Profile + Logout)
 // -----------------------------------------------------------------------------
 .sidebar-footer {
   padding: var(--spacing-3);
   border-top: 1px solid var(--color-gray-200);
   flex-shrink: 0;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  gap: var(--spacing-2);
+  align-items: center;
 }
 
-.sidebar-user {
+.sidebar-link--pill {
+  border-radius: 999px;
+  margin: 0;
+}
+
+.sidebar-logout {
+  margin: 0;
+  width: 100%;
   display: flex;
+  justify-content: center;
+  
+  button {
+    border: none;
+    background: transparent;
+    padding: 0;
+  }
+}
+
+.user-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background-color: var(--color-primary-100);
+  color: var(--color-primary);
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  text-decoration: none;
-  color: var(--color-gray-900);
-  transition: transform 0.2s ease;
-  padding: var(--spacing-2);
-  border-radius: var(--border-radius-full);
-  position: relative;
-  
-  &:hover {
-    transform: scale(1.05);
-    
-    &::after {
-      opacity: 1;
-    }
-  }
-  
-  // Tooltip for user info
-  &::after {
-    content: attr(data-username);
-    position: absolute;
-    left: 100%;
-    top: 50%;
-    transform: translateY(-50%);
-    margin-left: var(--spacing-2);
-    padding: var(--spacing-2) var(--spacing-3);
-    background-color: var(--color-gray-900);
-    color: var(--color-white);
-    font-size: var(--font-size-sm);
-    white-space: nowrap;
-    border-radius: var(--border-radius-md);
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.2s ease;
-    z-index: 1000;
-    box-shadow: var(--shadow-lg);
-  }
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-sm);
 }
 
 .user-avatar {

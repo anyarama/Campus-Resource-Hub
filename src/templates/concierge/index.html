@@ -1,157 +1,237 @@
 {% extends "base.html" %}
-{% block title %}AI Resource Concierge - Campus Resource Hub{% endblock %}{% block extra_css %}{% endblock %}{% block content %}<div class="concierge-hero">
-  <div class="container">
-    <h1>🤖 AI Resource Concierge</h1>
-    <p class="subtitle">Just tell me what you need - I'll find it for you!</p>
-  </div>
-</div>
+{% block title %}AI Resource Concierge · Campus Resource Hub{% endblock %}
 
-<div class="container">
-  <!-- Search Interface -->
-  <div class="search-container">
-    <div class="search-box">
-      <form id="concierge-form">
-        <div class="space-b-3">
-          <label class="form-label" for="query-input">What are you looking for?</label>
-          <input autocomplete="off" class="query-input form-control" id="query-input" maxlength="500" name="query" placeholder="Try: 'Find a study room for 4 people tomorrow'" required="" type="text"/>
-          <small class="text-dim">Ask in plain English - I understand natural language!</small>
-        </div>
-        
-        <button class="search-btn btn btn--primary" id="search-btn" type="submit">
-          <i class="bi bi-search icon"></i> Search
-        </button>
-      </form>
-      
-      <!-- Example Queries -->
-      <div class="example-queries">
-        <small class="text-dim">Try these examples:</small>
-        </div></div></div></div>{% for example in examples %}{{ example }}">{{ example }}{% endfor %}<div class="loading-spinner" id="loading">
-    <div class="spinner"></div>
-    <p class="space-t-2">Thinking...</p>
+{% block content %}
+<section class="concierge-hero">
+  <div class="container">
+    <p class="eyebrow">Personalized discovery</p>
+    <h1>AI Resource Concierge</h1>
+    <p class="text-dim">Describe what you need in plain English and I’ll translate it into the perfect campus resource.</p>
   </div>
-  
-   Results Container 
-  <div class="results-container" id="results-container">
-    <!-- AI Response Message -->
-    <div class="ai-message" id="ai-message"></div>
-    
-    <!-- Resource Grid -->
-    <div class="resource-grid" id="resource-grid"></div>
-    
-    <!-- No Results -->
-    <div class="no-results" id="no-results" style="display: none;">
-      <i class="bi bi-inbox icon"></i>
-      <h4>No results found</h4>
-      <p>Try adjusting your search or browse all resources.</p>
-      </div></div>{{ url_for('resources.index') }}" class="btn btn-outline">
-        Browse All Resources
-      
-    
-  
-  
-   Features Section (shown when no search yet) 
-  <div class="features" id="features-section">
-    <div class="feature-card">
+</section>
+
+<section class="concierge-shell container">
+  <div class="concierge-search-card card">
+    <form id="concierge-form" class="stack-md" novalidate>
+      <div>
+        <label class="form-label" for="query-input">What are you looking for?</label>
+        <input
+          id="query-input"
+          name="query"
+          type="text"
+          maxlength="500"
+          autocomplete="off"
+          class="form-input"
+          placeholder="Try: “Find a study room for 4 people tomorrow afternoon”"
+          required
+        />
+        <small class="text-dim">The concierge understands capacity, categories, locations, dates, and times.</small>
+      </div>
+
+      <button id="search-btn" class="btn btn-primary btn--primary" type="submit">
+        <i class="bi bi-search icon" aria-hidden="true"></i>
+        Search
+      </button>
+    </form>
+
+    <div class="example-queries" aria-live="polite">
+      <span class="text-dim">Try one of these examples:</span>
+      <div class="example-chips">
+        {% for example in examples %}
+          <button type="button" class="chip chip--selectable" data-example="{{ example }}">{{ example }}</button>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <div id="concierge-error" class="alert alert-warning" role="alert" hidden></div>
+
+  <div id="loading" class="concierge-loading" hidden>
+    <div class="spinner-border text-primary" role="status" aria-live="polite" aria-label="Fetching results"></div>
+    <p class="text-dim space-t-2">Thinking through the catalog…</p>
+  </div>
+
+  <section id="results-container" class="concierge-results" hidden aria-live="polite">
+    <div id="ai-message" class="ai-message"></div>
+
+    <div id="suggestions" class="suggestions" hidden>
+      <p class="text-dim">Need another idea?</p>
+      <ul id="suggestions-list"></ul>
+    </div>
+
+    <div id="resource-grid" class="resource-grid"></div>
+
+    <div id="no-results" class="no-results card" hidden>
+      <i class="bi bi-inbox icon" aria-hidden="true"></i>
+      <h3>No resources found</h3>
+      <p>Try broadening your request or browse everything that’s currently published.</p>
+      <a class="btn btn-outline" href="{{ url_for('resources.index') }}">
+        Browse all resources
+      </a>
+    </div>
+  </section>
+
+  <section id="features-section" class="concierge-features">
+    <article class="feature-card">
       <div class="feature-icon">💬</div>
-      <h3>Natural Language</h3>
-      <p>Just ask in plain English - no complex filters needed</p>
-    </div>
-    
-    <div class="feature-card">
+      <h3>Natural language</h3>
+      <p>Skip the filters—just describe what you need.</p>
+    </article>
+    <article class="feature-card">
       <div class="feature-icon">🎯</div>
-      <h3>Smart Matching</h3>
-      <p>I understand capacity, dates, times, and locations</p>
-    </div>
-    
-    <div class="feature-card">
+      <h3>Smart matching</h3>
+      <p>Understands capacity, locations, dates, and equipment.</p>
+    </article>
+    <article class="feature-card">
       <div class="feature-icon">⚡</div>
-      <h3>Instant Results</h3>
-      <p>Get relevant resources in seconds</p>
-    </div>
-    
-    <div class="feature-card">
+      <h3>Instant results</h3>
+      <p>Returns only resources that actually exist in the database.</p>
+    </article>
+    <article class="feature-card">
       <div class="feature-icon">✅</div>
-      <h3>Database Grounded</h3>
-      <p>All results come from real, available resources</p>
-    </div>
-  </div>
-{% endblock %}{% block extra_js %}{{ url_for("concierge.query") }}', {
+      <h3>Grounded answers</h3>
+      <p>Every suggestion links directly to the real resource record.</p>
+    </article>
+  </section>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const form = document.getElementById('concierge-form');
+  const queryInput = document.getElementById('query-input');
+  const searchBtn = document.getElementById('search-btn');
+  const exampleButtons = document.querySelectorAll('[data-example]');
+  const resultsContainer = document.getElementById('results-container');
+  const featuresSection = document.getElementById('features-section');
+  const aiMessage = document.getElementById('ai-message');
+  const resourceGrid = document.getElementById('resource-grid');
+  const loading = document.getElementById('loading');
+  const errorBanner = document.getElementById('concierge-error');
+  const noResults = document.getElementById('no-results');
+  const suggestionsWrap = document.getElementById('suggestions');
+  const suggestionsList = document.getElementById('suggestions-list');
+  const conciergeEndpoint = '{{ url_for("concierge.query") }}';
+  const csrfToken = '{{ csrf_token() }}';
+
+  exampleButtons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const example = btn.dataset.example || '';
+      queryInput.value = example;
+      queryInput.focus();
+    });
+  });
+
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const query = queryInput.value.trim();
+
+    if (!query) {
+      showError('Please enter a search query.');
+      return;
+    }
+
+    showError(null);
+    toggleLoading(true);
+
+    try {
+      const response = await fetch(conciergeEndpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-CSRFToken': '{{ csrf_token() }}'
+          'X-CSRFToken': csrfToken,
         },
-        body: JSON.stringify({ query: query })
+        body: JSON.stringify({ query }),
       });
-      
+
       const data = await response.json();
-      
-      // Hide loading
-      loading.classList.remove('show');
-      searchBtn.disabled = false;
-      
-      // Show results
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Unable to process your request right now.');
+      }
+
       displayResults(data);
-      
     } catch (error) {
-      console.error('Error:', error);
-      loading.classList.remove('show');
-      searchBtn.disabled = false;
-      alert('An error occurred. Please try again.');
+      console.error('Concierge error:', error);
+      showError(error.message || 'An unexpected error occurred.');
+    } finally {
+      toggleLoading(false);
     }
   });
-  
-  function displayResults(data) {
-    resultsContainer.classList.add('show');
-    
-    // Display AI message
-    aiMessage.innerHTML = formatMessage(data.message);
-    
-    // Display resources
-    if (data.results && data.results.length > 0) {
-      resourceGrid.innerHTML = '';
-      noResults.style.display = 'none';
-      
-      data.results.forEach(resource => {
-        const card = createResourceCard(resource);
-        resourceGrid.appendChild(card);
-      });
-    } else {
-      resourceGrid.innerHTML = '';
-      noResults.style.display = 'block';
+
+  function toggleLoading(isLoading) {
+    searchBtn.disabled = isLoading;
+    loading.hidden = !isLoading;
+  }
+
+  function showError(message) {
+    if (!message) {
+      errorBanner.hidden = true;
+      errorBanner.textContent = '';
+      return;
     }
-    
-    // Scroll to results
+    errorBanner.hidden = false;
+    errorBanner.textContent = message;
+  }
+
+  function displayResults(data) {
+    resultsContainer.hidden = false;
+    featuresSection.hidden = true;
+    noResults.hidden = true;
+    suggestionsWrap.hidden = true;
+    resourceGrid.innerHTML = '';
+
+    aiMessage.innerHTML = formatMessage(data.message || 'Here are the closest matches.');
+
+    if (Array.isArray(data.suggestions) && data.suggestions.length > 0) {
+      suggestionsList.innerHTML = '';
+      data.suggestions.forEach((suggestion) => {
+        const item = document.createElement('li');
+        item.textContent = suggestion;
+        suggestionsList.appendChild(item);
+      });
+      suggestionsWrap.hidden = false;
+    }
+
+    if (data.results && data.results.length > 0) {
+      data.results.forEach((resource) => resourceGrid.appendChild(createResourceCard(resource)));
+    } else {
+      noResults.hidden = false;
+    }
+
     resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
-  
+
   function formatMessage(message) {
-    // Convert markdown-style bold to HTML
     return message
       .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-      .replace(/\n\n/g, '<br/><br/>')
-      .replace(/•/g, '<i class="bi bi-check-circle icon"></i>');
+      .replace(/\n\n/g, '<br><br>');
   }
-  
+
   function createResourceCard(resource) {
     const card = document.createElement('div');
-    card.className = 'resource-result-card';
-    
+    card.className = 'resource-result-card card';
+
+    const description = resource.description || 'No description provided.';
+    const trimmedDescription = description.length > 200 ? `${description.slice(0, 197)}…` : description;
+
     card.innerHTML = `
-      <h4>${resource.title}</h4>
-      <p class="text-dim small">${resource.description || 'No description available'}</p>
+      <h3>${resource.title}</h3>
+      <p class="text-dim small">${trimmedDescription}</p>
       <div class="resource-meta">
-        ${resource.capacity ? `<span><i class="bi bi-people icon"></i> ${resource.capacity}</span>` : ''}
-        ${resource.location ? `<span><i class="bi bi-geo-alt icon"></i> ${resource.location}</span>` : ''}
+        ${resource.capacity ? `<span><i class="bi bi-people" aria-hidden="true"></i> ${resource.capacity}</span>` : ''}
+        ${resource.location ? `<span><i class="bi bi-geo-alt" aria-hidden="true"></i> ${resource.location}</span>` : ''}
         ${resource.category ? `<span class="badge badge-primary">${resource.category}</span>` : ''}
       </div>
-      <a class="btn btn-primary" href="${resource.url}">
-        View Details <i class="bi bi-arrow-right icon"></i>
+      <a class="btn btn-outline" href="${resource.url}">
+        View details
+        <i class="bi bi-arrow-right" aria-hidden="true"></i>
       </a>
     `;
-    
+
     return card;
   }
 });
-
+</script>
 {% endblock %}

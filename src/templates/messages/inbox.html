@@ -1,50 +1,67 @@
 {% extends "base.html" %}
 
-{% block title %}Messages{% endblock %}
+{% block title %}Messages - Campus Resource Hub{% endblock %}
 
 {% block main_content %}
-<div class="messages-page" data-messages-page>
-  <aside class="conversations-sidebar">
-    <div class="conversations-sidebar__header">
-      <h1>Inbox</h1>
-      <div class="conversations-sidebar__search">
+<section class="messages-workspace" data-messages-page>
+  <div class="messages-workspace__sidebar">
+    <article class="ui-card messages-sidebar">
+      <div class="messages-sidebar__header">
+        <p class="resources-dashboard__eyebrow">Inbox</p>
+        <h1>Messages</h1>
+        <p>Keep conversations with students and owners in one place.</p>
+      </div>
+      <div class="messages-sidebar__search">
         <i data-lucide="search" class="icon icon-sm"></i>
-        <input type="search" placeholder="Search conversations" autocomplete="off" data-conversation-search class="form-control">
+        <input
+          type="search"
+          placeholder="Search conversations"
+          autocomplete="off"
+          data-conversation-search
+          class="ui-input">
       </div>
-      <div class="conversation-metrics">
-        <span><i data-lucide="mail" class="icon icon-sm"></i>{{ stats.total_received }} received</span>
-        <span><i data-lucide="send" class="icon icon-sm"></i>{{ stats.total_sent }} sent</span>
-        <span><i data-lucide="bell" class="icon icon-sm"></i>{{ stats.unread }} unread</span>
+      <div class="messages-sidebar__metrics">
+        <span class="messages-sidebar__metric">
+          <i data-lucide="mail" class="icon icon-xs"></i>{{ stats.total_received }} received
+        </span>
+        <span class="messages-sidebar__metric">
+          <i data-lucide="send" class="icon icon-xs"></i>{{ stats.total_sent }} sent
+        </span>
+        <span class="messages-sidebar__metric">
+          <i data-lucide="bell" class="icon icon-xs"></i>{{ stats.unread }} unread
+        </span>
       </div>
-    </div>
-    <div class="conversations-sidebar__list" data-conversation-list>
+    </article>
+
+    <div class="conversation-list" data-conversation-list>
       {% if conversations %}
         {% for conv in conversations %}
           {% set other = conv.other_user %}
-          <a href="{{ url_for('messages.inbox', user_id=other.user_id) }}"
-             class="conversation-item {% if selected_user_id == other.user_id %}is-active{% endif %} {% if conv.unread_count > 0 %}is-unread{% endif %}"
-             data-conversation-link>
-            <div class="conversation-item__avatar">
+          <a
+            href="{{ url_for('messages.inbox', user_id=other.user_id) }}"
+            class="conversation-list__item {% if selected_user_id == other.user_id %}is-active{% endif %}"
+            data-conversation-link>
+            <div class="conversation-list__avatar">
               {% if other.profile_image %}
                 <img src="{{ url_for('static', filename='uploads/' + other.profile_image) }}" alt="{{ other.name }}">
               {% else %}
                 {{ other.name[0]|upper }}
               {% endif %}
             </div>
-            <div class="conversation-item__content">
-              <div class="conversation-item__header">
-                <span class="conversation-item__name">{{ other.name }}</span>
-                <time class="conversation-item__time">{{ conv.last_message.timestamp.strftime('%b %d • %I:%M %p') }}</time>
+            <div class="conversation-list__body">
+              <div class="conversation-list__row">
+                <span class="conversation-list__name">{{ other.name }}</span>
+                <time class="conversation-list__time">{{ conv.last_message.timestamp.strftime('%b %d • %I:%M %p') }}</time>
               </div>
-              <p class="conversation-item__preview">
+              <p class="conversation-list__preview">
                 {% if conv.last_message.sender_id == current_user.user_id %}
                   You:
                 {% endif %}
                 {{ conv.last_message.get_preview(80) }}
               </p>
-              <div class="conversation-item__badges">
+              <div class="conversation-list__badges">
                 {% if conv.unread_count > 0 %}
-                  <span class="conversation-item__unread-badge" data-unread-badge>{{ conv.unread_count }}</span>
+                  <span class="conversation-list__unread" data-unread-badge>{{ conv.unread_count }}</span>
                 {% endif %}
                 <span class="badge badge--ghost">{{ conv.message_count }} msg{{ '' if conv.message_count == 1 else 's' }}</span>
               </div>
@@ -52,111 +69,118 @@
           </a>
         {% endfor %}
       {% else %}
-        <div class="conversation-view__empty">
-          <i data-lucide="inbox" class="icon icon-sm"></i>
+        <div class="messages-empty">
+          <i data-lucide="inbox" class="icon icon-lg"></i>
           <h2>No conversations yet</h2>
-          <p>Message a resource owner to start a thread.</p>
-          <a href="{{ url_for('resources.index') }}" class="btn btn--primary">Browse resources</a>
+          <p>Message a resource owner to start collaborating.</p>
+          <a href="{{ url_for('resources.index') }}" class="ui-button ui-button--primary">
+            Browse resources
+          </a>
         </div>
       {% endif %}
     </div>
-  </aside>
+  </div>
 
-  <section class="conversation-view">
+  <section class="messages-thread">
     {% if active_user %}
-      <header class="conversation-view__header">
-        <button type="button" class="conversation-view__back-btn btn btn--primary" data-back-to-list aria-label="Back to inbox">
-          <i data-lucide="arrow-left" class="icon icon-sm"></i>
-        </button>
-        <div class="conversation-view__user-info">
-          <div class="conversation-view__user-avatar">
-            {% if active_user.profile_image %}
-              <img src="{{ url_for('static', filename='uploads/' + active_user.profile_image) }}" alt="{{ active_user.name }}">
-            {% else %}
-              {{ active_user.name[0]|upper }}
-            {% endif %}
-          </div>
-          <div class="conversation-view__user-details">
-            <h2>{{ active_user.name }}</h2>
-            <p>{{ active_user.email }}</p>
-          </div>
-        </div>
-        <div class="conversation-view__actions">
-          <button type="button" aria-label="More options" class="btn btn--primary">
-            <i data-lucide="more-horizontal" class="icon icon-sm"></i>
+      <article class="ui-card messages-thread__panel">
+        <header class="messages-thread__header">
+          <button type="button" class="ui-button ui-button--ghost" data-back-to-list aria-label="Back to inbox">
+            <i data-lucide="arrow-left" class="icon icon-sm"></i>
+            <span>Inbox</span>
           </button>
-        </div>
-      </header>
-
-      <div class="conversation-view__messages" data-thread>
-        {% if active_messages %}
-          {% for message in active_messages %}
-            {% set is_sender = message.sender_id == current_user.user_id %}
-            <article class="message-bubble {{ 'message-bubble--sent' if is_sender else 'message-bubble--received' }}">
-              <div class="message-bubble__body">
-                <p>{{ message.content | replace('\n', '<br>') | safe }}</p>
-              </div>
-              <div class="message-bubble__meta">
-                <time>{{ message.timestamp.strftime('%b %d, %I:%M %p') }}</time>
-                {% if is_sender %}
-                  <span class="message-bubble__status">
-                    {% if message.is_read %}
-                      <i data-lucide="check-check" class="icon icon-sm"></i> Read
-                    {% else %}
-                      <i data-lucide="check" class="icon icon-sm"></i> Sent
-                    {% endif %}
-                  </span>
-                {% endif %}
-              </div>
-            </article>
-          {% endfor %}
-        {% else %}
-          <div class="conversation-view__empty">
-            <i data-lucide="messages-square" class="icon icon-sm"></i>
-            <h2>No messages yet</h2>
-            <p>Say hello to start the conversation.</p>
+          <div class="messages-thread__user">
+            <div class="messages-thread__user-avatar">
+              {% if active_user.profile_image %}
+                <img src="{{ url_for('static', filename='uploads/' + active_user.profile_image) }}" alt="{{ active_user.name }}">
+              {% else %}
+                {{ active_user.name[0]|upper }}
+              {% endif %}
+            </div>
+            <div class="messages-thread__user-meta">
+              <h2>{{ active_user.name }}</h2>
+              <p>{{ active_user.email }}</p>
+            </div>
           </div>
-        {% endif %}
-      </div>
+          <div class="messages-thread__actions">
+            <button type="button" class="ui-button ui-button--ghost" aria-label="Conversation options">
+              <i data-lucide="more-horizontal" class="icon icon-sm"></i>
+            </button>
+          </div>
+        </header>
 
-      <div class="conversation-view__input-area">
-        <form method="POST" action="{{ url_for('messages.send') }}" class="conversation-view__form" data-composer>
+        <div class="messages-thread__messages" data-thread>
+          {% if active_messages %}
+            {% for message in active_messages %}
+              {% set is_sender = message.sender_id == current_user.user_id %}
+              <article class="message-bubble {{ 'message-bubble--sent' if is_sender else 'message-bubble--received' }}">
+                <div class="message-bubble__body">
+                  {{ message.content | replace('\n', '<br>') | safe }}
+                </div>
+                <div class="message-bubble__meta">
+                  <time>{{ message.timestamp.strftime('%b %d, %I:%M %p') }}</time>
+                  {% if is_sender %}
+                    <span>
+                      {% if message.is_read %}
+                        <i data-lucide="check-check" class="icon icon-xs"></i> Read
+                      {% else %}
+                        <i data-lucide="check" class="icon icon-xs"></i> Sent
+                      {% endif %}
+                    </span>
+                  {% endif %}
+                </div>
+              </article>
+            {% endfor %}
+          {% else %}
+            <div class="messages-empty">
+              <i data-lucide="messages-square" class="icon icon-lg"></i>
+              <h2>No messages yet</h2>
+              <p>Say hello to start the conversation.</p>
+            </div>
+          {% endif %}
+        </div>
+
+        <form method="POST" action="{{ url_for('messages.send') }}" class="messages-thread__composer" data-composer>
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
           <input type="hidden" name="receiver_id" value="{{ active_user.user_id }}">
-
-          <div class="conversation-view__input-wrapper">
+          <label class="ui-field">
+            <span class="ui-field__label">Message {{ active_user.name }}</span>
             <textarea
               name="content"
-              rows="2"
-              placeholder="Message {{ active_user.name }}..."
+              rows="3"
+              placeholder="Type your reply…"
               required
               maxlength="10000"
-              data-composer-input
-             class="form-control"></textarea>
-            <button type="submit" class="btn btn--primary conversation-view__send-btn">
-              <i data-lucide="send" class="icon icon-sm"></i>
-              <span>Send</span>
-            </button>
-          </div>
-
-          <div class="conversation-view__input-actions">
-            <button type="button" aria-label="Attach file" data-attach-trigger class="btn btn--primary">
-              <i data-lucide="paperclip" class="icon icon-sm"></i>Attach
-            </button>
-            <input type="file" data-attach-input hidden>
+              class="ui-input messages-thread__input"
+              data-composer-input></textarea>
+          </label>
+          <div class="messages-thread__composer-actions">
             <span class="composer-hint">Cmd/Ctrl + Enter to send</span>
+            <div class="messages-thread__action-buttons">
+              <button type="button" class="ui-button ui-button--ghost" data-attach-trigger>
+                <i data-lucide="paperclip" class="icon icon-sm"></i>
+                Attach
+              </button>
+              <input type="file" data-attach-input hidden>
+              <button type="submit" class="ui-button ui-button--primary conversation-view__send-btn">
+                <i data-lucide="send" class="icon icon-sm"></i>
+                <span>Send</span>
+              </button>
+            </div>
           </div>
         </form>
-      </div>
+      </article>
     {% else %}
-      <div class="conversation-view__empty">
-        <i data-lucide="message-square" class="icon icon-sm"></i>
-        <h2>Select a conversation</h2>
-        <p>Choose someone from the inbox to view your messages.</p>
-      </div>
+      <article class="ui-card messages-thread__panel">
+        <div class="messages-empty">
+          <i data-lucide="message-square" class="icon icon-lg"></i>
+          <h2>Select a conversation</h2>
+          <p>Choose someone from the inbox to view your messages.</p>
+        </div>
+      </article>
     {% endif %}
   </section>
-</div>
+</section>
 {% endblock %}
 
 {% block extra_js %}

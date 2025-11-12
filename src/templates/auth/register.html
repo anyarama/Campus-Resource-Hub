@@ -1,81 +1,112 @@
 {% extends "base.html" %}
-{% from "_components.html" import form_field, button, card %}
 
 {% block title %}Register - Campus Resource Hub{% endblock %}
 
 {% block main_content %}
-<div class="auth-container">
-    <div class="auth-card auth-card--wide">
-        {% call card(title="Create Your Account") %}
-            <form method="POST" action="{{ url_for('auth.register') }}" novalidate class="form">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                
-                {{ form_field(
-                    type="text",
-                    name="name",
-                    label="Full Name",
-                    value=name or '',
-                    required=true,
-                    autofocus=true,
-                    min_length=2
-                ) }}
-                
-                {{ form_field(
-                    type="email",
-                    name="email",
-                    label="Email Address",
-                    value=email or '',
-                    required=true
-                ) }}
-                
-                {{ form_field(
-                    type="password",
-                    name="password",
-                    label="Password",
-                    required=true,
-                    min_length=8,
-                    help_text="At least 8 characters with uppercase, lowercase, and digit"
-                ) }}
-                
-                {{ form_field(
-                    type="password",
-                    name="confirm_password",
-                    label="Confirm Password",
-                    required=true
-                ) }}
-                
-                <div class="form-group">
-                    <label for="role" class="form-label">Role</label>
-                    <select class="form-select form-control" id="role" name="role">
-                        <option value="student" {% if role == 'student' or not role %}selected{% endif %}>Student</option>
-                        <option value="staff" {% if role == 'staff' %}selected{% endif %}>Staff</option>
-                        <option value="admin" {% if role == 'admin' %}selected{% endif %}>Admin</option>
-                    </select>
-                </div>
-                
-                {{ form_field(
-                    type="text",
-                    name="department",
-                    label="Department (Optional)",
-                    value=department or '',
-                    placeholder="e.g., Computer Science"
-                ) }}
-                
-                {{ button(
-                    text="Create Account",
-                    type="submit",
-                    variant="primary",
-                    full_width=true
-                ) }}
-            </form>
-            
-            <div class="auth-divider"></div>
-            
-            <p class="auth-footer-text">
-                Already have an account? 
-                <a href="{{ url_for('auth.login') }}" class="link-primary">Login here</a>
-            </p>
-        {% endcall %}
-    </div>
-</div>
+<section class="auth-page">
+  <div class="auth-page__intro">
+    <p class="auth-page__eyebrow">Join the community</p>
+    <h1>Create your Campus Resource Hub account</h1>
+    <p class="auth-page__copy">
+      Publish study spaces, coordinate equipment checkouts, and approve bookings with a single enterprise-grade workspace.
+    </p>
+    <ul class="auth-page__highlights">
+      <li>List and manage the resources you oversee</li>
+      <li>Book rooms, labs, or gear in seconds</li>
+      <li>Track approvals with administrator-level visibility</li>
+    </ul>
+  </div>
+
+  <div class="auth-page__panel">
+    <article class="ui-card auth-card">
+      <header class="auth-card__header">
+        <h2>Create your account</h2>
+        <p class="auth-card__subhead">Share a few details so we can tailor the workspace to your role.</p>
+      </header>
+
+      <form method="POST" action="{{ url_for('auth.register') }}" novalidate class="ui-form-group" aria-describedby="register-support-text">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+
+        <div class="ui-field">
+          <label class="ui-field__label" for="name">
+            Full name <span class="ui-field__required" aria-hidden="true">*</span>
+          </label>
+          <input class="ui-input"
+                 type="text"
+                 id="name"
+                 name="name"
+                 value="{{ name or '' }}"
+                 minlength="2"
+                 required
+                 autofocus>
+        </div>
+
+        <div class="ui-field">
+          <label class="ui-field__label" for="email">
+            Email address <span class="ui-field__required" aria-hidden="true">*</span>
+          </label>
+          <input class="ui-input"
+                 type="email"
+                 id="email"
+                 name="email"
+                 value="{{ email or '' }}"
+                 required>
+        </div>
+
+        <div class="ui-field">
+          <label class="ui-field__label" for="role">
+            Role <span class="ui-field__required" aria-hidden="true">*</span>
+          </label>
+          <select class="ui-select" id="role" name="role" required>
+            <option value="student" {% if role == 'student' or not role %}selected{% endif %}>Student</option>
+            <option value="staff" {% if role == 'staff' %}selected{% endif %}>Staff</option>
+            <option value="admin" {% if role == 'admin' %}selected{% endif %}>Admin</option>
+          </select>
+        </div>
+
+        <div class="ui-field">
+          <label class="ui-field__label" for="department">Department (optional)</label>
+          <input class="ui-input"
+                 type="text"
+                 id="department"
+                 name="department"
+                 value="{{ department or '' }}"
+                 placeholder="e.g., Computer Science">
+        </div>
+
+        <div class="ui-field">
+          <label class="ui-field__label" for="password">
+            Password <span class="ui-field__required" aria-hidden="true">*</span>
+          </label>
+          <input class="ui-input"
+                 type="password"
+                 id="password"
+                 name="password"
+                 minlength="8"
+                 required>
+          <span class="ui-field__help">Use at least 8 characters with uppercase, lowercase, and a number.</span>
+        </div>
+
+        <div class="ui-field">
+          <label class="ui-field__label" for="confirm_password">
+            Confirm password <span class="ui-field__required" aria-hidden="true">*</span>
+          </label>
+          <input class="ui-input"
+                 type="password"
+                 id="confirm_password"
+                 name="confirm_password"
+                 required>
+        </div>
+
+        <div class="ui-form-group__actions">
+          <button type="submit" class="ui-button ui-button--primary">Create account</button>
+        </div>
+
+        <p class="auth-card__swap" id="register-support-text">
+          Already have an account? <a href="{{ url_for('auth.login') }}">Login here</a>.
+        </p>
+      </form>
+    </article>
+  </div>
+</section>
 {% endblock %}

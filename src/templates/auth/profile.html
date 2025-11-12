@@ -1,66 +1,104 @@
 {% extends "base.html" %}
-{% block title %}Profile - {{ current_user.name }}{% endblock %}{% block content %}<div class="layout-grid">
-    <div class="layout-col" data-col="12">
-      <!-- Profile Header -->
-      <div class="card">
-        <div class="card-body">
-          </div></div></div></div>{% if current_user.profile_image %}{{ url_for('static', filename='uploads/' + current_user.profile_image) }}" 
-               alt="Profile Image" 
-               class="rounded-circle" 
-               width="120" 
-               height="120"
-               style="object-fit: cover;">
-          {% else %}<div class="rounded-full bg-secondary d-inline-flex" style="width: 120px; height: 120px;">
-              <span class="text-inverse fs-1"></span></div>{{ current_user.name[0].upper() }}{% endif %}<h2 class="space-b-1"></h2>{{ current_user.name }}<p class="text-dim"></p>{{ current_user.email }}{% if current_user.role == 'admin' %}<span class="badge badge-danger fs-6">Admin</span>
-          {% elif current_user.role == 'staff' %}<span class="badge badge-primary fs-6">Staff</span>
-          {% else %}<span class="badge badge-success fs-6">Student</span>
-          {% endif %}<div class="card">
-        <div class="card-header">
-          <h5 class="space-b-0">Profile Information</h5>
-        </div>
-        <div class="card-body">
-          <div class="layout-grid">
-            <div class="layout-col" data-col-sm="4">
-              <strong>User ID:</strong>
-            </div>
-            <div class="layout-col" data-col-sm="8">
-              </div></div></div></div>{{ current_user.user_id }}<div class="layout-grid">
-            <div class="layout-col" data-col-sm="4">
-              <strong>Name:</strong>
-            </div>
-            <div class="layout-col" data-col-sm="8">
-              </div></div>{{ current_user.name }}<div class="layout-grid">
-            <div class="layout-col" data-col-sm="4">
-              <strong>Email:</strong>
-            </div>
-            <div class="layout-col" data-col-sm="8">
-              </div></div>{{ current_user.email }}<div class="layout-grid">
-            <div class="layout-col" data-col-sm="4">
-              <strong>Role:</strong>
-            </div>
-            <div class="layout-col" data-col-sm="8">
-              <span class="text-capitalize"></span></div></div>{{ current_user.role }}{% if current_user.department %}<div class="layout-grid">
-            <div class="layout-col" data-col-sm="4">
-              <strong>Department:</strong>
-            </div>
-            <div class="layout-col" data-col-sm="8">
-              </div></div>{{ current_user.department }}{% endif %}<div class="layout-grid">
-            <div class="layout-col" data-col-sm="4">
-              <strong>Member Since:</strong>
-            </div>
-            <div class="layout-col" data-col-sm="8">
-              </div></div>{{ current_user.created_at.strftime('%B %d, %Y') if current_user.created_at else 'N/A' }}<div class="card-footer">
-          </div>{{ url_for('resources.dashboard') }}" class="btn btn-secondary">
-            <i class="bi bi-arrow-left icon"></i> Back to Dashboard
-          
-          {# Future: Edit Profile button #}{# <a href="{{ url_for('auth.edit_profile') }}" class="btn btn-primary">Edit Profile #}
-        
-      
 
-       Admin Panel Link (if admin) 
-      {% if current_user.role == 'admin' %}<div class="space-t-3">
-        </div>{{ url_for('resources.admin_ping') }}" class="btn btn-danger">
-          <i class="bi bi-shield-lock icon"></i> Admin Panel
-        
-      
-      {% endif %}{% endblock %}
+{% block title %}Profile - {{ current_user.name }}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <p class="eyebrow">Account</p>
+    <h1>{{ current_user.name }}</h1>
+    <p class="text-dim">Manage your identity and jump back to the dashboard.</p>
+  </div>
+</div>
+
+<div class="layout-grid gap-lg">
+  <div class="layout-col" data-col-lg="8">
+    <div class="card">
+      <div class="card-body">
+        <div class="profile-hero space-b-3">
+          {% if current_user.profile_image %}
+            <img
+              src="{{ url_for('static', filename='uploads/' + current_user.profile_image) }}"
+              alt="{{ current_user.name }}"
+              class="profile-avatar"
+              style="width: 120px; height: 120px; object-fit: cover; border-radius: 50%;"
+            >
+          {% else %}
+            <div aria-hidden="true" style="width: 120px; height: 120px; border-radius: 50%; background: var(--color-gray-200); display: grid; place-items: center; font-size: 2.5rem; font-weight: 600;">
+              {{ current_user.name[0].upper() }}
+            </div>
+          {% endif %}
+          <div>
+            <h2 class="space-b-1">{{ current_user.name }}</h2>
+            <p class="text-dim space-b-2">{{ current_user.email }}</p>
+            {% if current_user.role == 'admin' %}
+              <span class="badge badge-danger">Admin</span>
+            {% elif current_user.role == 'staff' %}
+              <span class="badge badge-primary">Staff</span>
+            {% else %}
+              <span class="badge badge-success">Student</span>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="stack-md">
+          <dl class="profile-list">
+            <div>
+              <dt>User ID</dt>
+              <dd>{{ current_user.user_id }}</dd>
+            </div>
+            <div>
+              <dt>Email</dt>
+              <dd>{{ current_user.email }}</dd>
+            </div>
+            <div>
+              <dt>Role</dt>
+              <dd class="text-capitalize">{{ current_user.role }}</dd>
+            </div>
+            {% if current_user.department %}
+            <div>
+              <dt>Department</dt>
+              <dd>{{ current_user.department }}</dd>
+            </div>
+            {% endif %}
+            <div>
+              <dt>Member since</dt>
+              <dd>{{ current_user.created_at.strftime('%B %d, %Y') if current_user.created_at else 'N/A' }}</dd>
+            </div>
+          </dl>
+        </div>
+      </div>
+      <div class="card-footer flex gap-sm wrap">
+        <a href="{{ url_for('resources.dashboard') }}" class="btn btn-secondary">
+          <i class="bi bi-arrow-left icon"></i> Back to dashboard
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="layout-col" data-col-lg="4">
+    <div class="card">
+      <div class="card-body">
+        <h3 class="space-b-2"><i class="bi bi-info-circle icon"></i> Session info</h3>
+        <p class="text-dim">Stay signed in to keep your bookings and messages in sync.</p>
+        <ul class="space-b-0">
+          <li>Last login: {{ current_user.last_login.strftime('%B %d, %Y %I:%M %p') if current_user.last_login else 'N/A' }}</li>
+          <li>Preferred role: {{ current_user.role|capitalize }}</li>
+        </ul>
+      </div>
+    </div>
+
+    {% if current_user.role == 'admin' %}
+    <div class="card space-t-3">
+      <div class="card-body">
+        <h3 class="space-b-2"><i class="bi bi-shield-lock icon"></i> Admin tools</h3>
+        <p class="text-dim">Jump into the admin dashboard to approve resources or manage users.</p>
+        <a href="{{ url_for('admin.dashboard') }}" class="btn btn-danger">
+          <i class="bi bi-speedometer2 icon"></i> Open admin dashboard
+        </a>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

@@ -2,235 +2,241 @@
 {% block title %}Admin Dashboard{% endblock %}
 
 {% block main_content %}
-<section class="admin-page__header">
-  <div>
-    <p class="eyebrow">Administration</p>
-    <h1>Platform Overview</h1>
-    <p>Monitor approvals, review flagged content, and keep bookings moving.</p>
-  </div>
-  <div class="admin-page__actions">
-    <a href="{{ url_for('admin.analytics') }}" class="btn btn--ghost">
-      <i data-lucide="bar-chart-3" class="icon icon-sm"></i>
-      <span>View Analytics</span>
-    </a>
-    <a href="{{ url_for('admin.users') }}" class="btn btn--primary">
-      <i data-lucide="users" class="icon icon-sm"></i>
-      <span>Manage Users</span>
-    </a>
-  </div>
-</section>
+<section class="admin-dashboard">
+  <header class="admin-dashboard__hero">
+    <div>
+      <p class="resources-dashboard__eyebrow">Administration</p>
+      <h1>Platform overview</h1>
+      <p>Monitor approvals, review moderation queues, and keep bookings moving.</p>
+    </div>
+    <div class="admin-dashboard__actions">
+      <a href="{{ url_for('admin.analytics') }}" class="ui-button ui-button--ghost">
+        <i data-lucide="bar-chart-3" class="icon icon-sm"></i>
+        Analytics
+      </a>
+      <a href="{{ url_for('admin.users') }}" class="ui-button ui-button--primary">
+        <i data-lucide="users" class="icon icon-sm"></i>
+        Manage users
+      </a>
+    </div>
+  </header>
 
-<section class="admin-dashboard__kpi-grid">
-  <article class="kpi-tile">
-    <div class="kpi-tile__icon kpi-tile__icon--primary">
-      <i data-lucide="users" class="icon icon-sm"></i>
-    </div>
-    <div class="kpi-tile__content">
-      <p class="kpi-tile__label">Total Users</p>
-      <p class="kpi-tile__value">{{ stats.total_users }}</p>
-      <p class="kpi-tile__meta">{{ stats.active_users }} active · {{ stats.suspended_users }} suspended</p>
-    </div>
-  </article>
-  <article class="kpi-tile">
-    <div class="kpi-tile__icon kpi-tile__icon--success">
-      <i data-lucide="box" class="icon icon-sm"></i>
-    </div>
-    <div class="kpi-tile__content">
-      <p class="kpi-tile__label">Resources</p>
-      <p class="kpi-tile__value">{{ stats.total_resources }}</p>
-      <p class="kpi-tile__meta">{{ stats.published_resources }} published · {{ stats.archived_resources }} archived</p>
-    </div>
-  </article>
-  <article class="kpi-tile">
-    <div class="kpi-tile__icon kpi-tile__icon--info">
-      <i data-lucide="calendar-check" class="icon icon-sm"></i>
-    </div>
-    <div class="kpi-tile__content">
-      <p class="kpi-tile__label">Bookings</p>
-      <p class="kpi-tile__value">{{ stats.total_bookings }}</p>
-      <p class="kpi-tile__meta">{{ stats.pending_bookings }} pending approvals</p>
-    </div>
-  </article>
-  <article class="kpi-tile">
-    <div class="kpi-tile__icon kpi-tile__icon--warning">
-      <i data-lucide="message-square" class="icon icon-sm"></i>
-    </div>
-    <div class="kpi-tile__content">
-      <p class="kpi-tile__label">Messages</p>
-      <p class="kpi-tile__value">{{ stats.total_messages }}</p>
-      <p class="kpi-tile__meta">{{ stats.total_reviews }} reviews logged</p>
-    </div>
-  </article>
-</section>
-
-<section class="admin-dashboard__panels">
-  <article class="card approvals-card">
-    <header class="card__header">
-      <div>
-        <p class="eyebrow">Approvals</p>
-        <h2>Pending bookings</h2>
+  <div class="admin-dashboard__kpis">
+    <article class="ui-card kpi-tile">
+      <div class="kpi-tile__icon kpi-tile__icon--primary">
+        <i data-lucide="users" class="icon icon-sm"></i>
       </div>
-      <span class="badge badge--warning">{{ approvals|length }}</span>
-    </header>
-    {% if approvals %}
-    <form method="POST" action="{{ url_for('admin.bulk_booking_approvals') }}" data-bulk-form>
-      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-      <input type="hidden" name="action" value="" data-bulk-action-input>
-      <div class="bulk-toolbar">
-        <span data-bulk-count>0 selected</span>
-        <div class="bulk-toolbar__actions">
-          <button type="submit" class="btn btn--ghost btn--primary" data-bulk-action value="reject" disabled>
-            <i data-lucide="x" class="icon icon-sm"></i>
-            <span>Reject</span>
-          </button>
-          <button type="submit" class="btn btn--primary" data-bulk-action value="approve" disabled>
-            <i data-lucide="check" class="icon icon-sm"></i>
-            <span>Approve</span>
-          </button>
+      <div class="kpi-tile__content">
+        <p class="kpi-tile__label">Total users</p>
+        <p class="kpi-tile__value">{{ stats.total_users }}</p>
+        <p class="kpi-tile__meta">{{ stats.active_users }} active · {{ stats.suspended_users }} suspended</p>
+      </div>
+    </article>
+    <article class="ui-card kpi-tile">
+      <div class="kpi-tile__icon kpi-tile__icon--success">
+        <i data-lucide="box" class="icon icon-sm"></i>
+      </div>
+      <div class="kpi-tile__content">
+        <p class="kpi-tile__label">Resources</p>
+        <p class="kpi-tile__value">{{ stats.total_resources }}</p>
+        <p class="kpi-tile__meta">{{ stats.published_resources }} published · {{ stats.archived_resources }} archived</p>
+      </div>
+    </article>
+    <article class="ui-card kpi-tile">
+      <div class="kpi-tile__icon kpi-tile__icon--info">
+        <i data-lucide="calendar-check" class="icon icon-sm"></i>
+      </div>
+      <div class="kpi-tile__content">
+        <p class="kpi-tile__label">Bookings</p>
+        <p class="kpi-tile__value">{{ stats.total_bookings }}</p>
+        <p class="kpi-tile__meta">{{ stats.pending_bookings }} pending approvals</p>
+      </div>
+    </article>
+    <article class="ui-card kpi-tile">
+      <div class="kpi-tile__icon kpi-tile__icon--warning">
+        <i data-lucide="message-square" class="icon icon-sm"></i>
+      </div>
+      <div class="kpi-tile__content">
+        <p class="kpi-tile__label">Messages</p>
+        <p class="kpi-tile__value">{{ stats.total_messages }}</p>
+        <p class="kpi-tile__meta">{{ stats.total_reviews }} reviews logged</p>
+      </div>
+    </article>
+  </div>
+
+  <div class="admin-dashboard__panels">
+    <article class="ui-card admin-dashboard__panel">
+      <div class="admin-dashboard__panel-header">
+        <div>
+          <p class="resources-dashboard__eyebrow">Approvals</p>
+          <h2>Pending bookings</h2>
+          <p>Review new requests waiting for admin action.</p>
         </div>
+        <span class="badge badge--warning">{{ approvals|length }}</span>
       </div>
-      <div class="table-scroll table-scroll--sticky" role="region" aria-live="polite">
-        <table class="table table--interactive" role="table">
-          <thead>
-            <tr>
-              <th scope="col">
-                <label class="checkbox">
-                  <input type="checkbox" data-bulk-master aria-label="Select all approvals">
-                  <span></span>
-                </label>
-              </th>
-              <th scope="col">Resource</th>
-              <th scope="col">Requester</th>
-              <th scope="col">Slot</th>
-              <th scope="col">Requested</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for item in approvals %}
-            <tr tabindex="0">
-              <td data-label="Select">
-                <label class="checkbox">
-                  <input type="checkbox" name="booking_ids" value="{{ item.booking_id }}" data-bulk-checkbox aria-label="Select booking {{ item.booking_id }}">
-                  <span></span>
-                </label>
-              </td>
-              <td data-label="Resource">
-                <strong>{{ item.resource_title }}</strong>
-                <p class="text-muted">{{ item.resource_category|replace('_', ' ')|title }}</p>
-              </td>
-              <td data-label="Requester">
-                <strong>{{ item.requester_name }}</strong>
-                <p class="text-muted">{{ item.requester_email }}</p>
-              </td>
-              <td data-label="Slot">
-                <p>{{ item.start_datetime.strftime('%b %d, %I:%M %p') }} — {{ item.end_datetime.strftime('%I:%M %p') }}</p>
-              </td>
-              <td data-label="Requested">
-                <p>{{ item.created_at.strftime('%b %d, %I:%M %p') }}</p>
-              </td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-    </form>
-    {% else %}
-      <div class="empty-state empty-state--inline">
-        <i data-lucide="inbox" class="icon icon-sm"></i>
-        <h3>No pending approvals</h3>
-        <p>You're all caught up. New booking requests will appear here.</p>
-      </div>
-    {% endif %}
-  </article>
-
-  <article class="card flagged-card">
-    <header class="card__header">
-      <div>
-        <p class="eyebrow">Moderation</p>
-        <h2>Flagged reviews</h2>
-      </div>
-      <span class="badge badge--ghost">{{ flagged_reviews|length }}</span>
-    </header>
-    {% if flagged_reviews %}
-      <ul class="flagged-list">
-        {% for review in flagged_reviews %}
-        <li class="flagged-list__item">
-          <div>
-            <p class="flagged-list__resource">{{ review.resource_title }}</p>
-            <p class="flagged-list__meta">{{ review.reviewer_name }} · {{ review.hidden_at.strftime('%b %d, %I:%M %p') if review.hidden_at else 'Recently flagged' }}</p>
-            <p class="flagged-list__reason">{{ review.hidden_reason or 'Flagged by admin' }}</p>
-            <p class="flagged-list__comment">{{ review.comment or 'No comment supplied.' }}</p>
-          </div>
-          <div class="flagged-list__actions">
-            <form method="POST" action="{{ url_for('reviews.unhide', review_id=review.review_id) }}">
-              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-              <button type="submit" class="btn btn--ghost btn--sm btn--primary">
-                <i data-lucide="eye" class="icon icon-sm"></i>
-                <span>Unhide</span>
+      {% if approvals %}
+        <form method="POST" action="{{ url_for('admin.bulk_booking_approvals') }}" data-bulk-form>
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <input type="hidden" name="action" value="" data-bulk-action-input>
+          <div class="admin-dashboard__bulk">
+            <span data-bulk-count>0 selected</span>
+            <div class="admin-dashboard__bulk-actions">
+              <button type="submit" class="ui-button ui-button--ghost" data-bulk-action value="reject" disabled>
+                <i data-lucide="x" class="icon icon-sm"></i>
+                Reject
               </button>
-            </form>
-            <a class="btn btn--ghost btn--sm" href="{{ url_for('resources.detail', resource_id=review.resource_id) }}" target="_blank" rel="noopener">
-              <i data-lucide="external-link" class="icon icon-sm"></i>
-              <span>View</span>
-            </a>
-          </div>
-        </li>
-        {% endfor %}
-      </ul>
-    {% else %}
-      <div class="empty-state empty-state--inline">
-        <i data-lucide="shield" class="icon icon-sm"></i>
-        <h3>No flagged content</h3>
-        <p>Reviews will appear here when hidden for moderation.</p>
-      </div>
-    {% endif %}
-  </article>
-</section>
-
-<section class="admin-dashboard__content-grid">
-  <article class="card">
-    <header class="card__header">
-      <h2><i data-lucide="star" class="icon icon-sm"></i> Popular resources</h2>
-      <small class="text-muted">By booking volume</small>
-    </header>
-    {% if popular_resources %}
-      <ul class="resource-rankings">
-        {% for resource in popular_resources %}
-        <li>
-          <div>
-            <p class="resource-rankings__title">{{ loop.index }}. {{ resource.title }}</p>
-            <p class="text-muted">{{ resource.category|replace('_', ' ')|title }} · {{ resource.owner_name }}</p>
-          </div>
-          <span class="badge badge--ghost">{{ resource.booking_count }} bookings</span>
-        </li>
-        {% endfor %}
-      </ul>
-    {% else %}
-      <p class="text-muted">No resource data yet.</p>
-    {% endif %}
-  </article>
-
-  <article class="card">
-    <header class="card__header">
-      <h2><i data-lucide="activity" class="icon icon-sm"></i> Recent activity</h2>
-    </header>
-    <div class="activity-feed">
-      {% if activity.bookings %}
-        {% for booking in activity.bookings[:5] %}
-          <div class="activity-feed__item">
-            <div>
-              <p><strong>{{ booking.requester_name }}</strong> booked {{ booking.resource_title }}</p>
-              {% set event_time = booking.timestamp if booking.timestamp is defined else booking.created_at %}
-            <p class="text-muted">{% if event_time %}{{ event_time.strftime('%b %d, %I:%M %p') }}{% else %}—{% endif %}</p>
+              <button type="submit" class="ui-button ui-button--primary" data-bulk-action value="approve" disabled>
+                <i data-lucide="check" class="icon icon-sm"></i>
+                Approve
+              </button>
             </div>
-            <span class="badge badge--primary">{{ booking.status|title }}</span>
           </div>
-        {% endfor %}
+          <div class="table-scroll table-scroll--sticky" role="region" aria-live="polite">
+            <table class="ui-table" role="table">
+              <thead>
+                <tr>
+                  <th scope="col">
+                    <label class="checkbox">
+                      <input type="checkbox" data-bulk-master aria-label="Select all approvals">
+                      <span></span>
+                    </label>
+                  </th>
+                  <th scope="col">Resource</th>
+                  <th scope="col">Requester</th>
+                  <th scope="col">Slot</th>
+                  <th scope="col">Requested</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for item in approvals %}
+                <tr>
+                  <td data-label="Select">
+                    <label class="checkbox">
+                      <input type="checkbox" name="booking_ids" value="{{ item.booking_id }}" data-bulk-checkbox aria-label="Select booking {{ item.booking_id }}">
+                      <span></span>
+                    </label>
+                  </td>
+                  <td data-label="Resource">
+                    <strong>{{ item.resource_title }}</strong>
+                    <p class="text-muted">{{ item.resource_category|replace('_', ' ')|title }}</p>
+                  </td>
+                  <td data-label="Requester">
+                    <strong>{{ item.requester_name }}</strong>
+                    <p class="text-muted">{{ item.requester_email }}</p>
+                  </td>
+                  <td data-label="Slot">
+                    {{ item.start_datetime.strftime('%b %d, %I:%M %p') }} – {{ item.end_datetime.strftime('%I:%M %p') }}
+                  </td>
+                  <td data-label="Requested">
+                    {{ item.created_at.strftime('%b %d, %I:%M %p') }}
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </form>
       {% else %}
-        <p class="text-muted">No booking activity yet.</p>
+        <div class="messages-empty">
+          <i data-lucide="inbox" class="icon icon-lg"></i>
+          <h3>No pending approvals</h3>
+          <p>You’re caught up. New booking requests will appear here.</p>
+        </div>
       {% endif %}
-    </div>
-  </article>
+    </article>
+
+    <article class="ui-card admin-dashboard__panel">
+      <div class="admin-dashboard__panel-header">
+        <div>
+          <p class="resources-dashboard__eyebrow">Moderation</p>
+          <h2>Flagged reviews</h2>
+          <p>Resolve hidden feedback to keep trust high.</p>
+        </div>
+        <span class="badge badge--ghost">{{ flagged_reviews|length }}</span>
+      </div>
+      {% if flagged_reviews %}
+        <div class="admin-dashboard__flagged-list">
+          {% for review in flagged_reviews %}
+            <div class="admin-dashboard__flagged-item">
+              <p class="flagged-list__resource">{{ review.resource_title }}</p>
+              <p class="text-muted">{{ review.reviewer_name }} · {{ review.hidden_at.strftime('%b %d, %I:%M %p') if review.hidden_at else 'Recently flagged' }}</p>
+              <p class="flagged-list__comment">{{ review.comment or 'No comment supplied.' }}</p>
+              <div class="admin-dashboard__activity-item">
+                <span class="text-muted">{{ review.hidden_reason or 'Flagged by admin' }}</span>
+                <div class="admin-dashboard__actions">
+                  <form method="POST" action="{{ url_for('reviews.unhide', review_id=review.review_id) }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="ui-button ui-button--primary ui-button--sm">
+                      <i data-lucide="eye" class="icon icon-sm"></i>
+                      Unhide
+                    </button>
+                  </form>
+                  <a class="ui-button ui-button--ghost ui-button--sm" href="{{ url_for('resources.detail', resource_id=review.resource_id) }}" target="_blank" rel="noopener">
+                    <i data-lucide="external-link" class="icon icon-sm"></i>
+                    View
+                  </a>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="messages-empty">
+          <i data-lucide="shield" class="icon icon-lg"></i>
+          <h3>No flagged content</h3>
+          <p>Reviews will appear here when hidden for moderation.</p>
+        </div>
+      {% endif %}
+    </article>
+  </div>
+
+  <div class="admin-dashboard__panels">
+    <article class="ui-card admin-dashboard__panel">
+      <div class="admin-dashboard__panel-header">
+        <h2><i data-lucide="star" class="icon icon-sm"></i> Popular resources</h2>
+        <p class="text-muted">By booking volume</p>
+      </div>
+      {% if popular_resources %}
+        <ul class="resource-rankings">
+          {% for resource in popular_resources %}
+            <li>
+              <div>
+                <p class="resource-rankings__title">{{ loop.index }}. {{ resource.title }}</p>
+                <p class="text-muted">{{ resource.category|replace('_', ' ')|title }} · {{ resource.owner_name }}</p>
+              </div>
+              <span class="badge badge--ghost">{{ resource.booking_count }} bookings</span>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="text-muted">No resource data yet.</p>
+      {% endif %}
+    </article>
+
+    <article class="ui-card admin-dashboard__panel">
+      <div class="admin-dashboard__panel-header">
+        <h2><i data-lucide="activity" class="icon icon-sm"></i> Recent activity</h2>
+      </div>
+      <div class="admin-dashboard__activity">
+        {% if activity.bookings %}
+          {% for booking in activity.bookings[:5] %}
+            {% set event_time = booking.timestamp if booking.timestamp is defined else booking.created_at %}
+            <div class="admin-dashboard__activity-item">
+              <div>
+                <p><strong>{{ booking.requester_name }}</strong> booked {{ booking.resource_title }}</p>
+                <p class="text-muted">
+                  {% if event_time %}{{ event_time.strftime('%b %d, %I:%M %p') }}{% else %}—{% endif %}
+                </p>
+              </div>
+              <span class="badge badge--primary">{{ booking.status|title }}</span>
+            </div>
+          {% endfor %}
+        {% else %}
+          <p class="text-muted">No booking activity yet.</p>
+        {% endif %}
+      </div>
+    </article>
+  </div>
 </section>
 {% endblock %}
 

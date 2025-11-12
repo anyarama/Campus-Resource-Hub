@@ -1,158 +1,159 @@
 {% extends "base.html" %}
-{% block title %}Booking Details - {{ resource.title }}{% endblock %}{% block content %}<div class="grid">
-    <!-- Booking Information Card -->
-    <div class="layout-col" data-col-lg="8">
-      <div class="card">
-        <div class="card-header border-bottom">
-          <div class="flex">
-            <h4 class="space-b-0">
-              <i class="bi bi-calendar-check icon"></i>Booking Details
-            </h4>
-            </div></div></div></div></div>{% if booking.status == 'pending' %}<span class="badge badge-warning text-dark">Pending Approval</span>
-            {% elif booking.status == 'approved' %}<span class="badge badge-success">Approved</span>
-            {% elif booking.status == 'rejected' %}<span class="badge badge-danger">Rejected</span>
-            {% elif booking.status == 'cancelled' %}<span class="badge badge-secondary">Cancelled</span>
-            {% elif booking.status == 'completed' %}<span class="badge badge-primary">Completed</span>
-            {% endif %}<div class="card-body">
-          <!-- Resource Info -->
-          <div class="space-b-4 pad-b-3 border-bottom">
-            <h5 class="text-dim">Resource</h5>
-            <div class="flex">
-              </div></div></div>{% if resource.images %}{% set image_list = resource.images.split(',') %}{{ url_for('static', filename='uploads/' + image_list[0]) }}" 
-                   alt="{{ resource.title }}"
-                   class="rounded"
-                   style="width: 80px; height: 80px; object-fit: cover;">
-              {% else %}<div class="bg-neutral rounded" style="width: 80px; height: 80px;">
-                  <i class="bi bi-image icon" style="font-size: 2rem;"></i>
-                </div>
-              {% endif %}<div>
-                <h5 class="space-b-1">
-                  </h5></div>{{ url_for('resources.detail', resource_id=resource.resource_id) }}" 
-                    class="text-decoration-none">
-                    {{ resource.title }}<p class="text-dim">
-                  <i class="bi bi-geo-alt icon"></i></p>{{ resource.location }}<p class="text-dim">
-                  <i class="bi bi-tag icon"></i></p>{{ resource.category }}<div class="layout-grid">
-            <div class="layout-col" data-col="12">
-              <h6 class="text-dim">
-                <i class="bi bi-calendar-event icon"></i>Start Time
-              </h6>
-              <p class="space-b-0">
-                </p></div></div>{{ booking.start_datetime.strftime('%B %d, %Y') }}<br/>
-                <strong></strong>{{ booking.start_datetime.strftime('%I:%M %p') }}<div class="layout-col" data-col="12">
-              <h6 class="text-dim">
-                <i class="bi bi-calendar-x icon"></i>End Time
-              </h6>
-              <p class="space-b-0">
-                </p></div>{{ booking.end_datetime.strftime('%B %d, %Y') }}<br/>
-                <strong></strong>{{ booking.end_datetime.strftime('%I:%M %p') }}<div class="space-b-3">
-            <h6 class="text-dim">
-              <i class="bi bi-clock icon"></i>Duration
-            </h6>
-            </div>{% set duration = (booking.end_datetime - booking.start_datetime).total_seconds() %}{% set hours = (duration // 3600)|int %}{% set minutes = ((duration % 3600) // 60)|int %}<p class="space-b-0">
-              </p>{% if hours > 0 %}{{ hours }}hour{{ 's' if hours != 1 else '' }}{% endif %}{% if minutes > 0 %}{{ minutes }}minute{{ 's' if minutes != 1 else '' }}{% endif %}<div class="space-b-3">
-            <h6 class="text-dim">
-              <i class="bi bi-person icon"></i>Requested By
-            </h6>
-            <p class="space-b-0"></p></div>{{ requester.name }}({{ requester.email }})<p></p>
-          
 
-           Notes 
-          {% if booking.notes %}<div class="space-b-3">
-            <h6 class="text-dim">
-              <i class="bi bi-chat-left-text icon"></i>Notes
-            </h6>
-            <p class="space-b-0"></p></div>{{ booking.notes }}{% endif %}{% if booking.status == 'rejected' and booking.rejection_reason %}<div class="alert alert-danger">
-            <h6 class="alert-heading">
-              <i class="bi bi-exclamation-triangle icon"></i>Rejection Reason
-            </h6>
-            <p class="space-b-0"></p></div>{{ booking.rejection_reason }}{% endif %}<div class="space-t-4 pad-t-3 border-top">
-            <small class="text-dim">
-              <i class="bi bi-clock-history icon"></i>
-              Created: </small></div>{{ booking.created_at.strftime('%B %d, %Y at %I:%M %p') }}{% if booking.updated_at and booking.updated_at != booking.created_at %}<br/>
-              <i class="bi bi-arrow-clockwise icon"></i>
-              Updated: {{ booking.updated_at.strftime('%B %d, %Y at %I:%M %p') }}{% endif %}<div class="layout-col" data-col-lg="4">
-      <div class="card">
-        <div class="card-header">
-          <h5 class="space-b-0">
-            <i class="bi bi-lightning-charge icon"></i>Actions
-          </h5>
+{% block title %}Booking Details - {{ resource.title }}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <p class="eyebrow">Booking</p>
+    <h1>{{ resource.title }}</h1>
+    <p class="text-dim">Review the request, take action, and message the owner if you need more info.</p>
+  </div>
+</div>
+
+<div class="layout-grid gap-lg">
+  <div class="layout-col" data-col-lg="8">
+    <div class="card">
+      <div class="card-body">
+        <div class="space-b-3">
+          <h2 class="space-b-1">Reservation details</h2>
+          <p class="text-dim">Requested by {{ requester.name }} ({{ requester.email }})</p>
         </div>
-        <div class="card-body">
-          <!-- Staff/Admin Approval Actions -->
-          </div></div></div>{% if booking.status == 'pending' and (current_user.role == 'staff' or current_user.role == 'admin' or current_user.user_id == resource.owner_id) %}{{ url_for('bookings.approve', booking_id=booking.booking_id) }}" class="mb-2">
-            {{ csrf_token() }}">
-            <button class="btn btn-success btn--primary" type="submit">
-              <i class="bi bi-check-circle icon"></i>Approve Booking
+
+        <div class="layout-grid gap-sm">
+          <div class="layout-col" data-col="6">
+            <h6 class="text-dim"><i class="bi bi-calendar-event icon"></i> Start</h6>
+            <p>{{ booking.start_datetime.strftime('%B %d, %Y') }}<br><strong>{{ booking.start_datetime.strftime('%I:%M %p') }}</strong></p>
+          </div>
+          <div class="layout-col" data-col="6">
+            <h6 class="text-dim"><i class="bi bi-calendar-x icon"></i> End</h6>
+            <p>{{ booking.end_datetime.strftime('%B %d, %Y') }}<br><strong>{{ booking.end_datetime.strftime('%I:%M %p') }}</strong></p>
+          </div>
+        </div>
+
+        {% set duration = (booking.end_datetime - booking.start_datetime).total_seconds() %}
+        {% set hours = (duration // 3600)|int %}
+        {% set minutes = ((duration % 3600) // 60)|int %}
+        <p class="text-dim space-b-3">
+          <i class="bi bi-clock icon"></i>
+          Duration: {% if hours %}{{ hours }} hour{{ '' if hours == 1 else 's' }} {% endif %}{% if minutes %}{{ minutes }} minute{{ '' if minutes == 1 else 's' }}{% endif %}
+        </p>
+
+        {% if booking.notes %}
+        <div class="space-b-3">
+          <h6 class="text-dim"><i class="bi bi-chat-left-text icon"></i> Notes</h6>
+          <p>{{ booking.notes }}</p>
+        </div>
+        {% endif %}
+
+        {% if booking.status == 'rejected' and booking.rejection_reason %}
+        <div class="alert alert-danger space-b-3">
+          <h6 class="alert-heading"><i class="bi bi-exclamation-triangle icon"></i> Rejection reason</h6>
+          <p class="space-b-0">{{ booking.rejection_reason }}</p>
+        </div>
+        {% endif %}
+
+        <div class="space-t-4 pad-t-3 border-top">
+          <small class="text-dim">
+            <i class="bi bi-clock-history icon"></i> Created {{ booking.created_at.strftime('%B %d, %Y at %I:%M %p') }}
+            {% if booking.updated_at and booking.updated_at != booking.created_at %}
+              <br>
+              <i class="bi bi-arrow-clockwise icon"></i> Updated {{ booking.updated_at.strftime('%B %d, %Y at %I:%M %p') }}
+            {% endif %}
+          </small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="layout-col" data-col-lg="4">
+    <div class="card space-b-3">
+      <div class="card-header">
+        <h3 class="space-b-0"><i class="bi bi-lightning-charge icon"></i> Actions</h3>
+      </div>
+      <div class="card-body stack-sm">
+        {% if booking.status == 'pending' and (current_user.role in ['staff', 'admin'] or current_user.user_id == resource.owner_id) %}
+          <form method="POST" action="{{ url_for('bookings.approve', booking_id=booking.booking_id) }}" class="stack-sm">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="btn btn-success btn--primary">
+              <i class="bi bi-check-circle icon"></i> Approve booking
             </button>
-          
-          <button class="btn btn-danger btn--primary" data-bs-target="#rejectModal" data-bs-toggle="modal" type="button">
-            <i class="bi bi-x-circle icon"></i>Reject Booking
+          </form>
+          <button type="button" class="btn btn-danger btn--primary" data-modal-open="rejectModal">
+            <i class="bi bi-x-circle icon"></i> Reject booking
           </button>
-          {% endif %}{% if booking.status in ['pending', 'approved'] and current_user.user_id == booking.requester_id %}{{ url_for('bookings.cancel', booking_id=booking.booking_id) }}" 
-             onsubmit="return confirm('Are you sure you want to cancel this booking?');" class="mb-2">
-            {{ csrf_token() }}">
-            <button class="btn btn-warning btn--primary" type="submit">
-              <i class="bi bi-x-circle icon"></i>Cancel Booking
-            </button>
-          
-          {% endif %}{% if booking.status == 'approved' and current_user.role == 'admin' %}{{ url_for('bookings.complete', booking_id=booking.booking_id) }}" 
-             onsubmit="return confirm('Mark this booking as completed?');" class="mb-2">
-            {{ csrf_token() }}">
-            <button class="btn btn-primary btn--primary" type="submit">
-              <i class="bi bi-check-all icon"></i>Mark Complete
-            </button>
-          
-          {% endif %}{% if booking.status == 'completed' and current_user.user_id == booking.requester_id %}{{ url_for('resources.detail', resource_id=resource.resource_id) }}#reviews" 
-            class="btn btn-secondary">
-            <i class="bi bi-star icon"></i>Leave a Review
-          
-          {% endif %}{{ url_for('bookings.my_bookings') }}" class="btn btn-ghost">
-            <i class="bi bi-arrow-left icon"></i>Back to My Bookings
-          
-        
-      
+        {% endif %}
 
-       Contact Owner Card 
-      {% if current_user.user_id != resource.owner_id %}<div class="card">
+        {% if booking.status in ['pending', 'approved'] and current_user.user_id == booking.requester_id %}
+          <form method="POST" action="{{ url_for('bookings.cancel', booking_id=booking.booking_id) }}" onsubmit="return confirm('Cancel this booking?');" class="stack-sm">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="btn btn-warning btn--primary">
+              <i class="bi bi-x-circle icon"></i> Cancel booking
+            </button>
+          </form>
+        {% endif %}
+
+        {% if booking.status == 'approved' and current_user.role == 'admin' %}
+          <form method="POST" action="{{ url_for('bookings.complete', booking_id=booking.booking_id) }}" onsubmit="return confirm('Mark as complete?');" class="stack-sm">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="btn btn-primary btn--primary">
+              <i class="bi bi-check-all icon"></i> Mark complete
+            </button>
+          </form>
+        {% endif %}
+
+        {% if booking.status == 'completed' and current_user.user_id == booking.requester_id %}
+          <a href="{{ url_for('resources.detail', resource_id=resource.resource_id) }}#reviews" class="btn btn-secondary">
+            <i class="bi bi-star icon"></i> Leave a review
+          </a>
+        {% endif %}
+
+        <a href="{{ url_for('bookings.my_bookings') }}" class="btn btn-outline">
+          <i class="bi bi-arrow-left icon"></i> Back to My Bookings
+        </a>
+      </div>
+    </div>
+
+    {% if current_user.user_id != resource.owner_id %}
+      <div class="card space-b-3">
         <div class="card-header">
-          <h5 class="space-b-0">
-            <i class="bi bi-chat-dots icon"></i>Contact
-          </h5>
+          <h3 class="space-b-0"><i class="bi bi-chat-dots icon"></i> Contact owner</h3>
         </div>
         <div class="card-body">
-          <p class="text-dim">Have questions about this booking?</p>
-          </div></div>{{ url_for('messages.compose', user_id=resource.owner_id) }}" 
-            class="btn btn-secondary">
-            <i class="bi bi-envelope icon"></i>Message Owner
-          
-        
-      
-      {% endif %}<div aria-hidden="true" aria-labelledby="rejectModalLabel" class="modal fade" id="rejectModal" tabindex="-1">
+          <p class="text-dim">Have a question about this booking? Send a quick message.</p>
+          <a href="{{ url_for('messages.compose', user_id=resource.owner_id) }}" class="btn btn-secondary">
+            <i class="bi bi-envelope icon"></i> Message owner
+          </a>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+<div class="modal fade" id="rejectModal" tabindex="-1" aria-labelledby="rejectModalLabel" aria-hidden="true" data-modal>
   <div class="modal-dialog">
     <div class="modal-content">
-      </div></div></div>{{ url_for('bookings.reject', booking_id=booking.booking_id) }}">
-        {{ csrf_token() }}">
+      <form method="POST" action="{{ url_for('bookings.reject', booking_id=booking.booking_id) }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <div class="modal-header">
-          <h5 class="modal-title" id="rejectModalLabel">
-            <i class="bi bi-x-circle icon"></i>Reject Booking
-          </h5>
-          <button aria-label="Close" class="btn-close btn btn--primary" data-bs-dismiss="modal" type="button"></button>
+          <h5 class="modal-title" id="rejectModalLabel"><i class="bi bi-x-circle icon"></i> Reject booking</h5>
+          <button type="button" class="btn-close btn btn--primary" data-modal-close aria-label="Close"></button>
         </div>
         <div class="modal-body">
           <div class="space-b-3">
-            <label class="form-label" for="rejection_reason">Reason for Rejection</label>
-            <textarea class="form-control" id="rejection_reason" name="rejection_reason" placeholder="Please provide a reason for rejecting this booking..." required="" rows="3"></textarea>
-            <div class="form-text">This will be visible to the requester.</div>
+            <label for="rejection_reason" class="form-label">Reason for rejection</label>
+            <textarea id="rejection_reason" name="rejection_reason" class="form-control" rows="3" required placeholder="Let the requester know why the booking was rejected."></textarea>
+            <div class="form-text">This message is shared with the requester.</div>
           </div>
         </div>
         <div class="modal-footer">
-          <button class="btn btn-secondary btn--primary" data-bs-dismiss="modal" type="button">Cancel</button>
-          <button class="btn btn-danger btn--primary" type="submit">
-            <i class="bi bi-x-circle icon"></i>Reject Booking
+          <button type="button" class="btn btn-secondary btn--primary" data-modal-close>Cancel</button>
+          <button type="submit" class="btn btn-danger btn--primary">
+            <i class="bi bi-x-circle icon"></i> Reject booking
           </button>
         </div>
-      
-    
-  
-
+      </form>
+    </div>
+  </div>
+</div>
 {% endblock %}

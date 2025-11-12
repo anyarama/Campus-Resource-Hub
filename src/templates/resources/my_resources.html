@@ -54,51 +54,103 @@
     
   
 
-   Filter Tabs 
-  <ul class="nav nav-tabs" id="resourceTabs" role="tablist">
-    <li class="nav-item" role="presentation">
-      <button class="nav-link active btn btn--primary" data-bs-target="#all" data-bs-toggle="tab" id="all-tab" role="tab" type="button">
-        All (</button></li></ul>{{ resources|length }})
-      
-    
-    <li class="nav-item" role="presentation">
-      <button class="nav-link btn btn--primary" data-bs-target="#published" data-bs-toggle="tab" id="published-tab" role="tab" type="button">
-        Published (</button></li>{{ resources|selectattr('status', 'equalto', 'published')|list|length }})
-      
-    
-    <li class="nav-item" role="presentation">
-      <button class="nav-link btn btn--primary" data-bs-target="#draft" data-bs-toggle="tab" id="draft-tab" role="tab" type="button">
-        Drafts (</button></li>{{ resources|selectattr('status', 'equalto', 'draft')|list|length }})
-      
-    
-    <li class="nav-item" role="presentation">
-      <button class="nav-link btn btn--primary" data-bs-target="#archived" data-bs-toggle="tab" id="archived-tab" role="tab" type="button">
-        Archived (</button></li>{{ resources|selectattr('status', 'equalto', 'archived')|list|length }})
-      
-    
-  
+  {% set published_resources = resources|selectattr('status', 'equalto', 'published')|list %}
+  {% set draft_resources = resources|selectattr('status', 'equalto', 'draft')|list %}
+  {% set archived_resources = resources|selectattr('status', 'equalto', 'archived')|list %}
 
-   Tab Content 
-  <div class="tab-content" id="resourceTabContent">
-    <!-- All Resources -->
-    <div class="tab-pane fade show active" id="all" role="tabpanel">
-      </div></div>{% for resource in resources %}{% include 'resources/_resource_card.html' %}{% endfor %}<div class="tab-pane fade" id="published" role="tabpanel">
-      </div>{% set published_resources = resources|selectattr('status', 'equalto', 'published')|list %}{% if published_resources %}{% for resource in published_resources %}{% include 'resources/_resource_card.html' %}{% endfor %}{% else %}<div class="text-center">
-          <i class="bi bi-inbox icon" style="font-size: 3rem; color: var(--brand-600);"></i>
-          <p class="text-dim">No published resources yet.</p>
-          </div>{{ url_for('resources.create') }}" class="btn btn-primary">Create Your First Resource
-        
-      {% endif %}<div class="tab-pane fade" id="draft" role="tabpanel">
-      </div>{% set draft_resources = resources|selectattr('status', 'equalto', 'draft')|list %}{% if draft_resources %}{% for resource in draft_resources %}{% include 'resources/_resource_card.html' %}{% endfor %}{% else %}<div class="text-center">
-          <i class="bi bi-inbox icon" style="font-size: 3rem; color: var(--brand-600);"></i>
-          <p class="text-dim">No draft resources.</p>
-        </div>
-      {% endif %}<div class="tab-pane fade" id="archived" role="tabpanel">
-      </div>{% set archived_resources = resources|selectattr('status', 'equalto', 'archived')|list %}{% if archived_resources %}{% for resource in archived_resources %}{% include 'resources/_resource_card.html' %}{% endfor %}{% else %}<div class="text-center">
-          <i class="bi bi-inbox icon" style="font-size: 3rem; color: var(--brand-600);"></i>
-          <p class="text-dim">No archived resources.</p>
-        </div>
-      {% endif %}{% else %}<div class="layout-grid">
+  <div class="resource-tabs" data-tabs>
+    <ul class="nav nav-tabs" id="resourceTabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active btn btn--primary"
+                data-tab-trigger="resources-tab-all"
+                aria-controls="resources-tab-all"
+                aria-selected="true"
+                id="all-tab"
+                type="button">
+          All ({{ resources|length }})
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link btn btn--primary"
+                data-tab-trigger="resources-tab-published"
+                aria-controls="resources-tab-published"
+                aria-selected="false"
+                id="published-tab"
+                type="button">
+          Published ({{ published_resources|length }})
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link btn btn--primary"
+                data-tab-trigger="resources-tab-draft"
+                aria-controls="resources-tab-draft"
+                aria-selected="false"
+                id="draft-tab"
+                type="button">
+          Drafts ({{ draft_resources|length }})
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link btn btn--primary"
+                data-tab-trigger="resources-tab-archived"
+                aria-controls="resources-tab-archived"
+                aria-selected="false"
+                id="archived-tab"
+                type="button">
+          Archived ({{ archived_resources|length }})
+        </button>
+      </li>
+    </ul>
+
+    <div class="tab-content" id="resourceTabContent">
+      <div class="tab-pane fade show active" id="resources-tab-all" role="tabpanel">
+        {% for resource in resources %}
+          {% include 'resources/_resource_card.html' %}
+        {% endfor %}
+      </div>
+
+      <div class="tab-pane fade" id="resources-tab-published" role="tabpanel" hidden>
+        {% if published_resources %}
+          {% for resource in published_resources %}
+            {% include 'resources/_resource_card.html' %}
+          {% endfor %}
+        {% else %}
+          <div class="text-center">
+            <i class="bi bi-inbox icon" style="font-size: 3rem; color: var(--brand-600);"></i>
+            <p class="text-dim">No published resources yet.</p>
+            <a href="{{ url_for('resources.create') }}" class="btn btn-primary">Create Your First Resource</a>
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="tab-pane fade" id="resources-tab-draft" role="tabpanel" hidden>
+        {% if draft_resources %}
+          {% for resource in draft_resources %}
+            {% include 'resources/_resource_card.html' %}
+          {% endfor %}
+        {% else %}
+          <div class="text-center">
+            <i class="bi bi-inbox icon" style="font-size: 3rem; color: var(--brand-600);"></i>
+            <p class="text-dim">No draft resources.</p>
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="tab-pane fade" id="resources-tab-archived" role="tabpanel" hidden>
+        {% if archived_resources %}
+          {% for resource in archived_resources %}
+            {% include 'resources/_resource_card.html' %}
+          {% endfor %}
+        {% else %}
+          <div class="text-center">
+            <i class="bi bi-inbox icon" style="font-size: 3rem; color: var(--brand-600);"></i>
+            <p class="text-dim">No archived resources.</p>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  {% else %}<div class="layout-grid">
     <div class="layout-col mx-auto" data-col-lg="6">
       <div class="card">
         <div class="card-body">

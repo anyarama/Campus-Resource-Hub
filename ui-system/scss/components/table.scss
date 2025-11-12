@@ -1,0 +1,61 @@
+/*
+ * Table styles based on admin seed density tokens
+ */
+.ui-table__wrapper {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-lg);
+  background-color: var(--color-surface-card);
+}
+
+.ui-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-size-body);
+}
+
+.ui-table thead {
+  background-color: var(--color-surface-muted);
+  text-align: left;
+}
+
+.ui-table th,
+.ui-table td {
+  padding: var(--table-cell-padding-comfortable);
+  border-bottom: 1px solid var(--color-border-muted);
+}
+
+.ui-table th {
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  font-size: var(--font-size-caption);
+}
+
+.ui-table tbody tr {
+  transition: background-color var(--motion-duration-base) var(--motion-ease-standard);
+}
+
+.ui-table tbody tr:hover {
+  background-color: var(--color-surface-hover);
+}
+
+.ui-table tbody tr.is-selected {
+  background-color: color-mix(in srgb, var(--color-brand-crimson-600) 6%, var(--color-surface-card));
+  border-left: 2px solid var(--color-brand-crimson-600);
+}
+
+.ui-table__empty {
+  padding: var(--space-10);
+  text-align: center;
+  color: var(--color-text-secondary);
+}
+
+@media (max-width: 768px) {
+  .ui-table th,
+  .ui-table td {
+    padding: var(--table-cell-padding-compact);
+    font-size: var(--font-size-caption);
+  }
+}
